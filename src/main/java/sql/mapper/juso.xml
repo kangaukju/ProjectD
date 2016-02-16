@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="juso">
+
+	<select id="select" 
+			 resultType="kr.co.projecta.matching.user.Region">
+			SELECT 
+				a.id id, 
+				a.sidoId sidoId, 
+				a.sidoName sidoName, 
+				a.sigunguId sigunguId, 
+				a.sigunguName sigunguName 
+			FROM (
+				SELECT
+					id
+				FROM
+					juso
+				WHERE 1=1
+				<if test="id != null">
+					AND id = #{id}
+				</if>
+				<if test="sidoId != null">
+					AND sidoId = #{sidoId}
+				</if>
+				<if test="sidoName != null">
+					AND sidoName like CONCAT('%', #{sidoName}, '%')
+				</if>
+				<if test="sigunguId != null">
+					AND sigunguId = #{sigunguId}
+				</if>
+				<if test="sigunguName != null">
+					AND sigunguName like CONCAT('%', #{sigunguName}, '%')
+				</if>
+				<if test="start != null and end != null">
+					LIMIT ${start}, ${end}
+				</if>
+			) b
+			JOIN juso a ON a.id = b.id
+			UNION
+				SELECT 
+					0 id, 
+					0 sidoId, 
+					'전지역' sidoName, 
+					0 sigunguId, 
+					'전지역' sigunguName
+			ORDER BY id
+	</select>
+	
+	<select id="selectCount" resultType="long">
+			SELECT count(*) FROM offerer
+			WHERE
+				1=1
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="sidoId != null">
+				AND sidoId = #{sidoId}
+			</if>
+			<if test="sidoName != null">
+				AND sidoName like CONCAT('%', #{sidoName}, '%')
+			</if>
+			<if test="sigunguId != null">
+				AND sigunguId = #{sigunguId}
+			</if>
+			<if test="sigunguName != null">
+				AND sigunguName like CONCAT('%', #{sigunguName}, '%')
+			</if>
+	</select>
+	
+	<select id="selectOne" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Region">
+			SELECT 
+				id, 
+				sidoId, 
+				sidoName, 
+				sigunguId, 
+				sigunguName
+			FROM
+				juso
+			WHERE
+				id = #{id}
+	</select>
+	
+</mapper>

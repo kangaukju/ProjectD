@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="offerer">
+
+	<insert id="join" 
+			parameterType="kr.co.projecta.matching.user.Offerer">
+        	INSERT INTO offerer
+        	(
+        		id,
+				name,
+				password,
+				offererName,
+				offererNumber,
+				offererBrief,
+				phone,
+				cellPhone,
+				payDate,
+				eosDate,
+				sidoId,
+				sigunguId,
+				postcode,
+				address1,
+				address2,
+				mapFilename
+        	) VALUES
+        	(
+        		#{id},
+				#{name},
+				#{password},
+				#{offererName},
+				#{offererNumber},
+				#{offererBrief},
+				#{phone},
+				#{cellPhone},
+				#{payDate},
+				#{eosDate},
+				#{sidoId},
+				#{sigunguId},
+				#{postcode},
+				#{address1},
+				#{address2},
+				#{mapFilename}
+        	)
+	</insert>
+	
+	<select id="selectCount" resultType="long">
+			SELECT count(*) FROM offerer
+			WHERE
+				1=1
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="name != null">
+				AND name like CONCAT('%', #{name}, '%')
+			</if>
+			<if test="offererName != null">
+				AND offererName like CONCAT('%', #{offererName}, '%')
+			</if>
+			<if test="registerDate != null">
+				AND registerDate = #{registerDate}
+			</if>
+			<if test="offererNumber != null">
+				AND offererNumber = #{offererNumber}
+			</if>
+			<if test="phone != null">
+				AND phone like CONCAT('%', #{phone}, '%')
+			</if>
+			<if test="cellPhone != null">
+				AND cellPhone like CONCAT('%', #{cellPhone}, '%')
+			</if>
+			<if test="sidoId != null">
+				AND sidoId = #{sidoId}
+			</if>
+			<if test="sigunguId != null">
+				AND sigunguId = #{sigunguId}
+			</if>
+			<if test="address1 != null">
+				AND address1 like CONCAT('%', #{address1}, '%')
+			</if>
+			<if test="address2 != null">
+				AND address2 like CONCAT('%', #{address2}, '%')
+			</if>
+	</select>
+	
+	<select id="selectName" resultType="hashmap">
+			SELECT id, name FROM offerer
+			WHERE
+				1=1
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="name != null">
+				AND name like CONCAT('%', #{name}, '%')
+			</if>
+			<if test="offererName != null">
+				AND offererName like CONCAT('%', #{offererName}, '%')
+			</if>
+			<if test="registerDate != null">
+				AND registerDate = #{registerDate}
+			</if>
+			<if test="offererNumber != null">
+				AND offererNumber = #{offererNumber}
+			</if>
+			<if test="phone != null">
+				AND phone like CONCAT('%', #{phone}, '%')
+			</if>
+			<if test="cellPhone != null">
+				AND cellPhone like CONCAT('%', #{cellPhone}, '%')
+			</if>
+			<if test="sidoId != null">
+				AND sidoId = #{sidoId}
+			</if>
+			<if test="sigunguId != null">
+				AND sigunguId = #{sigunguId}
+			</if>
+			<if test="address1 != null">
+				AND address1 like CONCAT('%', #{address1}, '%')
+			</if>
+			<if test="address2 != null">
+				AND address2 like CONCAT('%', #{address2}, '%')
+			</if>
+	</select>
+	
+	<select id="select" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Offerer">
+			SELECT 
+				a.id id,
+				a.name name,
+				a.password password,
+				a.offererName offererName,
+				a.registerDate registerDate,
+				a.offererNumber offererNumber,
+				a.offererBrief offererBrief,
+				a.phone phone,
+				a.cellPhone cellPhone,
+				a.payDate payDate,
+				a.eosDate eosDate,
+				a.mapFilename mapFilename
+			FROM (
+				SELECT
+					id
+				FROM
+					offerer
+				WHERE 1=1
+				<if test="id != null">
+					AND id = #{id}
+				</if>
+				<if test="name != null">
+					AND name like CONCAT('%', #{name}, '%')
+				</if>
+				<if test="offererName != null">
+					AND offererName like CONCAT('%', #{offererName}, '%')
+				</if>
+				<if test="registerDate != null">
+					AND registerDate = #{registerDate}
+				</if>
+				<if test="offererNumber != null">
+					AND offererNumber = #{offererNumber}
+				</if>
+				<if test="phone != null">
+					AND phone like CONCAT('%', #{phone}, '%')
+				</if>
+				<if test="cellPhone != null">
+					AND cellPhone like CONCAT('%', #{cellPhone}, '%')
+				</if>
+				<if test="sidoId != null">
+					AND sidoId = #{sidoId}
+				</if>
+				<if test="sigunguId != null">
+					AND sigunguId = #{sigunguId}
+				</if>
+				<if test="address1 != null">
+					AND address1 like CONCAT('%', #{address1}, '%')
+				</if>
+				<if test="address2 != null">
+					AND address2 like CONCAT('%', #{address2}, '%')
+				</if>
+				<if test="start != null and end != null">
+					LIMIT ${start}, ${end}
+				</if>
+			) b
+			JOIN offerer a ON a.id = b.id
+	</select>
+	
+	<select id="selectOne" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Offerer">
+			SELECT 
+				id,
+				name,
+				password,
+				offererName,
+				registerDate,
+				offererNumber,
+				offererBrief,
+				phone,
+				cellPhone,
+				payDate,
+				eosDate,
+				sidoId,
+				sigunguId,
+				postcode,
+				address1,
+				address2,
+				mapFilename
+			FROM
+				offerer
+			WHERE 
+				id = #{id}
+	</select>
+	
+	<update id="updateMapFilename" parameterType="hashmap">
+		UPDATE offerer SET mapFilename = #{mapFilename}
+		WHERE id = #{id}
+	</update>
+</mapper>

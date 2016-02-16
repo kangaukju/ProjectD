@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="admin">
+
+	<insert id="join" 
+			parameterType="kr.co.projecta.matching.user.Admin">
+        	INSERT INTO admin
+        	(
+        		id,
+				name,
+				password
+        	) VALUES
+        	(
+        		#{id},
+				#{name},
+				#{password}
+        	)
+	</insert>
+	
+	<select id="selectCount" resultType="long">
+			SELECT count(*) FROM admin
+			WHERE
+				1=1
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="name != null">
+				AND name like CONCAT('%', #{name}, '%')
+			</if>
+	</select>
+	
+	<select id="select" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Admin">
+			SELECT 
+				a.id id,
+				a.name name,
+				a.password password
+			FROM (
+				SELECT
+					id
+				FROM
+					admin
+				WHERE 1=1
+				<if test="id != null">
+					AND id = #{id}
+				</if>
+				<if test="name != null">
+					AND name like CONCAT('%', #{name}, '%')
+				</if>
+				<if test="start != null and end != null">
+					LIMIT ${start}, ${end}
+				</if>
+			) b
+			JOIN admin a ON a.id = b.id
+	</select>
+	
+	<select id="selectOne" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Admin">
+			SELECT 
+				id,
+				name,
+				password
+			FROM
+				admin
+			WHERE 
+				id = #{id}
+	</select>
+	
+</mapper>

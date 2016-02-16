@@ -1,0 +1,6 @@
+<%@ page pageEncoding="utf-8"%>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<script src="<c:out value="${pageContext.request.contextPath}"/>/crypto/ext/jsbn.js"></script>
+	<script src="<c:out value="${pageContext.request.contextPath}"/>/crypto/ext/rsa.js"></script>
+	<script src="<c:out value="${pageContext.request.contextPath}"/>/crypto/ext/prng4.js"></script>
+	<script src="<c:out value="${pageContext.request.contextPath}"/>/crypto/ext/rng.js"></script>

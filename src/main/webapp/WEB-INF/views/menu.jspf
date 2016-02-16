@@ -1,0 +1,88 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<script language="JavaScript">
+$(document).ready(function() {
+	var m = getParameter("m");
+	if (m == undefined) {
+		m = "m1";
+	}
+	$('#'+m).addClass("current-tab");
+});
+</script>
+
+<div id="myModal" class="modal-content">
+  <div class="modal-header">
+    <span id="myModalCloser" class="close">×</span>
+    <h2 id="myModalHead"></h2>
+  </div>
+  <div class="modal-body">
+  	<h5 id="myModalbody"></h5>
+  </div>
+  <div class="modal-footer">
+    <h3 id="myModalFoot"></h3>
+  </div>
+</div>
+
+<div id="header">
+	<div id="top">
+		<div class="left" id="logo">
+			<a href="/home.do"><img src="/img/logo.gif" alt="" /></a>
+		</div>
+		<div class="right navigation" id="head-nav">
+			<ul class="tabbed">
+				<c:choose>
+					<c:when test="${sessionScope.identity != null}">
+						<li><a href="#">[<c:out value="${sessionScope.identity.name}" />] 회원님 반갑습니다.</a></li>
+						<li><a href="/logout.do">[로그아웃]</a></li>
+						</br>
+					</c:when>					
+					<c:otherwise>
+						<li><a href="/login.do">로그인</a></li>
+						<li><a href="/join.do">회원가입</a></li>
+					</c:otherwise>
+				</c:choose>
+			</ul>
+		</div>
+		
+		<div class="left navigation" id="main-nav">
+			<ul class="tabbed" id="menus">
+				<li id="m1"><a href="/home.do?m=m1">소개</a></li>
+				<li id="m2"><a href="/howto.do?m=m2">이용방법</a></li>
+				<li id="m3"><a href="/howmoney.do?m=m3">요금안내</a></li>
+				<c:choose>
+					<c:when test="${sessionScope.seeker != null}">
+						<li id="m4"><a href="/seeker/off.do?m=m4">배정신청</a></li>
+						<li id="m4"><a href="/offerer/offererlist.do?m=m5">업체조회</a></li>
+					</c:when>
+				</c:choose>
+				<c:choose>
+					<c:when test="${sessionScope.offerer != null}">
+						<li id="m4"><a href="/offerer/requirement.do?m=m4">배정신청</a></li>
+						<li id="m4"><a href="/offerer/myrequirement.do?m=m5">배정내역</a></li>
+					</c:when>
+				</c:choose>
+				<c:choose>
+					<c:when test="${sessionScope.admin != null}">
+						<li id="m4"><a href="/admin/admin.do?m=m4">관리</a></li>
+					</c:when>
+				</c:choose>
+			</ul>
+			<div class="clearer">&nbsp;</div>
+		</div>
+		<div class="clearer">&nbsp;</div>
+	</div>
+<!-- 
+	<div class="navigation" id="sub-nav">
+		<ul class="tabbed">
+			<li class="current-tab"><a href="index.html">Template Info</a></li>
+			<li><a href="style-demo.html">Style Demo</a></li>
+			<li><a href="comments.html">Comments</a></li>
+			<li><a href="archives.html">Archives</a></li>
+			<li><a href="no-subnavigation.html">No Subnavigation</a></li>
+			<li><a href="left-sidebar.html">Left Sidebar</a></li>
+			<li><a href="single-column.html">Single Column</a></li>
+			<li><a href="empty-page.html">Empty Page</a></li>
+		</ul>
+		<div class="clearer">&nbsp;</div>
+	</div>
+ -->
+</div>

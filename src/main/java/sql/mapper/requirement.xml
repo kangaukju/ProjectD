@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="requirement">
+
+	<insert id="join" 
+			parameterType="kr.co.projecta.matching.user.Requirement">
+        	INSERT INTO requirement
+        	(
+				offererId,
+				workDate,
+				workTime,
+				ageRange,
+				workAbility,
+				nation,
+				gender
+        	) VALUES
+        	(
+				#{offererId},
+				#{workDate, typeHandler=org.apache.ibatis.type.DateTypeHandler},
+				#{workTime},
+				#{ageRange},
+				#{workAbility},
+				#{nation},
+				#{gender}
+        	)
+	</insert>
+	
+	<select id="selectCount" resultType="long">
+			SELECT count(*) FROM requirement
+			WHERE
+				1=1
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+			<if test="workDate != null">
+				AND workDate = #{workDate}
+			</if>
+			<if test="workAbility != null">
+				AND workAbility = #{workAbility}
+			</if>
+			<if test="matchStatus != null">
+				AND matchStatus = #{matchStatus}
+			</if>
+			<if test="registerDate != null">
+				AND registerDate = #{registerDate}
+			</if>
+			<if test="gender != null">
+				AND gender = #{gender}
+			</if>
+	</select>
+	
+	<select id="select" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Requirement">
+			SELECT 
+				a.id id,
+				a.offererId offererId,
+				a.workDate workDate,
+				a.workTime workTime,
+				a.ageRange ageRange,
+				a.workAbility workAbility,
+				a.nation nation,
+				a.registerDate registerDate,
+				a.matchStatus matchStatus,
+				a.gender gender,
+				(
+					SELECT b.id FROM offerer a, juso b 
+					WHERE a.id = offererId 
+					AND a.sidoId = b.sidoId 
+					AND a.sigunguId = b.sigunguId
+				) location,
+				(
+					SELECT offererName FROM offerer WHERE id = a.offererId
+				) offererName
+			FROM (
+				SELECT
+					id
+				FROM
+					requirement
+				WHERE 1=1
+				<if test="id != null">
+					AND id = #{id}
+				</if>
+				<if test="offererId != null">
+					AND offererId = #{offererId}
+				</if>
+				<if test="workDate != null">
+					AND workDate = #{workDate}
+				</if>
+				<if test="workAbility != null">
+					AND workAbility = #{workAbility}
+				</if>
+				<if test="matchStatus != null">
+					AND matchStatus = #{matchStatus}
+				</if>
+				<if test="registerDate != null">
+					AND registerDate = #{registerDate}
+				</if>
+				<if test="gender != null">
+					AND gender = #{gender}
+				</if>
+				<if test="start != null and end != null">
+					LIMIT ${start}, ${end}
+				</if>
+			) b
+			JOIN requirement a ON a.id = b.id
+	</select>
+	
+	<select id="selectOne" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Requirement">
+			SELECT 
+				id,
+				offererId,
+				workDate,
+				workTime,
+				ageRange,
+				workAbility,
+				nation,
+				registerDate,
+				matchStatus,
+				gender,
+				(
+					SELECT b.id FROM offerer a, juso b 
+					WHERE a.id = offererId 
+					AND a.sidoId = b.sidoId 
+					AND a.sigunguId = b.sigunguId
+				) location,
+				(
+					SELECT offererName FROM offerer WHERE id = a.offererId
+				) offererName
+			FROM
+				requirement
+			WHERE 1=1
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+	</select>
+</mapper>
