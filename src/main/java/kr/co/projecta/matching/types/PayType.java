@@ -32,13 +32,16 @@ public enum PayType implements ContextSchemable {
 	}
 	
 	public List<Object> getContextSchemaData() {
-		List<Object> list
-		= new ArrayList<Object>(Arrays.asList(PayType.values()));
-	Collections.reverse(list);
-	return list;
+		List<Object> list = new ArrayList<Object>(Arrays.asList(PayType.values()));
+		Collections.reverse(list);
+		return list;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public String getOriginalName() {
+		return name();
 	}
 }

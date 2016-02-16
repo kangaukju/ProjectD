@@ -46,13 +46,17 @@ public enum SeekerLevel implements ContextSchemable {
 	}
 	
 	public List<Object> getContextSchemaData() {
-		List<Object> list
-			= new ArrayList<Object>(Arrays.asList(WorkAbility.values()));
+		List<Object> list = new ArrayList<Object>(Arrays.asList(WorkAbility.values()));
 		Collections.reverse(list);
 		return list;
 	}
 	
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getOriginalName() {
+		return name();
 	}
 };

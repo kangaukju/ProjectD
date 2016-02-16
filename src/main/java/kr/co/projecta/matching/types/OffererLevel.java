@@ -46,9 +46,12 @@ public enum OffererLevel implements ContextSchemable {
 	}
 
 	public List<Object> getContextSchemaData() {
-		List<Object> list
-			= new ArrayList<Object>(Arrays.asList(OffererLevel.values()));
+		List<Object> list = new ArrayList<Object>(Arrays.asList(OffererLevel.values()));
 		Collections.reverse(list);
 		return list;
+	}
+
+	public String getOriginalName() {
+		return name();
 	}
 };
