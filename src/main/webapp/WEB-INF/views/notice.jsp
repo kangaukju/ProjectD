@@ -54,7 +54,7 @@ function setCookie(name, value, expiredays) {
 			<td>
 				<!-- 공지사항 시작 -->
 				<h3>* DB스키마가 변경되었습니다. 이전 데이터가 삭제될 가능성이 있습니다.</h3><br>
-				<b style="color: red;">관리자계정: projecta/adminme<br></b>
+				<b style="color: red;">관리자계정: projecta/qwe123<br></b>
 				[개발 기능 명세]<br>
 				1. 회원가입<br>
 				- 전화번호는 형식에 맞게 입력바랍니다.(아직 예외처리 못함)<br>
