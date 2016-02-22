@@ -103,7 +103,7 @@ $(document).ready(function() {
 <body>
 <h3>추천 구직자</h3>
 <form method="post" action="#" id="form">
-	<input type="hidden" id="requirementId" name="requirementId" value="${param.id}">
+	<input type="hidden" id="requirementId" name="requirementId" value="${param.requirementId}">
 	<input type="hidden" id="seekerId" name="seekerId">
 	<table class="data-table">
 		<tbody>
