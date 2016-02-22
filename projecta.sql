@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.5.47, for debian-linux-gnu (x86_64)
 --
--- Host: 127.0.0.1    Database: projecta
+-- Host: localhost    Database: projecta
 -- ------------------------------------------------------
 -- Server version	5.5.47-0ubuntu0.14.04.1
 
@@ -48,10 +48,11 @@ DROP TABLE IF EXISTS `assignment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assignment` (
-  `seekerId` char(11) NOT NULL,
-  `offererId` varchar(32) NOT NULL,
-  PRIMARY KEY (`seekerId`,`offererId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='배정';
+  `requirementId` int(11) unsigned NOT NULL COMMENT '배정 번호',
+  `seekerId` varchar(13) NOT NULL COMMENT '구직자 아이디',
+  `confirm` tinyint(1) NOT NULL DEFAULT '0' COMMENT '구직자 확정 (0: 미확정, 1:확정)',
+  PRIMARY KEY (`requirementId`,`seekerId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -60,6 +61,7 @@ CREATE TABLE `assignment` (
 
 LOCK TABLES `assignment` WRITE;
 /*!40000 ALTER TABLE `assignment` DISABLE KEYS */;
+INSERT INTO `assignment` VALUES (3,'010-000-0001',0),(3,'010-000-0005',0);
 /*!40000 ALTER TABLE `assignment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -99,29 +101,22 @@ DROP TABLE IF EXISTS `offerer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `offerer` (
-  `id` varchar(32) NOT NULL COMMENT '아이디',
-  `password` char(64) NOT NULL COMMENT 'sha256',
-  `name` varchar(32) NOT NULL COMMENT '상호',
-  `offererName` varchar(64) NOT NULL COMMENT '상호',
-  `registerDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '회원가입(등록) 날짜',
-  `level` enum('BASIC','PREMIUM') DEFAULT 'BASIC',
-  `level_modifyDate` timestamp NULL DEFAULT '0000-00-00 00:00:00',
-  `addrZipcode` varchar(6) DEFAULT NULL COMMENT '우편번호',
-  `region` int(10) unsigned DEFAULT NULL,
-  `addrFull` varchar(60) DEFAULT NULL,
-  `offererNumber` char(10) NOT NULL,
-  `offererBrief` varchar(64) DEFAULT NULL,
-  `phone` varchar(11) DEFAULT NULL COMMENT '연락처',
-  `cellPhone` varchar(11) DEFAULT NULL COMMENT 'SMS 수신번호',
-  `businessType` int(10) unsigned DEFAULT NULL,
-  `payDate` date DEFAULT NULL COMMENT '유료 결제 날짜',
-  `eosDate` date DEFAULT NULL COMMENT '유료 만료 날짜',
-  `sidoId` int(10) unsigned NOT NULL,
-  `sigunguId` int(10) unsigned NOT NULL,
-  `postcode` varchar(12) DEFAULT NULL,
-  `address1` varchar(128) NOT NULL,
-  `address2` varchar(128) DEFAULT NULL,
-  `mapFilename` varchar(256) DEFAULT NULL,
+  `id` varchar(32) NOT NULL COMMENT '업주 아이디',
+  `password` char(64) NOT NULL COMMENT '비밀번호 (sha256)',
+  `name` varchar(32) NOT NULL COMMENT '업주 이름',
+  `offererName` varchar(64) NOT NULL COMMENT '상호명',
+  `registerDate` datetime NOT NULL COMMENT '회원가입(등록) 날짜',
+  `offererNumber` varchar(12) NOT NULL COMMENT '사업자번호',
+  `offererBrief` text COMMENT '업체 간략 설명',
+  `phone` varchar(12) DEFAULT NULL COMMENT '연락처',
+  `cellPhone` varchar(13) NOT NULL COMMENT 'SMS 수신번호',
+  `businessType` int(10) unsigned DEFAULT NULL COMMENT '업종',
+  `sidoId` int(10) unsigned NOT NULL COMMENT '업체 시/도 주소 번호',
+  `sigunguId` int(10) unsigned NOT NULL COMMENT '업체 시/군/구 번호',
+  `postcode` varchar(12) DEFAULT NULL COMMENT '업체 우편번호',
+  `address1` varchar(128) NOT NULL COMMENT '업체 주소',
+  `address2` varchar(128) DEFAULT NULL COMMENT '업체 상세 주소',
+  `mapFilename` varchar(256) NOT NULL COMMENT '업체 지도 그림 파일',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='업주';
@@ -133,7 +128,7 @@ CREATE TABLE `offerer` (
 
 LOCK TABLES `offerer` WRITE;
 /*!40000 ALTER TABLE `offerer` DISABLE KEYS */;
-INSERT INTO `offerer` VALUES ('projectd','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','프로젝트D(주)','2016-02-16 06:03:08','BASIC','0000-00-00 00:00:00',NULL,NULL,NULL,'000000000',NULL,'021231234','01012341234',NULL,NULL,NULL,11,801,'06120','서울 강남구 논현동 202-16','3층 소프트피부과','/resources/offerer/projectd.png'),('test1','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','포레스트키친','2016-02-16 06:04:49','BASIC','0000-00-00 00:00:00',NULL,NULL,NULL,'0000000000',NULL,'029300707','0102332342',NULL,NULL,NULL,11,501,'01714','서울 노원구 중계동 359-14','','/resources/offerer/test1.png'),('test2','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','우주미','2016-02-16 06:15:21','BASIC','0000-00-00 00:00:00',NULL,NULL,NULL,'0000000000',NULL,'023547788','0102342351',NULL,NULL,NULL,11,801,'03384','서울 은평구 녹번동 185','','/resources/offerer/test2.png'),('test3','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','새마을식당','2016-02-16 06:16:25','BASIC','0000-00-00 00:00:00',NULL,NULL,NULL,'00112222',NULL,'024761485','0102955632',NULL,NULL,NULL,11,401,'05355','서울 강동구 길동 449-1','','/resources/offerer/test3.png'),('test4','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','사당삼겹살','2016-02-16 06:17:51','BASIC','0000-00-00 00:00:00',NULL,NULL,NULL,'112222233',NULL,'025971981','0102349533',NULL,NULL,NULL,11,201,'08807','서울 관악구 남현동 1061-13','','/resources/offerer/test4.png'),('test5','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','육회자매집','2016-02-16 06:18:35','BASIC','0000-00-00 00:00:00',NULL,NULL,NULL,'1122333',NULL,'0222748344','0106434576',NULL,NULL,NULL,11,101,'03195','서울 종로구 종로4가 177','','/resources/offerer/test5.png');
+INSERT INTO `offerer` VALUES ('mama1','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','abc마트','2016-02-20 22:38:28','00-000-00000',NULL,'02-222-2222','010-567-2364',NULL,11,680,'06129','서울 강남구 역삼동 815-2','','/resources/offerer/mama1.png'),('projectd','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','프로젝트D(주)','2016-02-16 15:03:08','00-000-00000',NULL,'02-123-1234','010-1234-1234',NULL,11,801,'06120','서울 강남구 논현동 202-16','3층 소프트피부과','/resources/offerer/projectd.png'),('test1','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','포레스트키친','2016-02-16 15:04:49','00-000-00000',NULL,'02-930-0707','010-233-2342',NULL,11,501,'01714','서울 노원구 중계동 359-14','','/resources/offerer/test1.png'),('test10','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','우헤미','2016-02-19 16:05:35','00-000-00000',NULL,'02-312-3123','010-254-2312',NULL,11,51,'01065','서울 강북구 오패산로 401-1 (번동, 장충왕족발)','','/resources/offerer/test10.png'),('test11','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','감자탕','2016-02-19 16:09:05','00-000-00000',NULL,'02-000-0000','010-223-5555',NULL,11,901,'06928','서울 동작구 노량진동 37-4','','/resources/offerer/test11.png'),('test12','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','감자감자','2016-02-19 16:11:19','00-000-00000',NULL,'02-222-1111','010-555-3353',NULL,11,401,'03984','서울 마포구 동교로 247 (연남동, 송가네 감자탕)','','/resources/offerer/test12.png'),('test13','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','순대','2016-02-19 16:13:36','00-000-00000',NULL,'02-777-7777','010-777-7777',NULL,11,501,'01625','서울 노원구 상계동 1118-1','','/resources/offerer/test13.png'),('test14','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','강남초등학교','2016-02-19 16:26:19','00-000-00000',NULL,'02-555-5555','010-555-5555',NULL,11,590,'06912','서울 동작구 상도1동 504','','/resources/offerer/test14.png'),('test2','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','우주미','2016-02-16 15:15:21','00-000-00000',NULL,'02-354-7788','010-234-2351',NULL,11,801,'03384','서울 은평구 녹번동 185','','/resources/offerer/test2.png'),('test3','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','새마을식당','2016-02-16 15:16:25','00-000-00000',NULL,'02-476-1485','010-295-5632',NULL,11,401,'05355','서울 강동구 길동 449-1','','/resources/offerer/test3.png'),('test4','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','사당삼겹살','2016-02-16 15:17:51','00-000-00000',NULL,'02-597-1981','010-234-9533',NULL,11,201,'08807','서울 관악구 남현동 1061-13','','/resources/offerer/test4.png'),('test5','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','qwe123','육회자매집','2016-02-16 15:18:35','00-000-00000',NULL,'02-2274-8344','010-643-4576',NULL,11,101,'03195','서울 종로구 종로4가 177','','/resources/offerer/test5.png');
 /*!40000 ALTER TABLE `offerer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -145,19 +140,20 @@ DROP TABLE IF EXISTS `requirement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `requirement` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `offererId` varchar(32) NOT NULL COMMENT '업주 id',
-  `workDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '업무 날짜',
-  `workTime` tinyint(3) unsigned NOT NULL COMMENT '업무 시간',
-  `ageRange` tinyint(4) DEFAULT '40',
-  `workAbility` enum('SERVING','KITCHEN','ASSIST') NOT NULL DEFAULT 'SERVING' COMMENT '배정 업무',
-  `matchStatus` enum('COMPLETION','INCOMPLETION') NOT NULL DEFAULT 'INCOMPLETION',
-  `nation` enum('KOR','CHA','ETC') NOT NULL DEFAULT 'KOR',
-  `registerDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `gender` enum('FEMALE','MALE') DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '배정번호',
+  `offererId` varchar(32) NOT NULL COMMENT '업주 아이디',
+  `workDate` datetime NOT NULL COMMENT '근무날짜',
+  `workTime` tinyint(3) unsigned NOT NULL COMMENT '근무시간',
+  `ageRange` tinyint(4) DEFAULT NULL COMMENT '선호 연령대',
+  `gender` tinyint(1) DEFAULT NULL COMMENT '선호 성별',
+  `workAbility` tinyint(1) NOT NULL COMMENT '근무종류',
+  `matchStatus` tinyint(1) NOT NULL DEFAULT '0' COMMENT '배정상태 (배정중=0, 배정완료=1)',
+  `nation` tinyint(1) NOT NULL COMMENT '선호 국적',
+  `registerDate` datetime NOT NULL COMMENT '배정요청 날짜',
+  `person` int(11) NOT NULL DEFAULT '1' COMMENT '근무인력(N명)',
   PRIMARY KEY (`id`),
   KEY `offererId` (`offererId`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -166,7 +162,7 @@ CREATE TABLE `requirement` (
 
 LOCK TABLES `requirement` WRITE;
 /*!40000 ALTER TABLE `requirement` DISABLE KEYS */;
-INSERT INTO `requirement` VALUES (1,'test1','2016-02-28 19:00:00',5,40,'KITCHEN','INCOMPLETION','CHA','2016-02-16 09:26:01','MALE');
+INSERT INTO `requirement` VALUES (3,'test14','2016-02-29 08:00:00',8,20,1,1,0,1,'2016-02-19 16:26:53',2),(4,'test1','2016-02-27 08:00:00',5,20,0,1,0,1,'2016-02-23 00:57:14',2);
 /*!40000 ALTER TABLE `requirement` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,24 +174,25 @@ DROP TABLE IF EXISTS `seeker`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `seeker` (
-  `id` char(11) NOT NULL COMMENT '전화번호 000-000-0000',
+  `id` varchar(13) NOT NULL COMMENT '전화번호 (구분자 제외)',
   `name` varchar(32) NOT NULL COMMENT '구직자 이름',
-  `registerDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '가입날짜',
-  `withdrawDate` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '탈퇴날짜',
-  `birth` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `gender` enum('FEMALE','MALE') NOT NULL COMMENT '성별',
-  `nation` enum('KOR','CHA','ETC') NOT NULL DEFAULT 'KOR',
+  `password` char(64) NOT NULL,
+  `registerDate` datetime NOT NULL COMMENT '가입날짜',
+  `withdrawDate` datetime DEFAULT NULL COMMENT '탈퇴날짜',
+  `birth` datetime NOT NULL COMMENT '생년 (년도 까지만)',
+  `gender` tinyint(1) NOT NULL COMMENT '성별 (FEMALE=0, MALE=1)',
+  `nation` tinyint(1) NOT NULL COMMENT '국적 (한국=0, 중국=1, 그외=2)',
   `region1` int(10) unsigned NOT NULL COMMENT '업무가능지역1',
   `region2` int(10) unsigned DEFAULT NULL COMMENT '업무가능지역2',
   `region3` int(10) unsigned DEFAULT NULL COMMENT '업무가능지역3',
-  `workMday` char(7) NOT NULL COMMENT '업무가능 요일 (0110000 = 월화, 일월화수목금토)',
-  `workQtime` char(4) NOT NULL,
-  `licenseFile` varchar(256) DEFAULT NULL,
-  `workAbility` enum('SERVING','KITCHEN','ASSIST') NOT NULL DEFAULT 'SERVING',
-  `payDate` timestamp NULL DEFAULT NULL,
-  `eosDate` timestamp NULL DEFAULT NULL,
-  `cancelCount` int(10) unsigned DEFAULT '0',
-  `credibility` tinyint(3) unsigned DEFAULT '0' COMMENT '신뢰도 (100)',
+  `workMday` char(7) NOT NULL COMMENT '업무가능 요일 (0110000=월화, 1111111=일월화수목금토)',
+  `workQtime` char(4) NOT NULL COMMENT '업무가능 시간 (1111=새벽,오전,오후,야간)',
+  `licenseFile` varchar(256) DEFAULT NULL COMMENT '신분증명 사진 파일',
+  `workAbility` tinyint(1) NOT NULL COMMENT '구직업무 (홀서빙=0, 주방=1, 조무사=2)',
+  `payDate` datetime DEFAULT NULL COMMENT '유료지불 날짜',
+  `eosDate` datetime DEFAULT NULL COMMENT '유료만료 날짜',
+  `cancelCount` int(10) unsigned DEFAULT '0' COMMENT '배정취소 횟수',
+  `credit` int(10) unsigned DEFAULT '0' COMMENT '신뢰도',
   PRIMARY KEY (`id`),
   KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='구직자';
@@ -207,8 +204,58 @@ CREATE TABLE `seeker` (
 
 LOCK TABLES `seeker` WRITE;
 /*!40000 ALTER TABLE `seeker` DISABLE KEYS */;
-INSERT INTO `seeker` VALUES ('01048597700','고영준','2016-02-16 06:01:32','0000-00-00 00:00:00','1980-12-31 15:00:00','MALE','CHA',175,174,168,'127','15',NULL,'KITCHEN',NULL,NULL,0,0),('01064179605','류용수','2016-02-16 06:00:06','0000-00-00 00:00:00','1983-12-31 15:00:00','MALE','CHA',190,189,187,'127','3',NULL,'KITCHEN',NULL,NULL,0,0),('01072390421','강석주','2016-02-16 05:58:56','0000-00-00 00:00:00','2009-12-31 15:00:00','MALE','CHA',166,167,180,'63','15',NULL,'SERVING',NULL,NULL,0,0);
+INSERT INTO `seeker` VALUES ('010-000-0001','조쿠만','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','2016-02-21 21:20:30',NULL,'1975-01-01 00:00:00',0,1,166,167,168,'127','15',NULL,1,NULL,NULL,0,0),('010-000-0002','기무라','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','2016-02-21 21:26:44',NULL,'1987-01-01 00:00:00',0,0,181,183,182,'122','6',NULL,2,NULL,NULL,0,0),('010-000-0003','고구마','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','2016-02-21 21:35:06',NULL,'1987-01-01 00:00:00',0,1,0,0,0,'127','3',NULL,1,NULL,NULL,0,0),('010-000-0004','호빵맨','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','2016-02-21 21:37:31',NULL,'1991-01-01 00:00:00',1,2,0,0,0,'14','15',NULL,2,NULL,NULL,0,0),('010-000-0005','오또상','18138372fad4b94533cd4881f03dc6c69296dd897234e0cee83f727e2e6b1f63','2016-02-21 21:38:26',NULL,'1971-01-01 00:00:00',0,0,182,174,177,'65','6',NULL,1,NULL,NULL,0,0);
 /*!40000 ALTER TABLE `seeker` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `smsOffererHistory`
+--
+
+DROP TABLE IF EXISTS `smsOffererHistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `smsOffererHistory` (
+  `id` int(11) unsigned NOT NULL,
+  `sendDate` datetime NOT NULL,
+  `offererId` varchar(32) NOT NULL,
+  `sendOk` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `smsOffererHistory`
+--
+
+LOCK TABLES `smsOffererHistory` WRITE;
+/*!40000 ALTER TABLE `smsOffererHistory` DISABLE KEYS */;
+/*!40000 ALTER TABLE `smsOffererHistory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `smsSeekerHistory`
+--
+
+DROP TABLE IF EXISTS `smsSeekerHistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `smsSeekerHistory` (
+  `id` int(11) unsigned NOT NULL,
+  `sendDate` datetime NOT NULL,
+  `seekerId` char(11) NOT NULL,
+  `sendOk` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `smsSeekerHistory`
+--
+
+LOCK TABLES `smsSeekerHistory` WRITE;
+/*!40000 ALTER TABLE `smsSeekerHistory` DISABLE KEYS */;
+/*!40000 ALTER TABLE `smsSeekerHistory` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -220,4 +267,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-02-16 21:13:16
+-- Dump completed on 2016-02-23  1:55:19
