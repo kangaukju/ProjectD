@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<project name="projectd" default="all" basedir=".">
+
+	<description>
+	</description>
+
+	<property name="mvn.src" location="/home/projectd/.m2/repository"/>
+	<property name="java.src" location="src/main/java"/>
+	<property name="resource.src" location="src/main/resources"/>
+	<property name="webapp.src" location="src/main/webapp"/>
+	<property name="sql.src" location="${java.src}/sql"/>
+	<property name="dist.home" location="target"/>
+	<property name="java.dist" location="${dist.home}/WEB-INF/classes"/>
+	<property name="lib.dist" location="${dist.home}/WEB-INF/lib"/>
+	<property name="debuglevel" value="source,lines,vars"/>
+	<path id="compile.classpath">
+<!--		<pathelement location="${dist.home}/classes"/> -->
+		<fileset dir="${mvn.src}">
+        		<include name="**/*.jar"/>
+	        </fileset>
+	</path>
+
+	<target name="init">
+		<mkdir dir="${dist.home}" />
+		<mkdir dir="${java.dist}"/>
+		<mkdir dir="${lib.dist}"/>
+<!--		<mkdir dir="${java.dist}/sql"/> -->
+	</target>
+
+	<target name="compile" depends="init" description="Compile Java code">
+		<javac srcdir="${java.src}" destdir="${java.dist}" debug="true" debuglevel="${debuglevel}">
+			<classpath refid="compile.classpath"/>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile" description="Dist java class">
+		<echo message="dist: ${webapp.src} to ${dist.home}" />
+		<copy todir="${dist.home}">
+			<fileset dir="${webapp.src}" includes="**/*"/>
+		</copy>
+		<copy todir="${java.dist}">
+			<fileset dir="${resource.src}" includes="**/*"/>
+		</copy>
+		<copy todir="${java.dist}/sql">
+			<fileset dir="${sql.src}" includes="**"/>
+		</copy>
+		<copy todir="target/resources">
+			<fileset dir="resources" includes="**"/>
+		</copy>
+	</target>
+
+	<target name="all" depends="init, compile, dist"/>
+<!--
+	<target name="cleanup" depends="deploy">
+		<delete dir="${dist.home}"/>
+	</target>
+
+	<target name="clean" description="Clean">
+	</target>
+-->
+</project>
