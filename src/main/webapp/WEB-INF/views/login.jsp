@@ -139,11 +139,11 @@ $(document).ready(function() {
 					<tbody>
 						<tr>
 							<th>아이디</th>
-							<td><input type="text" id="myadminId" class="text"></td>
+							<td><input type="text" id="myadminId" class="text" value="projecta"></td>
 						</tr>
 						<tr>
 							<th>비밀번호</th>
-							<td><input type="password" id="myadminPassword" class="text"></td>
+							<td><input type="password" id="myadminPassword" class="text" value="qwe123"></td>
 						</tr>
 						<tr>
 							<th></th>
