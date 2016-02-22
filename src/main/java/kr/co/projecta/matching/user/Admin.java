@@ -3,10 +3,13 @@ package kr.co.projecta.matching.user;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Admin implements Identity {
-	String id;
-	String name;
-	String password;
+public class Admin 
+	implements Identity 
+{
+	String id; // 관리자 아이디
+	String name; // 관리자 이름
+	String password; // 관리자 비밀번호
+	
 	public String getId() {
 		return id;
 	}
@@ -27,6 +30,6 @@ public class Admin implements Identity {
 	}
 	public String toString() {
 		return ToStringBuilder.reflectionToString(
-				this, ToStringStyle.NO_CLASS_NAME_STYLE);
+			this, ToStringStyle.NO_CLASS_NAME_STYLE);
 	}
 }

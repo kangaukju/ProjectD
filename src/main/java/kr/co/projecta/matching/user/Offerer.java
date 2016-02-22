@@ -28,7 +28,9 @@ public class Offerer
 	String address2;
 	String mapFilename;
 
-	public Offerer() { }
+	public Offerer() {
+		
+	}
 	
 	public boolean equals(Object obj) {
 		Offerer offerer = (Offerer) obj;

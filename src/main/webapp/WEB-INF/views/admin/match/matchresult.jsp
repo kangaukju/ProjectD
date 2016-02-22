@@ -6,12 +6,10 @@
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
-$(document).ready(function() {
-	
+$(document).ready(function() {	
 	var myUrl = "/admin/match/matchresult.do";
 	
-	setValue($("#line"), '${line}');
-	setValue($("#workAbility"), '${context.WorkAbility}');
+	setValueDefault($("#line"), '${line}', 10);
 	setValue($("#id"), '${id}');
 	setValue($("#name"), '${name}');
 	
@@ -40,13 +38,14 @@ $(document).ready(function() {
 		}
 	});
 	
+	var popupUrl = "/admin/match/matchresult_offerer.do";
 	$(".data-table a").on("click", function() {
-		var target = $(this).text();
-		$('#target').val(target);
-		
-		var form = $("#form");
-		form.action = "/admin/match/matchresult2.do";
-		form.submit();
+		var width = 500;
+		var height = 600;		
+		var x = (screen.availWidth - width) / 2;
+		var y = (screen.availHeight - height) / 2;
+		var id = $(this).text();
+		window.open(popupUrl+"?id="+id, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
 	});
 });
 </script>
@@ -56,26 +55,59 @@ $(document).ready(function() {
 	<%@ include file="../../menu.jspf" %>
 	
 	<div id="splash">
-		<h3>매칭결과 조회</h3>
+		<h3>구직자 조회</h3>
 		<form method="post" action="#" id="form">
-			<input type="hidden" name="target">
 			<table class="data-table">
 				<tbody>
 					<tr>
-						<th>업체명</th>
+						<th>id</th>
+						<td><input type="text" id="id" name="id" class="text" ></td>
+						<th>이름</th>
+						<td><input type="text" id="name" name="name" class="text" ></td>
+						<th>상호</th>
 						<td><input type="text" id="offererName" name="offererName" class="text" ></td>
-						<td><input type="button" id="search" value="검색" class="button"></td>
+						<th>가입날짜</th>
+						<td><input type="text" id="registerDate" name="registerDate" class="text" ></td>
+						<td rowspan="2"><input type="button" id="search" value="검색" class="button"></td>
+					</tr>
+					<tr>
+						<th>사업자번호</th>
+						<td><input type="text" id="offererNumber" name="offererNumber" class="text" ></td>
+						<th>전화번호</th>
+						<td><input type="text" id="phone" name="phone" class="text" ></td>
+						<th>휴대폰</th>
+						<td><input type="text" id="cellPhone" name="cellPhone" class="text" ></td>
+						<th></th>
+						<td></td>					
 					</tr>
 				</tbody>
 			</table>
 			<table class="data-table">
 				<tbody>
-					<th>업체명</th>
-					<c:forEach items="${list}" var="f">
+					<th>id</th>
+					<th>이름</th>
+					<th>상호</th>
+					<th>가입날짜</th>
+					<th>사업자번호</th>
+					<th>전화번호</th>
+					<th>휴대폰</th>
+					<!-- 
+					<th>결제날짜</th>
+					<th>만료날짜</th>
+					-->
+					<c:forEach items="${list}" var="o">
 					<tr>
-						<td>
-							<a href="#"><c:out value="${f.name}" /></a>
-						</td>
+						<td><a href="#"><c:out value="${o.id}" /></a></td>
+						<td><c:out value="${o.name}" /></td>
+						<td><c:out value="${o.offererName}" /></td>
+						<td><fmt:formatDate pattern="yyyy-MM-dd" value="${o.registerDate}" /></td>
+						<td><c:out value="${o.offererNumber}" /></td>
+						<td><c:out value="${o.phone}" /></td>
+						<td><c:out value="${o.cellPhone}" /></td>
+						<!-- 
+						<td><c:out value="${o.payDate}"></c:out></td>
+						<td><c:out value="${o.eosDate}"></c:out></td>
+						-->
 					</tr>
 					</c:forEach>
 				</tbody>

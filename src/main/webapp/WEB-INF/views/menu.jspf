@@ -1,9 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<script language="JavaScript">
+<script language="JavaScript">	
 $(document).ready(function() {
+	// check menu parameter
 	var m = getParameter("m");
 	if (m == undefined) {
-		m = "m1";
+		// check menu attribute
+		m = "${m}";
+		if (m == "") {
+			m = "m1";
+		}
 	}
 	$('#'+m).addClass("current-tab");
 });
@@ -50,19 +55,19 @@ $(document).ready(function() {
 				<li id="m3"><a href="/howmoney.do?m=m3">요금안내</a></li>
 				<c:choose>
 					<c:when test="${sessionScope.seeker != null}">
-						<li id="m4"><a href="/seeker/off.do?m=m4">배정신청</a></li>
-						<li id="m4"><a href="/offerer/offererlist.do?m=m5">업체조회</a></li>
+						<li id="m4"><a href="/seeker/my_requirementlist.do?m=m4">배정내역(X)</a></li>
+						<li id="m5"><a href="/offerer/offererlist.do?m=m5">업체조회(X)</a></li>
 					</c:when>
 				</c:choose>
 				<c:choose>
 					<c:when test="${sessionScope.offerer != null}">
-						<li id="m4"><a href="/offerer/requirement.do?m=m4">배정신청</a></li>
-						<li id="m4"><a href="/offerer/myrequirement.do?m=m5">배정내역</a></li>
+						<li id="m6"><a href="/offerer/my_requirementlist.do?m=m6">배정내역</a></li>
+						<li id="m7"><a href="/offerer/requirement.do?m=m7">배정신청</a></li>
 					</c:when>
 				</c:choose>
 				<c:choose>
 					<c:when test="${sessionScope.admin != null}">
-						<li id="m4"><a href="/admin/admin.do?m=m4">관리</a></li>
+						<li id="m8"><a href="/admin/admin.do?m=m8">관리</a></li>
 					</c:when>
 				</c:choose>
 			</ul>

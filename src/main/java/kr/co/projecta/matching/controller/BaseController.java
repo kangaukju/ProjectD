@@ -35,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import kr.co.projecta.matching.context.ContextDatabase;
 import kr.co.projecta.matching.controller.Responser.CODE;
 import kr.co.projecta.matching.dao.AdminDAO;
+import kr.co.projecta.matching.dao.AssignmentDAO;
 import kr.co.projecta.matching.dao.CommonDAO;
 import kr.co.projecta.matching.dao.DAO;
 import kr.co.projecta.matching.dao.MatchResultDAO;
@@ -71,7 +72,7 @@ abstract public class BaseController {
 	@Resource(name="OffererDAO")
 	protected OffererDAO offererDAO;
 	
-	// 배정 DAO
+	// 배정요청 DAO
 	@Resource(name="RequirementDAO")
 	RequirementDAO requirementDAO;
 	
@@ -87,6 +88,9 @@ abstract public class BaseController {
 	@Resource(name="MatchResultDAO")
 	MatchResultDAO matchResultDAO;	
 	
+	// 배정 DAO
+	@Resource(name="AssignmentDAO")
+	AssignmentDAO assignmentDAO;	
 	
 	public static final int DEFAULT_LINE = 10;
 	
@@ -151,6 +155,10 @@ abstract public class BaseController {
 			ModelAndView mv, 
 			HttpSession session)
 	{
+		if (session == null) {
+			return;
+		}
+		
 		RSA rsa = new RSA();
 		String publicKeyModulus = rsa.getPublicKeyModulus();
 		String publicKeyExponent = rsa.getPublicKeyExponent();
@@ -398,7 +406,13 @@ abstract public class BaseController {
 	 * @return
 	 */
 	protected Responser proxy(Callback callback) {
-		Responser responser = new Responser();
+		return proxy("/", false, callback);
+	}
+	protected Responser proxy(String success, Callback callback) {
+		return proxy(success, false, callback);
+	}
+	protected Responser proxy(String success, boolean popup, Callback callback) {
+		Responser responser = new Responser(success, popup);
 		String message = null;
 		try {
 			callback.tryCatchRun();

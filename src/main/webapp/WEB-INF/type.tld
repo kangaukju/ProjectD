@@ -7,46 +7,44 @@
 	<short-name>naming</short-name>
 	<function>
 	    <name>gender</name>
-	    <function-class>kr.co.projecta.matching.user.Gender</function-class>
+	    <function-class>kr.co.projecta.matching.user.types.Gender</function-class>
 	    <function-signature>
-	        kr.co.projecta.matching.user.Gender valueOf(java.lang.String)
+	        kr.co.projecta.matching.user.types.Gender valueOf(java.lang.Integer)
 	    </function-signature>
 	</function>
 	<function>
 	    <name>nation</name>
-	    <function-class>kr.co.projecta.matching.user.Nation</function-class>
+	    <function-class>kr.co.projecta.matching.user.types.Nation</function-class>
 	    <function-signature>
-	        kr.co.projecta.matching.user.Nation valueOf(java.lang.String)
+	        kr.co.projecta.matching.user.types.Nation valueOf(java.lang.Integer)
 	    </function-signature>
 	</function>
 	<function>
 	    <name>workAbility</name>
-	    <function-class>kr.co.projecta.matching.user.WorkAbility</function-class>
+	    <function-class>kr.co.projecta.matching.user.types.WorkAbility</function-class>
 	    <function-signature>
-	        kr.co.projecta.matching.user.WorkAbility valueOf(java.lang.String)
+	        kr.co.projecta.matching.user.types.WorkAbility valueOf(java.lang.Integer)
 	    </function-signature>
 	</function>
-	<!--
 	<function>
 	    <name>workQtime</name>
-	    <function-class>kr.co.projecta.matching.user.WorkQtime</function-class>
+	    <function-class>kr.co.projecta.matching.user.types.WorkQtime</function-class>
 	    <function-signature>
-	        kr.co.projecta.matching.user.WorkQtime valueOf(java.lang.String)
+	        kr.co.projecta.matching.user.types.WorkQtime valueOf(java.lang.Integer)
 	    </function-signature>
 	</function>
 	<function>
 	    <name>workMday</name>
-	    <function-class>kr.co.projecta.matching.user.WorkMday</function-class>
+	    <function-class>kr.co.projecta.matching.user.types.WorkMday</function-class>
 	    <function-signature>
-	        kr.co.projecta.matching.user.WorkMday valueOf(java.lang.String)
+	        kr.co.projecta.matching.user.types.WorkMday valueOf(java.lang.Integer)
 	    </function-signature>
 	</function>
-	-->
 	<function>
 	    <name>seoulJuso</name>
-	    <function-class>kr.co.projecta.matching.user.Region</function-class>
+	    <function-class>kr.co.projecta.matching.user.types.Region</function-class>
 	    <function-signature>
-	        kr.co.projecta.matching.user.WorkMday valueOf(java.lang.String)
+	        kr.co.projecta.matching.user.types.WorkMday valueOf(java.lang.Integer)
 	    </function-signature>
 	</function>	
 </taglib>

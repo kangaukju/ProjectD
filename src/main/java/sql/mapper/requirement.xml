@@ -8,23 +8,33 @@
         	INSERT INTO requirement
         	(
 				offererId,
-				workDate,
-				workTime,
-				ageRange,
+				workDate,				
 				workAbility,
 				nation,
-				gender
+				gender,
+				workTime,
+				ageRange,
+				person,
+				registerDate
         	) VALUES
         	(
 				#{offererId},
 				#{workDate, typeHandler=org.apache.ibatis.type.DateTypeHandler},
+				#{workAbility.workAbility},
+				#{nation.nation},
+				#{gender.gender},
 				#{workTime},
 				#{ageRange},
-				#{workAbility},
-				#{nation},
-				#{gender}
+				#{person},
+				now()
         	)
 	</insert>
+	
+	<update id="updateMatchStatus" parameterType="hashmap">
+			UPDATE requirement
+			SET matchStatus = #{matchStatus}
+			WHERE id = #{id}
+	</update>
 	
 	<select id="selectCount" resultType="long">
 			SELECT count(*) FROM requirement
@@ -51,6 +61,30 @@
 			<if test="gender != null">
 				AND gender = #{gender}
 			</if>
+			<if test="person != null">
+				AND person = #{person}
+			</if>
+	</select>
+	
+	<select id="selectNotAssignComplete"
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Requirement">
+			SELECT
+				id,
+				offererId,
+				workDate,
+				workTime,
+				ageRange,
+				workAbility,
+				nation,
+				registerDate,
+				matchStatus,
+				gender,
+				person
+			FROM
+				requirement
+			WHERE
+				person != (SELECT count(*) FROM assignment WHERE requirementId = id)
 	</select>
 	
 	<select id="select" 
@@ -67,6 +101,7 @@
 				a.registerDate registerDate,
 				a.matchStatus matchStatus,
 				a.gender gender,
+				a.person person,
 				(
 					SELECT b.id FROM offerer a, juso b 
 					WHERE a.id = offererId 
@@ -103,6 +138,9 @@
 				<if test="gender != null">
 					AND gender = #{gender}
 				</if>
+				<if test="person != null">
+					AND person = #{person}
+				</if>
 				<if test="start != null and end != null">
 					LIMIT ${start}, ${end}
 				</if>
@@ -124,6 +162,7 @@
 				registerDate,
 				matchStatus,
 				gender,
+				person,
 				(
 					SELECT b.id FROM offerer a, juso b 
 					WHERE a.id = offererId 
@@ -131,7 +170,7 @@
 					AND a.sigunguId = b.sigunguId
 				) location,
 				(
-					SELECT offererName FROM offerer WHERE id = a.offererId
+					SELECT offererName FROM offerer WHERE id = offererId
 				) offererName
 			FROM
 				requirement

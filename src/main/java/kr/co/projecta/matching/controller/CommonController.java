@@ -7,18 +7,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import kr.co.projecta.matching.controller.BaseController.Callback;
 import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.popup.Popuper;
 import kr.co.projecta.matching.security.RSA;
 import kr.co.projecta.matching.user.Identity;
+import kr.co.projecta.matching.user.Seeker;
+import kr.co.projecta.matching.util.Numbers;
 
 @Controller
 public class CommonController extends BaseController {
 	Plogger log = Plogger.getLogger(this.getClass());
+	
+	/**
+	 * 공지사항
+	 * @param mv
+	 * @return
+	 */
+	@RequestMapping(value="/notice.do")
+	public ModelAndView notice(ModelAndView mv) {
+		return mv;
+	}
 	
 	/**
 	 * 이용방법
@@ -101,7 +117,9 @@ public class CommonController extends BaseController {
 			HttpServletResponse response) 
 	{
 		Identity identity = (Identity) session.getAttribute("identity");
-		log.i("logout: "+identity.getName()+"("+identity.getId()+")");
+		if (identity != null) {
+			log.i("logout: "+identity.getName()+"("+identity.getId()+")");
+		}
 		session.invalidate();
 		BaseController.goHome(response);
 	}
@@ -114,6 +132,31 @@ public class CommonController extends BaseController {
 	@RequestMapping(value="/error.do")
 	public ModelAndView error(ModelAndView mv) {
 		return mv;
+	}
+	
+	/**
+	 * 구직자 아이디 중복 검사
+	 * @param id
+	 * @param mv
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/check_dup_seeker.do")
+	@ResponseBody
+	public Responser seekerCheckDupSeeker(
+			@RequestParam(value="id") String id,
+			ModelAndView mv, 
+			HttpServletRequest request)
+	{
+		return proxy(new Callback() {
+			public void tryCatchRun() throws Exception {
+				Seeker seeker = seekerDAO.selectOne("id", id);
+				if (seeker != null && 
+					seeker.getId().equals(id)) {
+					throw new DuplicateKeyException("seeker ["+id+"]id duplicated");
+				}
+			}
+		});
 	}
 }
 

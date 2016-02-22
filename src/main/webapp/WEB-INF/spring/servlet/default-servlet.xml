@@ -33,18 +33,26 @@
 	</util:list>
 	
 	<mvc:interceptors>
+		<!-- for menu parameter -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<beans:bean class="kr.co.projecta.matching.security.MenuInterceptor" />
+		</mvc:interceptor>
+		<!-- for accessible admin menu -->
 		<mvc:interceptor>
 			<mvc:mapping path="/admin/**"/>
 			<beans:bean class="kr.co.projecta.matching.security.AdminSessionInterceptor">
 				<beans:property name="excludePattern" ref="excludeURIList"/>
 			</beans:bean>
 		</mvc:interceptor>
+		<!-- for accessible offerer menu -->
 		<mvc:interceptor>
 			<mvc:mapping path="/offerer/**"/>
 			<beans:bean class="kr.co.projecta.matching.security.OffererSessionInterceptor">
 				<beans:property name="excludePattern" ref="excludeURIList"/>
 			</beans:bean>			
 		</mvc:interceptor>
+		<!-- for accessible seeker menu -->
 		<mvc:interceptor>
 			<mvc:mapping path="/seeker/**"/>
 			<beans:bean class="kr.co.projecta.matching.security.SeekerSessionInterceptor">
@@ -85,7 +93,13 @@
     <beans:bean id="baseControllerAOP" class="kr.co.projecta.matching.controller.BaseControllerAOP" />
     
 	<beans:bean id="jacksonMessageConverter" 
-		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<beans:property name="supportedMediaTypes">
+			<beans:list>
+				<beans:value>text/html;charset=UTF-8</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
 	
 	<beans:bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">

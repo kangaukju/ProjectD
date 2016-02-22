@@ -1,23 +1,54 @@
 package kr.co.projecta.matching.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.projecta.matching.user.Gender;
-import kr.co.projecta.matching.user.Nation;
+import kr.co.projecta.matching.user.Assignment;
+import kr.co.projecta.matching.user.Identity;
 import kr.co.projecta.matching.user.Offerer;
 import kr.co.projecta.matching.user.Requirement;
-import kr.co.projecta.matching.user.WorkAbility;
+import kr.co.projecta.matching.user.Seeker;
+import kr.co.projecta.matching.user.types.Gender;
+import kr.co.projecta.matching.user.types.Nation;
+import kr.co.projecta.matching.user.types.WorkAbility;
 import kr.co.projecta.matching.util.Times;
 
 @Controller
 public class OffererController extends BaseController {
+	
+	/**
+	 * 업체의 배정내역 조회
+	 * @param mv
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/offerer/my_requirementlist.do")
+	public ModelAndView offererMyrequirementlist(
+			ModelAndView mv, 
+			RequestMap params,
+			HttpServletRequest request,
+			HttpServletResponse response,
+			HttpSession session) 
+	{
+		Identity identity = (Identity) session.getAttribute("identity");
+		if (identity == null) {
+			goHome(response);
+			return mv;
+		}
+		params.put("offererId", identity.getId());
+		return pagingData(mv, params, request, requirementDAO);
+	}
 	
 	/**
 	 * 업주 상세 설명 조회
@@ -59,9 +90,6 @@ public class OffererController extends BaseController {
 			HttpSession session,
 			HttpServletResponse response) 
 	{
-		if (session.getAttribute("offerer") == null) {
-			goHome(response);
-		}
 		generateRSAKeyPair(mv, request.getSession());
 		return mv;
 	}
@@ -90,6 +118,7 @@ public class OffererController extends BaseController {
 				String gender = request.getParameter("gender");
 				String ageRange = request.getParameter("ageRange");
 				String nation = request.getParameter("nation");
+				String person = request.getParameter("person");
 				
 				checkMustNotNull(offererId, workDate1, workDate2, workTime, workAbility, gender, ageRange, nation);
 				
@@ -99,10 +128,10 @@ public class OffererController extends BaseController {
 				requirement.setWorkDate(Times.getDateYYYYMMDDHH(workDate1+" "+workDate2));
 				requirement.setWorkTime(Integer.valueOf(workTime));
 				requirement.setAgeRange(Integer.valueOf(ageRange));
-				requirement.setWorkAbility(WorkAbility.valueOf(workAbility));
-				requirement.setNation(Nation.valueOf(nation));
-				requirement.setGender(Gender.valueOf(gender));
-				
+				requirement.setWorkAbility(WorkAbility.valueOf(workAbility).getWorkAbility());
+				requirement.setNation(Nation.valueOf(nation).getNation());
+				requirement.setGender(Gender.valueOf(gender).getGender());
+				requirement.setPerson(Integer.valueOf(person));
 				requirementDAO.join(requirement);
 			}
 		});
@@ -122,5 +151,44 @@ public class OffererController extends BaseController {
 			HttpServletRequest request) 
 	{
 		return pagingData(mv, params, request, offererDAO);
+	}
+	
+	/**
+	 * 배정된 구직자 리스트
+	 * @param mv
+	 * @param params
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/offerer/match/seekerlist.do")
+	public ModelAndView offererMatchSeekerlist(
+			@RequestParam(value="requirementId") String requirementId,
+			ModelAndView mv, 
+			RequestMap params,
+			HttpServletRequest request) 
+	{
+		List<Seeker> candidateSeekerList = new ArrayList<>();
+		List<Seeker> confirmSeekerList = new ArrayList<>();
+		
+		Requirement requirement = requirementDAO.selectOne("id", requirementId);
+		List<Assignment> assignmentList = assignmentDAO.selectList(requirementId);
+		
+		Seeker seeker;
+		for (Assignment a : assignmentList) {
+			seeker = seekerDAO.selectOne("id", a.getSeekerId());
+			switch (a.getConfirm()) {
+			case Assignment.CANDIDATE:
+				candidateSeekerList.add(seeker);
+				break;
+			case Assignment.CONFIRM:
+				confirmSeekerList.add(seeker);
+				break;
+			}
+		}
+		
+		mv.addObject("requirement", requirement);		
+		mv.addObject("candidateSeekerList", candidateSeekerList);
+		mv.addObject("confirmSeekerList", confirmSeekerList);		
+		return mv;
 	}
 }

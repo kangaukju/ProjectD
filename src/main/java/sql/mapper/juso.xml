@@ -4,7 +4,7 @@
 <mapper namespace="juso">
 
 	<select id="select" 
-			 resultType="kr.co.projecta.matching.user.Region">
+			 resultType="kr.co.projecta.matching.user.types.Region">
 			SELECT 
 				a.id id, 
 				a.sidoId sidoId, 
@@ -70,7 +70,7 @@
 	
 	<select id="selectOne" 
 			parameterType="hashmap"
-			resultType="kr.co.projecta.matching.user.Region">
+			resultType="kr.co.projecta.matching.user.types.Region">
 			SELECT 
 				id, 
 				sidoId, 

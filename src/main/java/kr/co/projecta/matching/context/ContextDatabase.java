@@ -18,7 +18,7 @@ import kr.co.projecta.gis.map.SimilarityTableSeoul;
 import kr.co.projecta.matching.dao.CommonDAO;
 import kr.co.projecta.matching.exception.ContextDatabaseException;
 import kr.co.projecta.matching.log.Plogger;
-import kr.co.projecta.matching.user.Region;
+import kr.co.projecta.matching.user.types.Region;
 
 @Component("ContextDatabase")
 public class ContextDatabase {

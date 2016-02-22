@@ -30,6 +30,7 @@ public class BaseControllerAOP {
         		if (arg != null) {
         			// check type 'ModelAndView'
         			if (arg.getClass().isAssignableFrom(ModelAndView.class)) {
+//        				System.out.println("append context database to model and view");
         				ModelAndView mv = (ModelAndView) arg;        				
         				mv.addObject("jusoAllMap", contextDatabase.getJusoAllMap());
         				mv.addObject("jusoSeoulMap", contextDatabase.getJusoSeoulMap());
@@ -48,13 +49,6 @@ public class BaseControllerAOP {
         			}
         		}
         	}
-    	} else if (typeName.lastIndexOf("Service") > -1) {
-    		
-    	} else if (typeName.lastIndexOf("DAO") > -1) {
-    		
-    	} else if (typeName.startsWith("/matching")) {
-    		
     	}
-
     }
 }

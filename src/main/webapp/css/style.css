@@ -257,8 +257,12 @@ input.button {
 	background: #DDD;
 	border: 1px outset #AAA;
 	padding: 4px 5px;
+	cursor: pointer;
 }
-input.button:active {border-style: inset;}
+input.button:active {
+	border-style: inset;
+	cursor: pointer;
+}
 
 
 /* Specific */

@@ -4,37 +4,49 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.mozilla.universalchardet.UniversalDetector;
 
-import kr.co.projecta.matching.user.Nation;
+import kr.co.projecta.matching.user.types.Gender;
+import kr.co.projecta.matching.user.types.MatchStatus;
+import kr.co.projecta.matching.user.types.MdayBit;
+import kr.co.projecta.matching.user.types.Nation;
+import kr.co.projecta.matching.user.types.QtimeBit;
+import kr.co.projecta.matching.user.types.Region;
+import kr.co.projecta.matching.user.types.WorkAbility;
+import kr.co.projecta.matching.user.types.WorkMday;
+import kr.co.projecta.matching.user.types.WorkQtime;
 
 public class Strings {
 
-	public static void setJSON(JSONObject json, String key, Object value) {
-		if (value != null) {			
-			//System.out.println(key+"="+value.getClass().getName());
-			
-			// Date
-			if (Date.class.isAssignableFrom(value.getClass())) {
-				json.put(key, Times.formatYYYYMMDDHHMMSS((Date) value));
-			}
-			// Enum
-			else if (Enum.class.isAssignableFrom(value.getClass())) {
-				Enum e = (Enum) value;
-				json.put(key, e.toString());
-			}
-			// List
-			else if (List.class.isAssignableFrom(value.getClass())) {
-				json.put(key, value);
-			}
-			else {
-				json.put(key, value);
-			}
+	/*
+	public static void setJSON(JSONObject json, String key, Object value) {		
+		if (value == null) {
+			return;
+		}
+		// Date
+		if (Date.class.isAssignableFrom(value.getClass())) {
+			json.put(key, Times.formatYYYYMMDDHHMMSS((Date) value));
+		}
+		// Enum
+		else if (Enum.class.isAssignableFrom(value.getClass())) {
+			Enum e = (Enum) value;
+			json.put(key, e.toString());
+		}
+		// List
+		else if (List.class.isAssignableFrom(value.getClass())) {
+			json.put(key, value);
+		}
+		else {
+			json.put(key, value);
 		}
 	}
+	*/
 	
 	public static void setJSONDateYYYYMMDD(JSONObject json, String key, Date value) {
 		if (value != null) {
@@ -136,6 +148,10 @@ public class Strings {
 		return sb.toString();
 	}
 	
+	public static String toBitString(long bit) {
+		return Long.toString(bit, 2);
+	}
+	
 	/**
 	 * 바이너리 스트링을 10진수 값으로 변환한다. (ex> 1100 = 12)
 	 * @param bitString: 바이너리 스트링
@@ -170,14 +186,31 @@ public class Strings {
 		return bitVal;
 	}
 	
-	public static void main(String [] ars) {
+	public static void main(String [] ars) throws JsonGenerationException, JsonMappingException, IOException {
 		JSONObject j = new JSONObject();
-		j.put("kaka", (Object)"IN");
 		
-		Enum n = Nation.KOR;
-		j.put("1", n);
-		j.put("2", n.toString());
+		Gender gender = new Gender(Gender.MALE);
+		MatchStatus matchStatus = new MatchStatus(MatchStatus.COMPLETION);
+		MdayBit mdayBit = new MdayBit(MdayBit.MON);
+		Nation nation = new Nation(Nation.CHA);
+		QtimeBit qtimeBit = new QtimeBit(QtimeBit.Q2);
+		Region region = new Region();
+		region.setId(1);
+		region.setSidoId(11);
+		region.setSidoName("서울시");
+		region.setSigunguId(22);
+		region.setSigunguName("은평구");
+		WorkAbility workAbility = new WorkAbility(WorkAbility.KITCHEN);
+		WorkMday workMday = new WorkMday(MdayBit.FRI | MdayBit.SAT);
+		WorkQtime workQtime = new WorkQtime(QtimeBit.Q2 | QtimeBit.Q3);
 		
-		System.out.println(j.toJSONString());
+		
+		ObjectMapper mapper = new ObjectMapper();
+		JSONObject o = new JSONObject();
+		
+		HashMap<String, String> map = new HashMap<>();
+		map.put("gender", gender.toString());
+		
+		System.out.println(mapper.writeValueAsString(map));
 	}
 }

@@ -38,9 +38,10 @@ public class MatchResultDAO implements DAO<File> {
 			return new ArrayList<File>();
 		}
 		
-		System.out.println(database);
-		
 		File resource = new File(database);
+		if (!resource.exists()) {
+			return new ArrayList<File>();
+		}
 		
 		// 파일 검색(필터) 처리
 		if (filter != null) {
@@ -82,10 +83,15 @@ public class MatchResultDAO implements DAO<File> {
 		System.arraycopy(resultFiles, start, pages, 0, size);
 		
 		List<File> result = new ArrayList<File>(Arrays.asList(pages));
-		return result;
+		List<File> kornameResult = new ArrayList<File>();
+		for (File file : result) {
+			String filename = file.getName();
+			
+		}
 		
+		return result;
 	}
-
+	
 	@Deprecated
 	public File selectOne(String key, String value) {
 		return null;
@@ -96,6 +102,7 @@ public class MatchResultDAO implements DAO<File> {
 	}
 	
 	public static void main(String [] args) {
+		/*
 		MatchResultDAO dao = new MatchResultDAO();
 		String dir = "/media/kinow/1TB_D/workspace/pa/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/pa/matching/kinow/";
 		Map<String, Object> params = new HashMap<>();
@@ -110,6 +117,9 @@ public class MatchResultDAO implements DAO<File> {
 		for (File f : files) {
 			System.out.println(f.getName());
 		}
+		*/
+		
+		String file = "2016_02_19_16_40_31.json";
 	}
 	
 }

@@ -17,7 +17,10 @@ import org.apache.ibatis.parsing.ParsingException;
 import kr.co.projecta.matching.exception.InvalidPhoneNumberException;
 
 public class Numbers {
-	
+
+	/**
+	 * 시간 형식 정의
+	 */
 	static SimpleDateFormat yyyy_format = new SimpleDateFormat("yyyy");
 	static SimpleDateFormat yyyy_mm_format = new SimpleDateFormat("yyyy-MM");
 	static SimpleDateFormat yyyy_mm_dd_format = new SimpleDateFormat("yyyy-MM-dd");

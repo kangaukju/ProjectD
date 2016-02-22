@@ -15,14 +15,13 @@
 				offererBrief,
 				phone,
 				cellPhone,
-				payDate,
-				eosDate,
 				sidoId,
 				sigunguId,
 				postcode,
 				address1,
 				address2,
-				mapFilename
+				mapFilename,
+				registerDate
         	) VALUES
         	(
         		#{id},
@@ -33,14 +32,13 @@
 				#{offererBrief},
 				#{phone},
 				#{cellPhone},
-				#{payDate},
-				#{eosDate},
 				#{sidoId},
 				#{sigunguId},
 				#{postcode},
 				#{address1},
 				#{address2},
-				#{mapFilename}
+				#{mapFilename},
+				now()
         	)
 	</insert>
 	
@@ -135,8 +133,6 @@
 				a.offererBrief offererBrief,
 				a.phone phone,
 				a.cellPhone cellPhone,
-				a.payDate payDate,
-				a.eosDate eosDate,
 				a.mapFilename mapFilename
 			FROM (
 				SELECT
@@ -197,8 +193,6 @@
 				offererBrief,
 				phone,
 				cellPhone,
-				payDate,
-				eosDate,
 				sidoId,
 				sigunguId,
 				postcode,

@@ -32,8 +32,11 @@ public interface MatchResult {
 		}
 	};
 	
-	
-	// Ranking 우선 순위 큐 compare 함	
+	/**
+	 * Ranking 우선 순위 큐 compare 함
+	 * @param <Long> rank 숫자
+	 * @param <T>
+	 */
 	static class RankResultComparable<Long, T>
 		implements Comparable<RankResultComparable<Long, T>>
 	{

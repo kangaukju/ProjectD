@@ -1,1 +1,2 @@
 <%@ page pageEncoding="utf-8"%>
+<input type="hidden" id="m" name="m" value="${m}">

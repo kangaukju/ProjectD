@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="assignment">
+
+	<insert id="insert" 
+			parameterType="kr.co.projecta.matching.user.Assignment">
+        	INSERT INTO assignment
+        	(
+				requirementId,
+				seekerId
+			<if test="confirm != null">
+				,confirm
+			</if>
+        	) VALUES
+        	(
+				#{requirementId},
+				#{seekerId}
+			<if test="confirm != null">
+				,#{confirm}
+			</if>
+        	)
+	</insert>
+	
+	<select id="selectCount" resultType="long">
+			SELECT count(*) FROM assignment
+			WHERE
+				1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+			<if test="confirm != null">
+				AND confirm = #{confirm}
+			</if>
+	</select>
+	
+	<select id="select" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Assignment">
+			SELECT
+				requirementId,
+				seekerId,
+				confirm
+			FROM
+				assignment
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+			<if test="confirm != null">
+				AND confirm = #{confirm}
+			</if>
+	</select>
+	
+	<select id="selectOne" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Assignment">
+			SELECT
+				requirementId,
+				seekerId,
+				confirm
+			FROM
+				assignment
+			WHERE
+				requirementId = #{requirementId}
+				AND seekerId = #{seekerId}
+			<if test="confirm != null">
+				AND confirm = #{confirm}
+			</if>
+	</select>
+	
+	<delete id="deleteAssign"
+			parameterType="hashmap">
+			DELETE FROM assignment
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+			<if test="confirm != null">
+				AND confirm = #{confirm}
+			</if>
+	</delete>
+	
+	<update id="updateConfirm" 
+			parameterType="hashmap">
+			UPDATE assignment 
+			SET confirm = #{confirm}
+			WHERE 
+				requirementId = #{requirementId}
+				AND seekerId = #{seekerId}
+	</update>
+</mapper>

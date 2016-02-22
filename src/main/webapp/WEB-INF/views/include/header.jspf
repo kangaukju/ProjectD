@@ -2,49 +2,92 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
-	<meta name="description" content=""/>
-	<meta name="keywords" content="" />
-	<meta name="author" content="" />
-	<link rel="stylesheet" type="text/css" href="/css/style.css" media="screen" />
-	
-	<script src="/js/url.js"></script>
-	<script src="/js/responser.js"></script>
-	<script src="/js/validator.js"></script>
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-	
-	<!-- 페이징 라이브러리, CSS -->
-	<script type="text/javascript" src="/js/jquery.paging.min.js"></script>
-	<style type="text/css">
-		#paging{text-align:center;}
-		a.paging-item,a.paging-side{margin:0 .25em;}
-		a.paging-item.selected{font-weight:bold;}
-	</style>
-	
-	<!-- Context Database의 class명에 대한 이름 맵핑 jstl 함수 정의 -->
-	<%@ taglib prefix="naming" uri="http://projecta.co.kr/tags/functions.tld" %>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<meta name="description" content=""/>
+<meta name="keywords" content="" />
+<meta name="author" content="" />
+<link rel="stylesheet" type="text/css" href="/css/style.css" media="screen" />
+
+<script src="/js/url.js"></script>
+<script src="/js/responser.js"></script>
+<script src="/js/validator.js"></script>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+<!-- 페이징 라이브러리, CSS -->
+<script type="text/javascript" src="/js/jquery.paging.min.js"></script>
+<style type="text/css">
+	#paging{text-align:center;}
+	a.paging-item,a.paging-side{margin:0 .25em;}
+	a.paging-item.selected{font-weight:bold;}
+</style>
+
+<!-- Context Database의 class명에 대한 이름 맵핑 jstl 함수 정의 -->
+<%@ taglib prefix="naming" uri="http://projecta.co.kr/tags/functions.tld" %>
 <!-- 
-	
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-	<script src="//code.jquery.com/jquery.min.js"></script>
-	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 -->	
 <!-- 
-	<script src="//code.jquery.com/jquery.min.js"></script>
-	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
-	<script src="/js/skel.min.js"></script>
-	<script src="/js/skel-layers.min.js"></script>
-	<script src="/js/init.js"></script>
-	<noscript>
-		<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-		<link rel="stylesheet" href="/css/skel.css" />
-		<link rel="stylesheet" href="/css/style.css" />
-		<link rel="stylesheet" href="/css/style-xlarge.css" />
-	</noscript>
+<script src="//code.jquery.com/jquery.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<script src="/js/skel.min.js"></script>
+<script src="/js/skel-layers.min.js"></script>
+<script src="/js/init.js"></script>
+<noscript>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+	<link rel="stylesheet" href="/css/skel.css" />
+	<link rel="stylesheet" href="/css/style.css" />
+	<link rel="stylesheet" href="/css/style-xlarge.css" />
+</noscript>
 -->	
 
-	<%@ include file="/js/popuper.jsp" %>
-	<link rel="stylesheet" type="text/css" href="/css/modal.css" media="screen" />
+<%@ include file="/js/popuper.jsp" %>
+
+<script type="text/javascript">
+// 하루동안 열리지 않게하는  스크립트 시작
+function getCookie(name) {
+	var nameOfCookie = name + "=";
+	var x = 0;
+
+	while (x <= document.cookie.length) {
+		var y = (x + nameOfCookie.length);
+		if (document.cookie.substring(x, y) == nameOfCookie) {
+			if ((endOfCookie = document.cookie.indexOf(";", y)) == -1)
+				endOfCookie = document.cookie.length;
+			return unescape(document.cookie.substring(y, endOfCookie));
+		}
+		x = document.cookie.indexOf(" ", x) + 1;
+		if (x == 0)
+			break;
+	}
+	return "";
+}
+
+// 쿠키를 만듭니다. 아래 closePopup()함수에서 호출됩니다
+function closePopup() {
+	if (document.pop_form.pop_input.checked)
+		setCookie("popup", "Y", 1); //오른쪽 숫자는 쿠키를 유지할 기간을 설정합니다.0으로하면 매번뜸.
+	self.close();
+}
+
+// 체크후 닫기버튼을 눌렀을때 쿠키를 만들고 창을 닫습니다
+function setCookie(name, value, expiredays) {
+	var endDate = new Date();
+	endDate.setDate(endDate.getDate() + expiredays);
+	endDate.setHours(0, 0, -1);
+	document.cookie = name + "=" + escape(value) + "; path=/; expires="+ endDate.toGMTString() + ";"
+}
+// 하루동안 열리지 않게하는  스크립트 끝
+
+if (getCookie("popup") != 'Y') {
+	var notice = window.open(
+		"/notice.do",
+		"notice",
+		"width=400,height=500,toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no, resizable=yes,top=100,left=300");
+	notice.focus();
+}
+</script>

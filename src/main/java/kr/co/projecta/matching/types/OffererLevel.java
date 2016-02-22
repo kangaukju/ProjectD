@@ -50,8 +50,4 @@ public enum OffererLevel implements ContextSchemable {
 		Collections.reverse(list);
 		return list;
 	}
-
-	public String getOriginalName() {
-		return name();
-	}
 };

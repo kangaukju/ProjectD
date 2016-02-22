@@ -2,6 +2,9 @@ package kr.co.projecta.openapi.naver;
 
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class NaverMapResultJSON {
 	int total;
 	String userquery;
@@ -94,6 +97,10 @@ public class NaverMapResultJSON {
 		public void setY(double y) {
 			this.y = y;
 		}
+		public String toString() {
+			return ToStringBuilder.reflectionToString(
+					this, ToStringStyle.NO_CLASS_NAME_STYLE);
+		}
 	}
 
 	public int getTotal() {
@@ -113,5 +120,9 @@ public class NaverMapResultJSON {
 	}
 	public void setItems(List<Item> items) {
 		this.items = items;
+	}
+	public String toString() {
+		return ToStringBuilder.reflectionToString(
+				this, ToStringStyle.NO_CLASS_NAME_STYLE);
 	}
 }

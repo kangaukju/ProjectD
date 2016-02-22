@@ -7,7 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import kr.co.projecta.matching.log.Plogger;
-import kr.co.projecta.matching.user.Region;
+import kr.co.projecta.matching.user.types.Region;
 
 @Component("CommonDAO")
 public class CommonDAO extends LoggingDao implements DAO<Region> {

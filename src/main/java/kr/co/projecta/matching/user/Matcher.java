@@ -1,15 +1,15 @@
 package kr.co.projecta.matching.user;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.json.simple.JSONObject;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import kr.co.projecta.gis.map.SimilarityTable;
 import kr.co.projecta.matching.context.ContextDatabase;
@@ -17,14 +17,21 @@ import kr.co.projecta.matching.exception.NeedNotMatchException;
 import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.match.MatchResult;
 import kr.co.projecta.matching.match.MatchResultScore;
-import kr.co.projecta.matching.util.Strings;
+import kr.co.projecta.matching.user.types.Gender;
+import kr.co.projecta.matching.user.types.MatchStatus;
+import kr.co.projecta.matching.user.types.MdayBit;
+import kr.co.projecta.matching.user.types.Nation;
+import kr.co.projecta.matching.user.types.Region;
+import kr.co.projecta.matching.user.types.WorkAbility;
+import kr.co.projecta.matching.user.types.WorkMday;
+import kr.co.projecta.matching.user.types.WorkQtime;
 import kr.co.projecta.matching.util.Times;
 
 public abstract class Matcher {
 	Plogger log = Plogger.getLogger(this.getClass());
 	
 	// Matching Factors
-	MatchStatus matchStatus = MatchStatus.INCOMPLETION;
+	MatchStatus matchStatus;
 	Gender gender; // 성별
 	WorkQtime workQtime; // 업무가능 시간
 	WorkMday workMday; // 업무가능 요일
@@ -37,49 +44,57 @@ public abstract class Matcher {
 	Date registerDate;
 	Region location; // 업주 주소
 	
+	abstract public String getId();
+	
+	// 객체의 key 값을 구현해야 한다. (아마 id로 해야 할 것임)
 	abstract public int hashCode();
 	
+	// 객체의 비교를 구현해야 한다. (아마 id가 같으면 같은 객체로 판단 할 것임)
 	abstract public boolean equals(Object obj);
 	
-	abstract protected JSONObject makeJSON();
+	// JSON 데이터를 만들수 있어야 한다.
+	abstract protected Map<String, Object> buildJSON();
 	
-	public JSONObject toJSON() {
-		JSONObject o = makeJSON();
-		if (o == null) {
-			o = new JSONObject();
+	public Map<String, Object> getBuildJSON() {
+		Map<String, Object> map = buildJSON();
+		if (map == null) {
+			map = new HashMap<>();
 		}
-		Strings.setJSON(o, "matchStatus", matchStatus);
-		Strings.setJSON(o, "gender", gender);
-		Strings.setJSON(o, "workQtime", workQtime);
-		Strings.setJSON(o, "workMday", workMday);
-		Strings.setJSONDateYYYYMMDDHH(o, "workDate", workDate);
-		Strings.setJSON(o, "nation", nation);
-		Strings.setJSON(o, "workAbility", workAbility);
-		Strings.setJSON(o, "regions", regions);
-		Strings.setJSONDateYYYYMMDD(o, "birth", birth);
-		Strings.setJSON(o, "workTime", workTime);
-		Strings.setJSONDateYYYYMMDD(o, "registerDate", registerDate);
-		Strings.setJSON(o, "location", location);
-		return o;
+		if (matchStatus != null)
+			map.put("matchStatus", matchStatus.toString());
+		if (gender != null)
+			map.put("gender", gender.toString());
+		if (workQtime != null)
+			map.put("workQtime", workQtime.toString());
+		if (workMday != null)
+			map.put("workMday", workMday.toString());
+		if (workDate != null)
+			map.put("workDate", Times.formatYYYYMMDDHH(workDate));
+		if (nation != null)
+			map.put("nation", nation.toString());
+		if (workAbility != null)
+			map.put("workAbility", workAbility.toString());
+		if (regions != null)
+			map.put("regions", regions);
+		if (birth != null)
+			map.put("birth", Times.formatYYYY(birth));		
+		if (registerDate != null)
+			map.put("registerDate", Times.formatYYYYMMDDHHMMSS(registerDate));
+		if (location != null)
+			map.put("location", location);
+		map.put("workTime", workTime);
+		return map;
 	}
 	
-	@Override
+	public String toJSON() throws IOException {		
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.writeValueAsString(getBuildJSON());
+	}
+	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(
 				this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
-	/*
-	@Override
-	public boolean equals(Object obj) {
-		Matcher matcher = (Matcher) obj;
-		return new EqualsBuilder().
-				appendSuper(super.equals(obj)).
-				append(factor1, matcher.factor1).
-				append(factor2, matcher.factor2).
-				append(factor3, matcher.factor3).
-				isEquals();
-	}
-	*/
 
 	static final double MAX_MATCH_SCORE = 100;
 	/////////////////////////////////////////////////////////////////////////////////
@@ -104,14 +119,14 @@ public abstract class Matcher {
 	}
 	public double scoreWorkMday(Matcher matcher) throws NeedNotMatchException {
 		if (workDate != null && matcher.workMday != null) {
-			MdayBit mBit = Times.getMday(workDate);
-			WorkMday mday = new WorkMday(mBit.intValue());
+			MdayBit mBit = MdayBit.getMday(workDate);
+			WorkMday mday = new WorkMday(mBit.getMdayBit());
 			return mday.howMatchPercent(matcher.workMday);
 		}
 		else
 		if (workMday != null && matcher.workDate != null) {
-			MdayBit mBit = Times.getMday(matcher.workDate);
-			WorkMday mday = new WorkMday(mBit.intValue());
+			MdayBit mBit = MdayBit.getMday(matcher.workDate);
+			WorkMday mday = new WorkMday(mBit.getMdayBit());
 			return mday.howMatchPercent(workMday);
 		}
 		throw new NeedNotMatchException();
@@ -228,32 +243,32 @@ public abstract class Matcher {
 	public Gender getGender() {
 		return gender;
 	}
-	public void setGender(Gender gender) {
-		this.gender = gender;
+	public void setGender(int gender) {
+		this.gender = Gender.valueOf(gender);
 	}
 	public WorkQtime getWorkQtime() {
 		return workQtime;
 	}
-	public void setWorkQtime(String value) {
+	public void setWorkQtime(int value) {
 		this.workQtime = WorkQtime.valueOf(value);
 	}
 	public WorkMday getWorkMday() {
 		return workMday;
 	}
-	public void setWorkMday(String value) {
+	public void setWorkMday(int value) {
 		this.workMday = WorkMday.valueOf(value);
 	}
 	public Nation getNation() {
 		return nation;
 	}
-	public void setNation(Nation nation) {
-		this.nation = nation;
+	public void setNation(int nation) {
+		this.nation = Nation.valueOf(nation);
 	}
 	public WorkAbility getWorkAbility() {
 		return workAbility;
 	}
-	public void setWorkAbility(WorkAbility workAbility) {
-		this.workAbility = workAbility;
+	public void setWorkAbility(int workAbility) {
+		this.workAbility = WorkAbility.valueOf(workAbility);
 	}
 	public Region getRegion1() {
 		return regions.get(0);
@@ -304,8 +319,8 @@ public abstract class Matcher {
 	public MatchStatus getMatchStatus() {
 		return matchStatus;
 	}
-	public void setMatchStatus(MatchStatus matchStatus) {
-		this.matchStatus = matchStatus;
+	public void setMatchStatus(int matchStatus) {
+		this.matchStatus = MatchStatus.valueOf(matchStatus);
 	}
 	public Region getLocation() {
 		return location;

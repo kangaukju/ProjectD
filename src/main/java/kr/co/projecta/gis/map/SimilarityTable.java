@@ -18,7 +18,6 @@ abstract public class SimilarityTable {
 		String name;
 		
 		public Node(int nominal, String name) {
-			super();
 			this.nominal = nominal;
 			this.name = name.trim();
 		}

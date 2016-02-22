@@ -9,6 +9,7 @@
         	(
 				id,
 				name,
+				password,
 				birth,
 				gender,
 				nation,
@@ -17,26 +18,29 @@
 				region3,
 				workMday,
 				workQtime,
-				licenseFile,
 				workAbility,
+				licenseFile,
 				payDate,
-				eosDate
+				eosDate,
+				registerDate
         	) VALUES
         	(
 				#{id},
 				#{name},
+				#{password},
 				#{birth, typeHandler=org.apache.ibatis.type.DateTypeHandler},
-				#{gender},
-				#{nation},
+				#{gender.gender},
+				#{nation.nation},
 				<foreach collection="regions" item="item" index="index" separator="," close=",">
 					#{item.id}
 				</foreach>
-				#{workMday.value},
-				#{workQtime.value},
+				#{workMday.workMday},
+				#{workQtime.workQtime},
+				#{workAbility.workAbility},
 				#{licenseFile},
-				#{workAbility},
 				#{payDate},
-				#{eosDate}
+				#{eosDate},
+				now()
         	)
 	</insert>
 	
@@ -75,7 +79,8 @@
 			resultType="kr.co.projecta.matching.user.Seeker">
 			SELECT 
 				a.id id, 
-				a.name name, 
+				a.name name,
+				a.password password,
 				a.birth birth, 
 				a.gender gender,
 				a.registerDate registerDate,
@@ -126,12 +131,39 @@
 			JOIN seeker a ON a.id = b.id
 	</select>
 	
+	<select id="selectNotAssignSeeker" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Seeker">
+			SELECT 
+				id, 
+				name, 
+				password,
+				birth, 
+				registerDate, 
+				gender, 
+				nation, 
+				region1, 
+				region2, 
+				region3, 
+				workMday, 
+				workQtime, 
+				licenseFile, 
+				workAbility, 
+				payDate, 
+				eosDate
+			FROM 
+				seeker
+			WHERE
+				id NOT IN (SELECT seekerId FROM assignment)
+	</select>
+	
 	<select id="selectOne"
 			parameterType="hashmap"
 			resultType="kr.co.projecta.matching.user.Seeker">
 			SELECT 
 				id, 
 				name, 
+				password,
 				birth, 
 				registerDate, 
 				gender, 

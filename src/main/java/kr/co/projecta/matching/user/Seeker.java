@@ -1,15 +1,29 @@
 package kr.co.projecta.matching.user;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.json.simple.JSONObject;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
-import kr.co.projecta.matching.util.Strings;
+import kr.co.projecta.matching.util.Times;
 
 public class Seeker  
 	extends Matcher 
-	implements Identity {
+	implements Identity
+{	
+	String id;
+	String name;
+	String password;
+	String licenseFile;
+	Date payDate;
+	Date eosDate;	
+	
+	public Seeker() {
+		
+	}
 	
 	public boolean equals(Object obj) {
 		Seeker seeker = (Seeker) obj;
@@ -23,45 +37,23 @@ public class Seeker
 	}
 	
 	public String toString() {
-		/*
 		return ToStringBuilder.reflectionToString(
 				this, ToStringStyle.NO_CLASS_NAME_STYLE);
-		*/
-		String s1 = "id="+id+
-				",이름="+name+
-				",성별="+gender.name+
-				",시간="+workQtime+
-				",요일="+workMday+
-				",국적="+nation.name+
-				",파트="+workAbility.name;
-		String s2 = ",지역=";
-		for (Region r : regions) {
-			s2 += r.getSigunguName() +" ";
-		}
-		return s1+s2;
 	}
 	
-	public JSONObject makeJSON() {
-		JSONObject o = new JSONObject();
-		Strings.setJSON(o, "id", id);
-		Strings.setJSON(o, "name", name);
-		return o;
+	public Map<String, Object> buildJSON() {
+		Map<String, Object> map = new HashMap<>();
+		if (id != null)
+			map.put("id", id);
+		if (name != null)
+			map.put("name", name);
+		if (payDate != null)
+			map.put("payDate", Times.formatYYYYMMDD(payDate));
+		if (eosDate != null)
+			map.put("eosDate", Times.formatYYYYMMDD(eosDate));
+		return map;
 	}
-	
-	public JSONObject toJSON() {
-		JSONObject o = new JSONObject();
-		o.putAll(super.toJSON());
-		o.putAll(makeJSON());
-		return o;
-	}
-	
-	String id;
-	String name;
-	String password;
-	String licenseFile;
-	Date payDate;
-	Date eosDate;
-	
+
 	public String getId() {
 		return id;
 	}
@@ -93,7 +85,7 @@ public class Seeker
 		this.eosDate = eosDate;
 	}
 	public String getPassword() {
-		return null;
+		return this.password;
 	}
 	public void setPassword(String password) {
 		this.password = password;

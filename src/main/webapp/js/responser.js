@@ -32,15 +32,19 @@ function responserAction(json) {
 	}
 	if (type == 'SUCCESS') {
 		if (popup) {
-			window.open(success, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
+			window.open(success, "", "width="+width+",height="+height+",directories=0,titlebar=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,copyhistory=no,left="+x+",top="+y);
 		} else {
-			window.location.replace(success);
+			if ($(location).attr('pathname') == success) {
+				window.location.reload();
+			} else {
+				window.location.replace(success);
+			}
 		}
 	} else 
 	if (type == 'FAILURE') {
 		var url = failure+"?code="+code+"&error="+error+"&data="+data;
 		if (popup) {
-			window.open(url, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
+			window.open(url, "", "width="+width+",height="+height+",directories=0,titlebar=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,copyhistory=no,left="+x+",top="+y);
 		} else {
 			window.location.replace(url);
 		}

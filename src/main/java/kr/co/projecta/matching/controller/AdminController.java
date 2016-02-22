@@ -1,9 +1,12 @@
 package kr.co.projecta.matching.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
@@ -28,8 +31,8 @@ public class AdminController extends BaseController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value="/admin/select/seeker.do")
-	public ModelAndView adminSelectSeeker(
+	@RequestMapping(value="/admin/select/seekerlist.do")
+	public ModelAndView adminSelectSeekerList(
 			ModelAndView mv, 
 			RequestMap params,
 			HttpServletRequest request)
@@ -67,5 +70,5 @@ public class AdminController extends BaseController {
 		mv.addObject("jusoSeoulList", commonDAO.selectList(params.getMap()));
 		mv.addAllObjects(params.getMap());
 		return mv;
-	}
+	}	
 }

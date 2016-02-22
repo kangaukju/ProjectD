@@ -23,6 +23,11 @@ public class SeekerDAO extends LoggingDao implements DAO<Seeker> {
 		return super.selectList("seeker.select", params);
 	}
 	
+	// 미배정된 구직자 조회
+	public List<Seeker> selectNotAssignSeeker() {
+		return super.selectList("seeker.selectNotAssignSeeker");
+	}
+	
 	// 구직자 수 조회
 	public long selectCount(Map<String, Object> params) {
 		return super.selectCount("seeker.selectCount", params);

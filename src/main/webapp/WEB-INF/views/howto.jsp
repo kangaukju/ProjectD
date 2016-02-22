@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 </head>
 <body>

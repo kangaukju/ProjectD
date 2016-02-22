@@ -16,7 +16,7 @@
 			<table>
 				<tr>
 					<td>
-						<h2 class="label label-green"><a href="/admin/select/seeker.do">구직자조회</a></h2>
+						<h2 class="label label-green"><a href="/admin/select/seekerlist.do">구직자조회</a></h2>
 					</td>
 				</tr>
 				<tr>
@@ -26,7 +26,7 @@
 				</tr>
 				<tr>
 					<td>
-						<h2 class="label label-green"><a href="/offerer/requirement.do">배정요청</a></h2>
+						<h2 class="label label-green"><a href="/offerer/requirement.do">관리자 배정요청(x)</a></h2>
 					</td>
 				</tr>
 			</table>
@@ -40,12 +40,12 @@
 				</tr>
 				<tr>
 					<td>
-						<h2 class="label label-orange"><a href="/admin/match/manual.do">수동배정</a></h2>
+						<h2 class="label label-orange"><a href="/admin/match/manual.do">수동배정(X)</a></h2>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<h2 class="label label-orange"><a href="/admin/match/matchresult.do">배정결과</a></h2>
+						<h2 class="label label-orange"><a href="/admin/match/matchresult.do">업체별 배정결과</a></h2>
 					</td>
 				</tr>
 				<tr>

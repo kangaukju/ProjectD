@@ -9,7 +9,6 @@ public class Popuper {
 	String foot;
 	
 	public Popuper(String name, int height, int width, String head, String body) {
-		super();
 		this.name = name;
 		this.height = height;
 		this.width = width;
@@ -17,7 +16,6 @@ public class Popuper {
 		this.body = body;
 	}
 	public Popuper(String name, int height, int width, String head, String body, String foot) {
-		super();
 		this.name = name;
 		this.height = height;
 		this.width = width;

@@ -3,30 +3,37 @@ package kr.co.projecta.matching.match;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import org.json.simple.JSONObject;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
-import kr.co.projecta.matching.dao.DAO;
+import kr.co.projecta.matching.dao.AssignmentDAO;
+import kr.co.projecta.matching.dao.RequirementDAO;
+import kr.co.projecta.matching.dao.SeekerDAO;
 import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.match.MatchResult.MatchResultComparable;
 import kr.co.projecta.matching.match.MatchResult.RankResultComparable;
 import kr.co.projecta.matching.user.Matcher;
 import kr.co.projecta.matching.user.Requirement;
+import kr.co.projecta.matching.user.Seeker;
+import kr.co.projecta.matching.util.Parameters;
 import kr.co.projecta.matching.util.Times;
 
 public class MatchService2 {
 	Plogger log = Plogger.getLogger(this.getClass());
 	
-	DAO<? extends Matcher> seekerDAO;
-	DAO<? extends Matcher> requirementDAO;
+	SeekerDAO seekerDAO;
+	RequirementDAO requirementDAO;
+	AssignmentDAO assignmentCandidateDAO;
 	int topLimit = 5;
 	
 	// 양방향 매칭 시 가중치를 부여할 매칭타켓
@@ -40,20 +47,23 @@ public class MatchService2 {
 	String resultExportPath;
 	
 	public MatchService2(
-			DAO<? extends Matcher> seekerDAO, 
-			DAO<? extends Matcher> requirementDAO, 
+			SeekerDAO seekerDAO, 
+			RequirementDAO requirementDAO,
+			AssignmentDAO assignmentCandidateDAO,
 			int topLimit) {
-		this(seekerDAO, requirementDAO, topLimit, MATCHER_PRIORITY.NONE);
+		this(seekerDAO, requirementDAO, assignmentCandidateDAO, topLimit, MATCHER_PRIORITY.NONE);
 	}
 	
 	public MatchService2(
-			DAO<? extends Matcher> seekerDAO, 
-			DAO<? extends Matcher> requirementDAO, 
+			SeekerDAO seekerDAO, 
+			RequirementDAO requirementDAO,
+			AssignmentDAO assignmentCandidateDAO,
 			int topLimit,
 			MATCHER_PRIORITY matcherPriority) 
 	{
 		this.seekerDAO = seekerDAO;
 		this.requirementDAO = requirementDAO;
+		this.assignmentCandidateDAO = assignmentCandidateDAO;
 		this.topLimit = topLimit;
 		this.matcherPriority = matcherPriority;
 	}
@@ -76,22 +86,21 @@ public class MatchService2 {
 	public void setRequirementPriority() {
 		matcherPriority = MATCHER_PRIORITY.REQUIREMENT;
 	}
-	public void setSeekerDAO(DAO<Matcher> DAO) {
-		this.seekerDAO = DAO;
+	public void setSeekerDAO(SeekerDAO seekerDAO) {
+		this.seekerDAO = seekerDAO;
 	}
-	public void setRequirementDAO(DAO<Matcher> DAO) {
-		this.requirementDAO = DAO;
-	}	
-	public static long matrixScore(long max, long x, long y) {
-		return max - (x + y);
+	public void setRequirementDAO(RequirementDAO requirementDAO) {
+		this.requirementDAO = requirementDAO;
 	}
 	
 	// 자동 매칭 서비스
 	synchronized public void autoMatchService() {
+		log.i("Start autoMatchService");
 		// TODO: DAO의 모든 데이터를 불러온다. 많은 리소스가 요구됨.
-		List<? extends Matcher> seekerAll = seekerDAO.selectList();
-		List<? extends Matcher> requirementAll = requirementDAO.selectList(null);
+		List<? extends Matcher> seekerAll = seekerDAO.selectNotAssignSeeker();
+		List<? extends Matcher> requirementAll = requirementDAO.selectNotAssignComplete();
 		
+		// 양방향 매칭
 		twoWayMatching(seekerAll, requirementAll);
 	}
 	
@@ -111,7 +120,7 @@ public class MatchService2 {
 		for (Matcher requirement : requirementAll) {
 			// 채용정보와 매칭률이 높은 구직자 N명 선출
 			// 1. topN
-			recommandSeekers = topMatch(requirement, seekerAll);
+			recommandSeekers = topMatch(requirement, seekerAll, topLimit);
 			
 			PriorityQueue<RankResultComparable<Long, MatchResultComparable<Matcher>>> rank
 				= new PriorityQueue<>(requirementAll.size());
@@ -141,11 +150,19 @@ public class MatchService2 {
 				seekerRank++;
 			}
 			
+			// 배정요청에 현재 배정된 구직자 수
+			int assignedSeekerCount = (int)assignmentCandidateDAO.selectCount(requirement.getId());
+			
 			// 해당 채용정보에 가장 (양방향)매칭률이 좋은 구직자 N명 선출
-			int topN = topLimit;
+			int person = ((Requirement)requirement).getPerson();
+			
+			// 배정요청에 부족한 인원 만큼 선출한다.
+			int needN = person - assignedSeekerCount;
+			
+			System.out.println("person: "+needN);
 			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> bestRank = 
 					new ArrayList<>();
-			while (!rank.isEmpty() && (topN-- > 0)) {
+			while (!rank.isEmpty() && (needN-- > 0)) {
 				
 				RankResultComparable<Long, MatchResultComparable<Matcher>> r = rank.poll();
 				
@@ -153,17 +170,17 @@ public class MatchService2 {
 				bestRank.add(r);
 			}
  
-//			recommandAction((Requirement) requirement, bestRank);
+			recommandAction(requirement, bestRank);
 			
 			if (resultExportPath != null) {
 				Requirement require = (Requirement) requirement;
-				JSONObject output = recommandActionJSON(require, bestRank);
-				exportJSON(output, require.getOffererId(), resultExportPath);
+				Map<String, Object> resultMap = recommandResultMap(require, bestRank);
+				exportJSON(resultMap, require.getOffererId(), resultExportPath);
 			}
 		}
 	}
 	
-	private String exportJSON(JSONObject result, String offererId, String path) {
+	private String exportJSON(Map<String, Object> resultMap, String offererId, String path) {
 		String directoryPath = path+"/"+offererId;
 		File dir = new File(directoryPath);
 		if (!dir.exists()) {
@@ -178,10 +195,8 @@ public class MatchService2 {
 					new OutputStreamWriter(
 						new FileOutputStream(
 							directoryPath+"/"+dateFilename), "UTF8"));
-			JSONObject root = new JSONObject();
-			root.put("results", result);
-			//root.writeJSONString(output);
-			output.write(root.toJSONString());
+			ObjectMapper mapper = new ObjectMapper();
+			output.write(mapper.writeValueAsString(resultMap));
 		} catch (IOException e) {
 			e.printStackTrace();
 			dateFilename = null;
@@ -197,33 +212,43 @@ public class MatchService2 {
 	 * @param recommandSeeker: 추천된 구직자
 	 */
 	private void recommandAction(
-			Requirement requirement,
+			Matcher requirement,
 			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> recommandSeeker) 
 	{
-		log.d("<<< ["+requirement+"] recommand seekers >>>");
-		
+		log.i("<<< ["+requirement+"] recommand seekers >>>");
 		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
 			MatchResultComparable<Matcher> match = rank.getData();
-			log.d("\t rank: "+rank.getRank());
+			log.i("\t rank: "+rank.getRank());
 			MatchResult matchResult = match.getMatchResult();
 			Matcher matcher = match.getData();
 			Map<String, Double> matchScore = matchResult.getMatchScore();
-			log.d("\t\t ["+matcher+"]");
+			log.i("\t\t ["+matcher+"]");
 			for (String key : matchScore.keySet()) {
-				log.d("\t\t "+key+": "+matchScore.get(key));
+				log.i("\t\t "+key+": "+matchScore.get(key));
 			}
 		}
+		
+		// 현재 배정 현황(assignment) 기록
+		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
+			MatchResultComparable<Matcher> match = rank.getData();
+			Seeker seeker = (Seeker) match.getData();
+			
+			String requirementId = requirement.getId();
+			String seekerId = seeker.getId();
+			assignmentCandidateDAO.insert(requirementId, seekerId);
+		}
+		
 	}
 	
-	private JSONObject recommandActionJSON(
+	private Map<String, Object> recommandResultMap(
 			Requirement requirement, 
 			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> recommandSeeker) 
 	{
-		JSONObject requirementJSON = new JSONObject();
+		Map<String, Object> requirementMap = new HashMap<String, Object>();
 		
-		List<JSONObject> seekerListJSON = new ArrayList<>();
+		List<Object> seekerListJSON = new ArrayList<Object>();
 		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
-			JSONObject o = new JSONObject();
+			Map<String, Object> map = new HashMap<String, Object>();
 			
 			long rankN = rank.getRank();
 			MatchResultComparable<Matcher> match = rank.getData();
@@ -231,18 +256,19 @@ public class MatchService2 {
 			MatchResult matchResult = match.getMatchResult();
 			Map<String, Double> matchScore = matchResult.getMatchScore();
 			
-			o.put("score", matchScore);
-			o.put("matcher", matcher.toJSON());
-			o.put("rank", rankN);
+			map.put("score", matchScore);
+			map.put("matcher", matcher.getBuildJSON());
+			map.put("rank", rankN);
 			
-			seekerListJSON.add(o);
+//			System.out.println(map);
+			seekerListJSON.add(map);
 		}
 		
-		requirementJSON.put("seeker", seekerListJSON);
-		requirementJSON.put("total", recommandSeeker.size());
-		requirementJSON.put("requirement", requirement.toJSON());
+		requirementMap.put("seeker", seekerListJSON);
+		requirementMap.put("total", recommandSeeker.size());
+		requirementMap.put("requirement", requirement.getBuildJSON());
 		
-		return requirementJSON;
+		return requirementMap;
 	}
 	
 	// @return rank 순위(0부터 시작)
@@ -288,8 +314,8 @@ public class MatchService2 {
 	 */
 	private List<MatchResultComparable<Matcher>> topMatch(
 			Matcher compareMatcher, 
-			List<? extends Matcher> matcherAll) {
-		int topN = topLimit;
+			List<? extends Matcher> matcherAll,
+			int topN) {
 		
 		// 매칭 점수 우선순위 큐
 		PriorityQueue<MatchResultComparable<Matcher>> topQueue
@@ -316,5 +342,22 @@ public class MatchService2 {
 		topQueue = null;
 		
 		return matchers;
+	}
+	
+	public static void main(String [] args) throws JsonGenerationException, JsonMappingException, IOException {
+		Map<String, Object> m1 = new HashMap<>();
+		Map<String, Object> m2 = new HashMap<>();
+		Map<String, Object> m3 = new HashMap<>();
+		
+		m1.put("m1", "m1");
+		m2.put("m2", "m2");
+		List list = new ArrayList<>();
+		list.add(m1);
+		list.add(m2);
+		m3.put("m3", list);
+		
+		ObjectMapper m = new ObjectMapper();
+		String out = m.writeValueAsString(m3);
+		System.out.println(out);
 	}
 }

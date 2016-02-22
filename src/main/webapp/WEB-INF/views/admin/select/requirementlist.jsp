@@ -33,14 +33,24 @@ $(document).ready(function() {
 		}
 	});
 	
-	var popupUrl = "/offerer/detail.do";
-	$(".data-table a").on("click", function() {
-		var width = 600;
+	$(".data-table .offerer a").on("click", function() {
+		var popupUrl = "/offerer/detail.do";
+		var width = 700;
 		var height = 300;		
 		var x = (screen.availWidth - width) / 2;
 		var y = (screen.availHeight - height) / 2;
-		var id = $(this).text();
-		window.open(popupUrl+"?id="+id, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
+		var offererId = $(this).children(':input').val();
+		window.open(popupUrl+"?id="+offererId, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
+	});
+	
+	$(".data-table .person a").on("click", function() {
+		var popupUrl = "/admin/match/seekerlist.do";
+		var width = 850;
+		var height = 300;		
+		var x = (screen.availWidth - width) / 2;
+		var y = (screen.availHeight - height) / 2;
+		var requirementId = $(this).children(':input').val();
+		window.open(popupUrl+"?requirementId="+requirementId, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
 	});
 });
 </script>
@@ -64,7 +74,7 @@ $(document).ready(function() {
 							<select name="workAbility">
 								<option value=''>선택안함 </option>
 							<c:forEach items="${context.WorkAbility}" var="row">
-								<option value="${row.originalName}"><c:out value="${row.name}"/></option>
+								<option value="${row.workAbility}"><c:out value="${row}"/></option>
 							</c:forEach>
 							</select>
 						<td>
@@ -76,6 +86,7 @@ $(document).ready(function() {
 				<tbody>
 					<th>배정번호</th>
 					<th>업체명</th>
+					<th>배정상태</th>
 					<th>업무</th>
 					<th>출근일자</th>
 					<th>근무시간</th>
@@ -83,22 +94,31 @@ $(document).ready(function() {
 					<th>연령</th>
 					<th>성별</th>
 					<th>국적</th>
-					<c:forEach items="${list}" var="s">
+					<th>근무인원</th>
+					<th>배정내역</th>
+					<c:forEach items="${list}" var="r">
 					<tr>
-						<td><c:out value="${s.id}"></c:out></td>						
-						<td>
+						<td><c:out value="${r.id}"/></td>						
+						<td class="offerer">
 							<a href="#">								
-								<c:out value="${s.offererName}" />
-								<input type="hidden" value="${s.offererId}" />
+								<c:out value="${r.offererName}" />
+								<input type="hidden" value="${r.offererId}" />
 							</a>
 						</td>
-						<td>${naming:workAbility(s.workAbility).name}</td>
-						<td><fmt:formatDate pattern="yyyy-MM-dd" value="${s.workDate}" /></td>
-						<td><c:out value="${s.workTime}" /></td>
-						<td><c:out value="${s.location.sigunguName}" /></td>
-						<td><c:out value="${s.ageRange}"></c:out></td>
-						<td>${naming:gender(s.gender).name}</td>
-						<td>${naming:nation(s.nation).name}</td>
+						<td>${r.matchStatus}</td>
+						<td>${r.workAbility}</td>
+						<td><fmt:formatDate pattern="yyyy-MM-dd" value="${r.workDate}" /></td>
+						<td><c:out value="${r.workTime}" /></td>
+						<td><c:out value="${r.location.sigunguName}" /></td>
+						<td><c:out value="${r.ageRange}"></c:out></td>
+						<td>${r.gender}</td>
+						<td>${r.nation}</td>
+						<td><c:out value="${r.person}" /></td>
+						<td class="person">
+							<a href="#">
+								자세히<input type="hidden" value="${r.id}" />
+							</a>
+						</td>
 					</tr>
 					</c:forEach>
 				</tbody>

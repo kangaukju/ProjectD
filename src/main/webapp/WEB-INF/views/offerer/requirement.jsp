@@ -69,8 +69,14 @@ $(document).ready(function() {
 		});
 	});
 	
-	$( "#workDate1" ).datepicker({
-		dateFormat: 'yy-mm-dd'
+	$("#workDate1").datepicker({
+		dateFormat: 'yy-mm-dd',
+		dayNames: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+		dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'],
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		minDate: "+1",
+		maxDate: "+100",
 	});
 });	
 
@@ -96,15 +102,24 @@ $(document).ready(function() {
 					</tr>
 					<tr>
 						<th>근무일자</th>
-						<td><input type="text" id="workDate1" name="workDate1" class="text"></td>
+						<td>
+							<input type="text" id="workDate1" name="workDate1" class="text">(익일부터 신청가능)
+						</td>
 					</tr>
 					<tr>
 						<th>출근시간</th>
 						<td>
 							<select id="workDate2" name="workDate2">
 								<c:forEach var="i" begin="1" end="24" step="1">
-									<option value="${i}">
-										<fmt:formatNumber pattern="00" value="${i}"/>:00
+								<c:choose>
+									<c:when test="${i ==8}">
+										<option value="${i}" selected="selected">
+									</c:when>
+									<c:otherwise>
+										<option value="${i}">
+									</c:otherwise>
+								</c:choose>
+									<fmt:formatNumber pattern="00" value="${i}"/>:00
 									</option>
 								</c:forEach>
 							</select>
@@ -115,7 +130,7 @@ $(document).ready(function() {
 						<td>
 							<select id="workTime" name="workTime">
 								<c:forEach var="i" begin="5" end="8" step="1">
-									<option value="${i}"><c:out value="${i}"/></option>
+									<option value="${i}"><c:out value="${i}"/> 시간</option>
 								</c:forEach>
 							</select>
 						</td>
@@ -124,17 +139,27 @@ $(document).ready(function() {
 						<th>업무</th>
 						<td>
 							<c:forEach items="${context.WorkAbility}" var="row">
-								<input type="radio" name="workAbility" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="radio" name="workAbility" id='<c:out value="${row.workAbility}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
+						</td>
+					</tr>
+					<tr>
+						<th>인원</th>
+						<td>
+							<select id="person" name="person">
+								<c:forEach var="i" begin="1" end="3" step="1">
+									<option value="${i}"><c:out value="${i}"/> 명</option>
+								</c:forEach>
+							</select>
 						</td>
 					</tr>
 					<tr>
 						<th>성별</th>
 						<td>
 							<c:forEach items="${context.Gender}" var="row">
-								<input type="radio" name="gender" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="radio" name="gender" id='<c:out value="${row.gender}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 						</td>
 					</tr>
@@ -152,8 +177,8 @@ $(document).ready(function() {
 						<th>국적</th>
 						<td>
 							<c:forEach items="${context.Nation}" var="row">
-								<input type="radio" name="nation" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="radio" name="nation" id='<c:out value="${row.nation}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 						</td>
 					</tr>

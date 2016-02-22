@@ -55,7 +55,7 @@ $(document).ready(function() {
                 $("#postcode").val(data.zonecode);  //5자리 새우편번호 사용
                 $("#address1").val(fullAddr);
                 $("#sidoId").val(data.bcode.substring(0, 2));
-                $("#sigunguId").val(data.bcode.substring(3, 6));
+                $("#sigunguId").val(data.bcode.substring(2, 5));
                 
                 // 커서를 상세주소 필드로 이동한다.
                 $("#address2").focus();

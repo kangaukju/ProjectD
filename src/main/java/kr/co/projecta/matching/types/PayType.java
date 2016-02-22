@@ -40,8 +40,4 @@ public enum PayType implements ContextSchemable {
 	public String getName() {
 		return name;
 	}
-
-	public String getOriginalName() {
-		return name();
-	}
 }

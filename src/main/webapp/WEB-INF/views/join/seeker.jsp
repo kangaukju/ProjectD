@@ -22,57 +22,33 @@ $(document).ready(function() {
 	});
 	$("#regionAllow").click(function(){
 		if ($(this).is(":checked")) {
-			$("#region1").val("all").attr("selected", "selected");
-			$("#region2").val("all").attr("selected", "selected");
-			$("#region3").val("all").attr("selected", "selected");
+			// 0은 전지역이다
+			$("#region1").val("0").attr("selected", "selected");
+			$("#region2").val("0").attr("selected", "selected");
+			$("#region3").val("0").attr("selected", "selected");
 		}
 	});
 	
 	$("#join").click(function() {
-		if (!checkvalue($("#phone").val())) {
-			alert("전화번호를 꼭 입력하세요.");
-			$("#phone").focus();
-			return;
-		} 
-		if (!checkvalue($("#name").val())) {
-			alert("이름을 꼭 입력하세요.");
-			$("#name").focus();
-			return;
-		}
+		var v = new Validator();
+		v.add($("#myid"), "전화번호를 꼭 입력하세요.");
+		v.add($("#myname"), "이름을 꼭 입력하세요.");
+		v.add($("#years"), "태어난 해를 꼭 입력하세요.");
+		v.add($("#region1"), "업무지역1을 꼭 입력하세요.");
+		v.add($("#region2"), "업무지역2을 꼭 입력하세요.");
+		v.add($("#region3"), "업무지역3을 꼭 입력하세요.");
+		
+		if (!v.isValid()) return;
+		
 		if (!checkvalue($('input:radio[name="gender"]:checked').val())) {
 			$('input:radio[name="gender"]').focus();
 			alert("성별을 꼭 입력하세요.");
-			return;
-		}
-		if (!checkvalue($("#years").val())) {
-			alert("태어난 해를 꼭 입력하세요.");
-			$("#years").focus();
 			return;
 		}
 		if (!checkvalue($('input:radio[name="nation"]:checked').val())) {
 			alert("국적을 꼭 입력하세요.");
 			$("#nation").focus();
 			return;
-		}
-		if (	!checkvalue($("#region1").val()) || 
-				!checkvalue($("#region2").val()) ||
-				!checkvalue($("#region3").val()))
-		{
-			if (!checkvalue($("#region1").val())) {
-				alert("업무지역을 꼭 입력하세요.");
-				$("#region1").focus();
-				return;
-			} 
-			if (!checkvalue($("#region2").val())) {
-				alert("업무지역을 꼭 입력하세요.");
-				$("#region2").focus();
-				return;
-			} 
-			if (!checkvalue($("#region3").val())) {
-				alert("업무지역을 꼭 입력하세요.");
-				$("#region3").focus();
-				return;
-			}
 		}
 		if (!checkvalue($('input:radio[name="workAbility"]:checked').val())) {
 			alert("가능한 업무를 꼭 입력하세요.");
@@ -90,9 +66,17 @@ $(document).ready(function() {
 			return;
 		}
 		
+		if ($("#mypassword").val() != $("#mypassword1").val()) {
+			alert("동일한 비밀번호를 입력하세요.");
+			$("#mypassword1").focus();
+			return;
+		}
+		
 		var rsa = new RSAKey();
 		rsa.setPublic($("#publicKeyModulus").val(), $("#publicKeyExponent").val());
-		$("#id").val(rsa.encrypt($("#phone").val()));	
+		$("#id").val(rsa.encrypt($("#myid").val()));
+		$("#name").val(rsa.encrypt($("#myname").val()));
+		$("#password").val(rsa.encrypt($("#mypassword").val()));
 		
 		var formData = $("#form").serialize();
 		$.ajax({
@@ -132,21 +116,35 @@ $(document).ready(function() {
 						<th>전화번호</th>
 						<td>
 							<input type="hidden" id="id" name="id" /> 
-							<input type="text" id="phone" class="text" value="010-7239-0421" placeholder="010-0000-0000" />
+							<input type="text" id="myid" class="text" placeholder="010-1234-5678" />
 						</td>
 					</tr>
 					<tr>
 						<th>이름</th>
 						<td>
-							<input type="text" name="name" id="name" class="text" value="강석주" placeholder="Name" />
+							<input type="hidden" id="name" name="name" /> 
+							<input type="text" id="myname" class="text" placeholder="이름" />
+						</td>
+					</tr>
+					<tr>
+						<th>비밀번호</th>
+						<td>
+							<input type="hidden" id="password" name="password" />
+							<input type="password" class="text" id="mypassword" />
+						</td>
+					</tr>
+					<tr>
+						<th>비밀번호 확인</th>
+						<td>
+							<input type="password" class="text" id="mypassword1" />
 						</td>
 					</tr>
 					<tr>
 						<th>성별</th>
 						<td>						
 							<c:forEach items="${context.Gender}" var="row">
-								<input type="radio" name="gender" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="radio" name="gender" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 						</td>
 					</tr>
@@ -154,7 +152,7 @@ $(document).ready(function() {
 						<th>출생년도</th>
 						<td>
 							<select name="years" id="years">
-								<c:forEach items="${context.Common[0].years}" var="row">
+								<c:forEach items="${context.CommonContext[0].years}" var="row">
 									<option value='<c:out value="${row}"/>'><c:out value="${row}"/></option>
 								</c:forEach>
 							</select>
@@ -164,8 +162,8 @@ $(document).ready(function() {
 						<th>국적</th>
 						<td>
 							<c:forEach items="${context.Nation}" var="row">
-								<input type="radio" name="nation" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="radio" name="nation" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 						</td>
 					</tr>
@@ -198,8 +196,8 @@ $(document).ready(function() {
 						<th>가능업무</th>
 						<td>
 							<c:forEach items="${context.WorkAbility}" var="row">
-								<input type="radio" name="workAbility" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="radio" name="workAbility" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 						</td>
 					</tr>
@@ -207,8 +205,8 @@ $(document).ready(function() {
 						<th>업무요일</th>
 						<td>
 							<c:forEach items="${context.MdayBit}" var="row">
-								<input type="checkbox" name="mday" id='<c:out value="${row}"/>' value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="checkbox" name="mday" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 							<input type="checkbox" name="mdayAllow" id="mdayAllow">
 							<label for="mdayAllow">전체선택</label>
@@ -218,8 +216,8 @@ $(document).ready(function() {
 						<th>업무시간</th>
 						<td>
 							<c:forEach items="${context.QtimeBit}" var="row">
-								<input type="checkbox" id='<c:out value="${row}"/>' name="qtime" value='<c:out value="${row.originalName}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row.name}"/></label>
+								<input type="checkbox" id='<c:out value="${row}"/>' name="qtime" value='<c:out value="${row}"/>'>
+								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
 							</c:forEach>
 							<input type="checkbox" name="qtimeAllow" id="qtimeAllow">
 							<label for="qtimeAllow">전체선택</label>

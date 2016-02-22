@@ -5,27 +5,21 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.projecta.matching.controller.Responser.CODE;
-import kr.co.projecta.matching.exception.InvalidPhoneNumberException;
-import kr.co.projecta.matching.exception.NotAccessableException;
-import kr.co.projecta.matching.exception.NotNullException;
-import kr.co.projecta.matching.exception.RSAException;
 import kr.co.projecta.matching.security.Password;
 import kr.co.projecta.matching.user.Admin;
-import kr.co.projecta.matching.user.Gender;
-import kr.co.projecta.matching.user.Nation;
 import kr.co.projecta.matching.user.Offerer;
-import kr.co.projecta.matching.user.Region;
 import kr.co.projecta.matching.user.Seeker;
-import kr.co.projecta.matching.user.WorkAbility;
-import kr.co.projecta.matching.user.WorkMday;
-import kr.co.projecta.matching.user.WorkQtime;
+import kr.co.projecta.matching.user.types.Gender;
+import kr.co.projecta.matching.user.types.Nation;
+import kr.co.projecta.matching.user.types.Region;
+import kr.co.projecta.matching.user.types.WorkAbility;
+import kr.co.projecta.matching.user.types.WorkMday;
+import kr.co.projecta.matching.user.types.WorkQtime;
 import kr.co.projecta.matching.util.Numbers;
 import kr.co.projecta.matching.util.Times;
 
@@ -139,7 +133,7 @@ public class JoinController extends BaseController {
 				checkMustNotNull(id, name, password, offererName, offererNumber, phone, cellPhone, sidoId, sigunguId, postcode, address1);
 				
 				id = getCleanSecurity(request.getSession(), id);
-				name = getCleanSecurity(request.getSession(), password);
+				name = getCleanSecurity(request.getSession(), name);
 				password = getCleanSecurity(request.getSession(), password);
 				
 				offerer.setId(id);
@@ -147,8 +141,8 @@ public class JoinController extends BaseController {
 				offerer.setPassword(Password.hash(password));
 				offerer.setOffererName(offererName);
 				offerer.setOffererNumber(offererNumber.replaceAll("[ .\t-]", ""));
-				offerer.setPhone(Numbers.getPhoneNumber(phone));
-				offerer.setCellPhone(Numbers.getCellPhoneNumber(cellPhone));
+				offerer.setPhone(phone);
+				offerer.setCellPhone(cellPhone);
 				offerer.setOffererBrief(offererBrief);
 				offerer.setSidoId(Integer.valueOf(sidoId));
 				offerer.setSigunguId(Integer.valueOf(sigunguId));
@@ -177,6 +171,7 @@ public class JoinController extends BaseController {
 				
 				String id = request.getParameter("id");
 				String name = request.getParameter("name");
+				String password = request.getParameter("password");
 				String gender = request.getParameter("gender");
 				String years = request.getParameter("years");
 				String []mdays = request.getParameterValues("mday");
@@ -187,16 +182,21 @@ public class JoinController extends BaseController {
 				String region3 = request.getParameter("region3");
 				String workAbility = request.getParameter("workAbility");
 				
-				checkMustNotNull(id, name, gender, years, mdays, nation, qtimes, region1, region2, region3, workAbility);
+				checkMustNotNull(id, name, password, gender, years, mdays, nation, qtimes, region1, region2, region3, workAbility);
 				
 				id = getCleanSecurity(request.getSession(), id);
-				seeker.setId(Numbers.getCellPhoneNumber(id));
+				name = getCleanSecurity(request.getSession(), name);
+				password = getCleanSecurity(request.getSession(), password);
+				
+				seeker.setId(id);
 				seeker.setName(name);
-				seeker.setGender(Gender.valueOf(gender));
+				seeker.setPassword(Password.hash(password));
+				seeker.setGender(Gender.valueOf(gender).getGender());
 				seeker.setBirth(Times.getDateYYYY(years));
-				seeker.setWorkMday(WorkMday.valueOf(mdays).stringValue());
-				seeker.setNation(Nation.valueOf(nation));
-				seeker.setWorkQtime(WorkQtime.valueOf(qtimes).stringValue());
+				seeker.setWorkMday(WorkMday.valueOf(mdays).getWorkMday());
+				seeker.setNation(Nation.valueOf(nation).getNation());
+				seeker.setWorkQtime(WorkQtime.valueOf(qtimes).getWorkQtime());
+				seeker.setWorkAbility(WorkAbility.valueOf(workAbility).getWorkAbility());
 				List<Region> regions = new ArrayList<Region>();
 				if (	"0".equals(region1) || 
 						"0".equals(region2) || 
@@ -211,8 +211,7 @@ public class JoinController extends BaseController {
 					regions.add(new Region(Integer.valueOf(region3)));
 				}
 				seeker.setRegions(regions);
-				seeker.setWorkAbility(WorkAbility.valueOf(workAbility));
-								
+				
 				seekerDAO.join(seeker);
 			}
 		});
