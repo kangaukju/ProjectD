@@ -8,14 +8,16 @@
         	INSERT INTO assignment
         	(
 				requirementId,
-				seekerId
+				seekerId,
+				updateTime
 			<if test="confirm != null">
 				,confirm
 			</if>
         	) VALUES
         	(
 				#{requirementId},
-				#{seekerId}
+				#{seekerId},
+				now()
 			<if test="confirm != null">
 				,#{confirm}
 			</if>
@@ -34,6 +36,16 @@
 			</if>
 			<if test="confirm != null">
 				AND confirm = #{confirm}
+			</if>
+			<if test="startTime != null">
+			<![CDATA[
+				AND updatetime >= date(#{startTime})
+			]]>
+			</if>
+			<if test="endTime != null">
+			<![CDATA[
+				AND updatetime <= date(#{endTime})
+			]]>
 			</if>
 	</select>
 	
@@ -56,6 +68,16 @@
 			<if test="confirm != null">
 				AND confirm = #{confirm}
 			</if>
+			<if test="startTime != null">
+			<![CDATA[
+				AND updatetime >= date(#{startTime})
+			]]>
+			</if>
+			<if test="endTime != null">
+			<![CDATA[
+				AND updatetime <= date(#{endTime})
+			]]>
+			</if>
 	</select>
 	
 	<select id="selectOne" 
@@ -73,6 +95,16 @@
 			<if test="confirm != null">
 				AND confirm = #{confirm}
 			</if>
+			<if test="startTime != null">
+			<![CDATA[
+				AND updatetime >= date(#{startTime})
+			]]>
+			</if>
+			<if test="endTime != null">
+			<![CDATA[
+				AND updatetime <= date(#{endTime})
+			]]>
+			</if>
 	</select>
 	
 	<delete id="deleteAssign"
@@ -87,6 +119,16 @@
 			</if>
 			<if test="confirm != null">
 				AND confirm = #{confirm}
+			</if>
+			<if test="startTime != null">
+			<![CDATA[
+				AND updatetime >= date(#{startTime})
+			]]>
+			</if>
+			<if test="endTime != null">
+			<![CDATA[
+				AND updatetime <= date(#{endTime})
+			]]>
 			</if>
 	</delete>
 	

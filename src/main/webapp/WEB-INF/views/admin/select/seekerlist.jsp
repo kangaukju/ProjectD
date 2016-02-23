@@ -11,7 +11,7 @@ $(document).ready(function() {
 	var myUrl = "/admin/select/seekerlist.do";
 	
 	setValue($("#line"), '${line}');
-	setValue($("#workAbility"), '${context.WorkAbility}');
+	setValue($("#workAbility"), '${workAbility}');
 	setValue($("#id"), '${id}');
 	setValue($("#name"), '${name}');
 	
@@ -58,14 +58,15 @@ $(document).ready(function() {
 						<td><input type="text" id="name" name="name" class="text" ></td>
 						<th>가능업무</th>
 						<td>
-							<select name="workAbility">
+							<select name="workAbility" id="workAbility">
 								<option value=''>선택안함 </option>
 							<c:forEach items="${context.WorkAbility}" var="row">
 								<option value="${row.workAbility}"><c:out value="${row}"/></option>
 							</c:forEach>
 							</select>
 						<td>
-						<td><input type="button" id="search" value="검색" class="button"></td>
+						<th></th>
+						<td><input type="button" id="search" value="검색" class="smallbutton"></td>
 					</tr>
 				</tbody>
 			</table>

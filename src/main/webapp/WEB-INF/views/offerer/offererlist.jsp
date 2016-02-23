@@ -12,6 +12,7 @@ $(document).ready(function() {
 	setValueDefault($("#line"), '${line}', 10);
 	setValue($("#id"), '${id}');
 	setValue($("#name"), '${name}');
+	setValue($("#offererName"), '${offererName}');	
 	
 	$("#search").click(function() {
 		var form = $("#form");
@@ -60,31 +61,20 @@ $(document).ready(function() {
 			<table class="data-table">
 				<tbody>
 					<tr>
-						<th>id</th>
+						<th>아이디</th>
 						<td><input type="text" id="id" name="id" class="text" ></td>
 						<th>이름</th>
 						<td><input type="text" id="name" name="name" class="text" ></td>
 						<th>상호</th>
 						<td><input type="text" id="offererName" name="offererName" class="text" ></td>
-						<th>가입날짜</th>
-						<td><input type="text" id="registerDate" name="registerDate" class="text" ></td>
-						<td rowspan="2"><input type="button" id="search" value="검색" class="button"></td>
-					</tr>
-					<tr>
-						<th>사업자번호</th>
-						<td><input type="text" id="offererNumber" name="offererNumber" class="text" ></td>
-						<th>전화번호</th>
-						<td><input type="text" id="phone" name="phone" class="text" ></td>
-						<th>휴대폰</th>
-						<td><input type="text" id="cellPhone" name="cellPhone" class="text" ></td>
 						<th></th>
-						<td></td>					
+						<td><input type="button" id="search" value="검색" class="smallbutton"></td>
 					</tr>
 				</tbody>
 			</table>
 			<table class="data-table">
 				<tbody>
-					<th>id</th>
+					<th>아이디</th>
 					<th>이름</th>
 					<th>상호</th>
 					<th>가입날짜</th>

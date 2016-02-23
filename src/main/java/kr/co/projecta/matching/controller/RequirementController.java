@@ -61,7 +61,7 @@ public class RequirementController extends BaseController {
 		
 		MatchService2 ms2 = new MatchService2(
 				seekerDAO, requirementDAO, assignmentDAO, topLimit);
-		// TODO: for debug
+		
 		ms2.setResultExportPath(resource);
 		ms2.autoMatchService();
 		

@@ -2,11 +2,9 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
-
 function login(target) {
 	if (!checkvalue($("#my"+target+"Id").val())) {
 		alert("아이디를 꼭 입력하세요.");
@@ -76,83 +74,81 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="menu.jspf" %>
 	
-	<div id="splash">
-		<div class="col3 left">
-			<h2 class="label label-green">구직자 로그인</h2>
-			<form method="post" action="#" id="seekerForm">
-			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
-			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
-			<input type="hidden" name="seekerId" id="seekerId">
-			<input type="hidden" name="seekerPassword" id="seekerPassword">
-				<table class="data-table">
-					<tbody>
+	<div class="main">
+		<div class="left" id="main-content">
+			<div class="loing_box">
+				<h2 class="label label-green">구직자 로그인</h2>
+				<form method="post" id="seekerForm">
+					<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
+					<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
+					<input type="hidden" name="seekerId" id="seekerId">
+					<input type="hidden" name="seekerPassword" id="seekerPassword">
+					<table>
 						<tr>
 							<th>아이디</th>
-							<td><input type="text" id="myseekerId" class="text"></td>
+							<td><input type="text" id="myseekerId" class="text w150"></td>
+							<td rowspan="2">
+								<input type="button" id="seekerLogin" value="로그인" class="bigbutton">
+							</td>
 						</tr>
 						<tr>
 							<th>비밀번호</th>
-							<td><input type="password" id="myseekerPassword" class="text"></td>
+							<td><input type="password" id="myseekerPassword" class="text w150"></td>
 						</tr>
-						<tr>
-							<th></th>
-							<td><input type="button" id="seekerLogin" value="로그인" class="button"></td>
-						</tr>
-					</tbody>
-				</table>
-			</form>
-		</div>
-		<div class="col3-mid left">
-			<h2 class="label label-orange">업체 로그인</a></h2>
-			<form method="post" action="#" id="offererForm">
-			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
-			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
-			<input type="hidden" name="offererId" id="offererId">
-			<input type="hidden" name="offererPassword" id="offererPassword">
-				<table class="data-table">
-					<tbody>
+					</table>
+				</form>
+			</div>
+			
+			<div class="loing_box">
+				<h2 class="label label-orange">업체 로그인</h2>
+				<form method="post" id="offererForm">
+					<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
+					<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
+					<input type="hidden" name="offererId" id="offererId">
+					<input type="hidden" name="offererPassword" id="offererPassword">
+					<table>
 						<tr>
 							<th>아이디</th>
-							<td><input type="text" id="myoffererId" class="text"></td>
+							<td><input type="text" id="myoffererId" class="text w150"></td>
+							<td rowspan="2">
+								<input type="button" id="offererLogin" value="로그인" class="bigbutton">
+							</td>
 						</tr>
 						<tr>
 							<th>비밀번호</th>
-							<td><input type="password" id="myoffererPassword" class="text"></td>
+							<td><input type="password" id="myoffererPassword" class="text w150"></td>
 						</tr>
-						<tr>
-							<th></th>
-							<td><input type="button" id="offererLogin" value="로그인" class="button"></td>
-						</tr>
-					</tbody>
-				</table>
-			</form>
-		</div>
-
-		<div class="col3-mid left">
-			<h2 class="label label-blue">관리자 로그인</a></h2>
-			<form method="post" action="#" id="adminForm">
-			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
-			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
-			<input type="hidden" name="adminId" id="adminId">
-			<input type="hidden" name="adminPassword" id="adminPassword">
-				<table class="data-table">
-					<tbody>
+					</table>
+				</form>
+			</div>
+			
+			<div class="loing_box">			
+				<h2 class="label label-blue">관리자 로그인</h2>
+				<form method="post" id="adminForm">
+					<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
+					<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
+					<input type="hidden" name="adminId" id="adminId">
+					<input type="hidden" name="adminPassword" id="adminPassword">
+					<table>
 						<tr>
 							<th>아이디</th>
-							<td><input type="text" id="myadminId" class="text" value="projecta"></td>
+							<td><input type="text" id="myadminId" class="text w150" value="projecta"></td>
+							<td rowspan="2">
+								<input type="button" id="adminLogin" value="로그인" class="bigbutton">
+							</td>
 						</tr>
 						<tr>
 							<th>비밀번호</th>
-							<td><input type="password" id="myadminPassword" class="text" value="qwe123"></td>
+							<td><input type="password" id="myadminPassword" class="text w150" value="qwe123"></td>
 						</tr>
-						<tr>
-							<th></th>
-							<td><input type="button" id="adminLogin" value="로그인" class="button"></td>
-						</tr>
-					</tbody>
-				</table>
-			</form>
+					</table>
+				</form>
+			</div>
 		</div>
+		<!-- 
+		<div class="right sidebar" id="sidebar"></div>		
+		 -->
+		 <div class="clearer">&nbsp;</div>
 	</div>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>

@@ -1,2 +1,19 @@
 <%@ page pageEncoding="utf-8"%>
 <input type="hidden" id="m" name="m" value="${m}">
+
+<div id="site-wrapper">
+	<div id="footer">	
+		<div class="left" id="footer-left">	
+			<img src="/img/work_logo1.png" alt="" class="left" width="30" height="30"/>	
+			<p>&copy; 2016 projectD. All rights Reserved</p>	
+			<p class="quiet">
+			<div class="clearer">&nbsp;</div>	
+		</div>	
+		<div class="right" id="footer-right">	
+			<p class="large">
+				<a href="#" class="quiet">회사소개</a> <span class="text-separator">|</span>
+				<a href="#" class="quiet">Events</a>
+			</p>	
+		</div>		
+	</div>
+</div>

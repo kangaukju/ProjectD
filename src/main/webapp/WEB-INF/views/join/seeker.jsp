@@ -36,10 +36,14 @@ $(document).ready(function() {
 		v.add($("#years"), "태어난 해를 꼭 입력하세요.");
 		v.add($("#region1"), "업무지역1을 꼭 입력하세요.");
 		v.add($("#region2"), "업무지역2을 꼭 입력하세요.");
-		v.add($("#region3"), "업무지역3을 꼭 입력하세요.");
-		
+		v.add($("#region3"), "업무지역3을 꼭 입력하세요.");		
 		if (!v.isValid()) return;
 		
+		if (!isPhoneNumber($("#myid").val())) {
+			alert("전화번호 형식이 올바르지 않습니다.");
+			$("#myid").focus();
+			return;
+		}		
 		if (!checkvalue($('input:radio[name="gender"]:checked').val())) {
 			$('input:radio[name="gender"]').focus();
 			alert("성별을 꼭 입력하세요.");
@@ -105,170 +109,164 @@ $(document).ready(function() {
 	<%@ include file="../menu.jspf" %>
 	
 	<div id="splash">
-		<h3>구직자 회원가입</h3>
+		<h3>개인 회원가입</h3>
 		
 		<form method="post" action="#" id="form">
 			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
 			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
 			<table class="data-table">
-				<tbody>
-					<tr>
-						<th>전화번호</th>
-						<td>
-							<input type="hidden" id="id" name="id" /> 
-							<input type="text" id="myid" class="text" placeholder="010-1234-5678" />
-						</td>
-					</tr>
-					<tr>
-						<th>이름</th>
-						<td>
-							<input type="hidden" id="name" name="name" /> 
-							<input type="text" id="myname" class="text" placeholder="이름" />
-						</td>
-					</tr>
-					<tr>
-						<th>비밀번호</th>
-						<td>
-							<input type="hidden" id="password" name="password" />
-							<input type="password" class="text" id="mypassword" />
-						</td>
-					</tr>
-					<tr>
-						<th>비밀번호 확인</th>
-						<td>
-							<input type="password" class="text" id="mypassword1" />
-						</td>
-					</tr>
-					<tr>
-						<th>성별</th>
-						<td>						
-							<c:forEach items="${context.Gender}" var="row">
-								<input type="radio" name="gender" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+				<tr>
+					<th>전화번호</th>
+					<td>
+						<input type="hidden" id="id" name="id" /> 
+						<input type="text" id="myid" class="text" placeholder="010-1234-5678" />
+					</td>
+				</tr>
+				<tr>
+					<th>이름</th>
+					<td>
+						<input type="hidden" id="name" name="name" /> 
+						<input type="text" id="myname" class="text" placeholder="이름" />
+					</td>
+				</tr>
+				<tr>
+					<th>비밀번호</th>
+					<td>
+						<input type="hidden" id="password" name="password" />
+						<input type="password" class="text" id="mypassword" />
+					</td>
+				</tr>
+				<tr>
+					<th>비밀번호 확인</th>
+					<td>
+						<input type="password" class="text" id="mypassword1" />
+					</td>
+				</tr>
+				<tr>
+					<th>성별</th>
+					<td>						
+						<c:forEach items="${context.Gender}" var="row">
+							<input type="radio" name="gender" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+							<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</c:forEach>
+					</td>
+				</tr>
+				<tr>
+					<th>출생년도</th>
+					<td>
+						<select name="years" id="years">
+							<c:forEach items="${context.CommonContext[0].years}" var="row">
+								<option value='<c:out value="${row}"/>'><c:out value="${row}"/></option>
 							</c:forEach>
-						</td>
-					</tr>
-					<tr>
-						<th>출생년도</th>
-						<td>
-							<select name="years" id="years">
-								<c:forEach items="${context.CommonContext[0].years}" var="row">
-									<option value='<c:out value="${row}"/>'><c:out value="${row}"/></option>
-								</c:forEach>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<th>국적</th>
-						<td>
-							<c:forEach items="${context.Nation}" var="row">
-								<input type="radio" name="nation" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<th>국적</th>
+					<td>
+						<c:forEach items="${context.Nation}" var="row">
+							<input type="radio" name="nation" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+							<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</c:forEach>
+					</td>
+				</tr>
+				<tr>
+					<th>업무지역</th>
+					<td>
+						<select name="region1" id="region1">
+							<option value=''>선택안함</option>								
+							<c:forEach items="${jusoSeoulList}" var="row">
+								<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
 							</c:forEach>
-						</td>
-					</tr>
-					<tr>
-						<th>업무지역</th>
-						<td>
-							<select name="region1" id="region1">
-								<option value=''>선택안함</option>								
-								<c:forEach items="${jusoSeoulList}" var="row">
-									<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
-								</c:forEach>
-							</select>
-							<select name="region2" id="region2">
-								<option value=''>선택안함</option>								
-								<c:forEach items="${jusoSeoulList}" var="row">
-									<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
-								</c:forEach>
-							</select>
-							<select name="region3" id="region3">
-								<option value=''>선택안함</option>																		
-								<c:forEach items="${jusoSeoulList}" var="row">
-									<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
-								</c:forEach>
-							</select>
-							<input type="checkbox" name="regionAllow" id="regionAllow">
-							<label for="regionAllow">전체선택</label>
-						</td>
-					</tr>
-					<tr>
-						<th>가능업무</th>
-						<td>
-							<c:forEach items="${context.WorkAbility}" var="row">
-								<input type="radio" name="workAbility" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</select>
+						<select name="region2" id="region2">
+							<option value=''>선택안함</option>								
+							<c:forEach items="${jusoSeoulList}" var="row">
+								<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
 							</c:forEach>
-						</td>
-					</tr>
-					<tr>
-						<th>업무요일</th>
-						<td>
-							<c:forEach items="${context.MdayBit}" var="row">
-								<input type="checkbox" name="mday" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</select>
+						<select name="region3" id="region3">
+							<option value=''>선택안함</option>																		
+							<c:forEach items="${jusoSeoulList}" var="row">
+								<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
 							</c:forEach>
-							<input type="checkbox" name="mdayAllow" id="mdayAllow">
-							<label for="mdayAllow">전체선택</label>
-						</td>
-					</tr>
-					<tr>
-						<th>업무시간</th>
-						<td>
-							<c:forEach items="${context.QtimeBit}" var="row">
-								<input type="checkbox" id='<c:out value="${row}"/>' name="qtime" value='<c:out value="${row}"/>'>
-								<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
-							</c:forEach>
-							<input type="checkbox" name="qtimeAllow" id="qtimeAllow">
-							<label for="qtimeAllow">전체선택</label>
-						</td>
-					</tr>
-					<tr>
-						<th>본인인증</th>
-						<td></td>
-					</tr>
-					<tr>
-						<th>결제</th>
-						<td></td>
-					</tr>
-					<tr>
-						<th>이용약관 동의</th>
-						<td>
-							<a href="#">자세히</a>
-							<input type="checkbox" name="allow" id="allow1" value="allow1">
-							<label for="allow1">동의</label>
-						</td>
-					</tr>
-					<tr>
-						<th>개인정보 취급약관 동의</th>
-						<td>
-							<a href="#">자세히</a>
-							<input type="checkbox" name="allow" id="allow2" value="allow2">
-							<label for="allow2">동의</label>
-						</td>
-					</tr>
-					<tr>
-						<th>상품이용 약관 동의</th>
-						<td>
-							<a href="#">자세히</a>
-							<input type="checkbox" name="allow" id="allow3" value="allow3">
-							<label for="allow3">동의</label>
-						</td>
-					</tr>
-					<tr>
-						<th></th>
-						<td>
-							<input type="checkbox" id="allowAll" name="allowAll">
-							<label for="allowAll">전체동의</label>
-						</td>
-					</tr>
-					<tr>
-						<th></th>
-						<td>								
-							<a href="#" id="join">가입하기</a>
-						</td>
-					</tr>
-				</tbody>
+						</select>
+						<input type="checkbox" name="regionAllow" id="regionAllow">
+						<label for="regionAllow">서울 전지역</label>
+					</td>
+				</tr>
+				<tr>
+					<th>가능업무</th>
+					<td>
+						<c:forEach items="${context.WorkAbility}" var="row">
+							<input type="radio" name="workAbility" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+							<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</c:forEach>
+					</td>
+				</tr>
+				<tr>
+					<th>업무요일</th>
+					<td>
+						<c:forEach items="${context.MdayBit}" var="row">
+							<input type="checkbox" name="mday" id='<c:out value="${row}"/>' value='<c:out value="${row}"/>'>
+							<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</c:forEach>
+						<input type="checkbox" name="mdayAllow" id="mdayAllow">
+						<label for="mdayAllow">전체선택</label>
+					</td>
+				</tr>
+				<tr>
+					<th>업무시간</th>
+					<td>
+						<c:forEach items="${context.QtimeBit}" var="row">
+							<input type="checkbox" id='<c:out value="${row}"/>' name="qtime" value='<c:out value="${row}"/>'>
+							<label for='<c:out value="${row}"/>'><c:out value="${row}"/></label>
+						</c:forEach>
+						<input type="checkbox" name="qtimeAllow" id="qtimeAllow">
+						<label for="qtimeAllow">전체선택</label>
+					</td>
+				</tr>
+				<tr>
+					<th>본인인증</th>
+					<td></td>
+				</tr>
+				<tr>
+					<th>이용약관 동의</th>
+					<td>
+						<a href="#">자세히</a>
+						<input type="checkbox" name="allow" id="allow1" value="allow1">
+						<label for="allow1">동의</label>
+					</td>
+				</tr>
+				<tr>
+					<th>개인정보 취급약관 동의</th>
+					<td>
+						<a href="#">자세히</a>
+						<input type="checkbox" name="allow" id="allow2" value="allow2">
+						<label for="allow2">동의</label>
+					</td>
+				</tr>
+				<tr>
+					<th>상품이용 약관 동의</th>
+					<td>
+						<a href="#">자세히</a>
+						<input type="checkbox" name="allow" id="allow3" value="allow3">
+						<label for="allow3">동의</label>
+					</td>
+				</tr>
+				<tr>
+					<th></th>
+					<td>
+						<input type="checkbox" id="allowAll" name="allowAll">
+						<label for="allowAll">전체동의</label>
+					</td>
+				</tr>
+				<tr>
+					<th></th>
+					<td>
+						<input type="button" id="join" value="가입하기" class="bigbutton">
+					</td>
+				</tr>
 			</table>
 		</form>		
 	</div>

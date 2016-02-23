@@ -8,6 +8,8 @@
 <meta name="keywords" content="" />
 <meta name="author" content="" />
 <link rel="stylesheet" type="text/css" href="/css/style.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/css/button.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/css/box.css" media="screen" />
 
 <script src="/js/url.js"></script>
 <script src="/js/responser.js"></script>

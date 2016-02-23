@@ -64,6 +64,16 @@
 			<if test="person != null">
 				AND person = #{person}
 			</if>
+			<if test="startTime != null">
+			<![CDATA[
+				AND workDate >= date(#{startTime})
+			]]>
+			</if>
+			<if test="endTime != null">
+			<![CDATA[
+				AND workDate <= date(#{endTime})
+			]]>
+			</if>
 	</select>
 	
 	<select id="selectNotAssignComplete"
@@ -113,33 +123,47 @@
 				) offererName
 			FROM (
 				SELECT
-					id
+					r.id
 				FROM
-					requirement
+					requirement r
+				<if test="offererName != null">
+					, offerer o
+				</if>
 				WHERE 1=1
 				<if test="id != null">
-					AND id = #{id}
+					AND r.id = #{id}
 				</if>
 				<if test="offererId != null">
-					AND offererId = #{offererId}
+					AND r.offererId = #{offererId}
 				</if>
-				<if test="workDate != null">
-					AND workDate = #{workDate}
+				<if test="startTime != null">
+				<![CDATA[
+					AND r.workDate >= date(#{startTime})
+				]]>
+				</if>
+				<if test="endTime != null">
+				<![CDATA[
+					AND r.workDate <= date(#{endTime})
+				]]>
 				</if>
 				<if test="workAbility != null">
-					AND workAbility = #{workAbility}
+					AND r.workAbility = #{workAbility}
 				</if>
 				<if test="matchStatus != null">
-					AND matchStatus = #{matchStatus}
+					AND r.matchStatus = #{matchStatus}
 				</if>
 				<if test="registerDate != null">
-					AND registerDate = #{registerDate}
+					AND r.registerDate = #{registerDate}
 				</if>
 				<if test="gender != null">
-					AND gender = #{gender}
+					AND r.gender = #{gender}
 				</if>
 				<if test="person != null">
-					AND person = #{person}
+					AND r.person = #{person}
+				</if>
+				<if test="offererName != null">
+					AND r.offererId = o.id
+					AND offererName like CONCAT('%', #{offererName}, '%')
 				</if>
 				<if test="start != null and end != null">
 					LIMIT ${start}, ${end}
@@ -180,6 +204,19 @@
 			</if>
 			<if test="offererId != null">
 				AND offererId = #{offererId}
+			</if>
+			<if test="offererName != null">
+				AND offererName like CONCAT('%', #{offererName}, '%')
+			</if>
+			<if test="startTime != null">
+			<![CDATA[
+				AND workDate >= date(#{startTime})
+			]]>
+			</if>
+			<if test="endTime != null">
+			<![CDATA[
+				AND workDate <= date(#{endTime})
+			]]>
 			</if>
 	</select>
 </mapper>

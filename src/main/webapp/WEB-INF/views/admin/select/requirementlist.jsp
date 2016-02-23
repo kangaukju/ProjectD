@@ -8,12 +8,12 @@
 <script language="JavaScript">
 $(document).ready(function() {
 	
-	var myUrl = "/admin/select/requirement.do"
-	
+	var myUrl = "/admin/select/requirementlist.do"
 	setValue($("#line"), '${line}');
-	setValue($("#workAbility"), '${context.WorkAbility}');
-	setValue($("#id"), '${id}');
-	setValue($("#name"), '${name}');
+	setValue($("#workAbility"), '${workAbility}');
+	setValue($("#offererName"), '${offererName}');
+	setValue($("#startTime"), '${startTime}');
+	setValue($("#endTime"), '${endTime}');
 	
 	$("#search").click(function() {
 		var form = $("#form");
@@ -52,6 +52,28 @@ $(document).ready(function() {
 		var requirementId = $(this).children(':input').val();
 		window.open(popupUrl+"?requirementId="+requirementId, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
 	});
+	
+	$("#startTime").datepicker({
+		dateFormat: 'yy-mm-dd',
+		dayNames: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+		dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'],
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		showButtonPanel: true, 
+		currentText: '오늘',
+		closeText: '닫기', 
+	});
+	
+	$("#endTime").datepicker({
+		dateFormat: 'yy-mm-dd',
+		dayNames: ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'],
+		dayNamesMin: ['월', '화', '수', '목', '금', '토', '일'],
+		monthNamesShort: ['1','2','3','4','5','6','7','8','9','10','11','12'],
+		monthNames: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+		showButtonPanel: true, 
+		currentText: '오늘',
+		closeText: '닫기', 
+	});
 });
 </script>
 </head>
@@ -60,32 +82,36 @@ $(document).ready(function() {
 	<%@ include file="../../menu.jspf" %>
 	
 	<div id="splash">
-		<h3>업체 조회</h3>
+		<h3>배정조회</h3>
 		<form method="post" action="#" id="form">
 			<table class="data-table">
 				<tbody>
 					<tr>
-						<th>전화번호</th>
-						<td><input type="text" id="id" name="id" class="text" ></td>
-						<th>이름</th>
-						<td><input type="text" id="name" name="name" class="text" ></td>
-						<th>가능업무</th>
+						<th>상호</th>
+						<td><input type="text" id="offererName" name="offererName" class="text" ></td>						
+						<th>업무</th>
 						<td>
-							<select name="workAbility">
+							<select name="workAbility" id="workAbility">
 								<option value=''>선택안함 </option>
 							<c:forEach items="${context.WorkAbility}" var="row">
 								<option value="${row.workAbility}"><c:out value="${row}"/></option>
 							</c:forEach>
 							</select>
 						<td>
-						<td><input type="button" id="search" value="검색" class="button"></td>
+						<th>배정시간</th>
+						<td>
+							<input type="text" id="startTime" name="startTime" class="text w70"> ~ 
+							<input type="text" id="endTime" name="endTime" class="text w70">
+						</td>
+						<th></th>
+						<td><input type="button" id="search" value="검색" class="smallbutton"></td>
 					</tr>
 				</tbody>
 			</table>
 			<table class="data-table">
 				<tbody>
 					<th>배정번호</th>
-					<th>업체명</th>
+					<th>상호</th>
 					<th>배정상태</th>
 					<th>업무</th>
 					<th>출근일자</th>

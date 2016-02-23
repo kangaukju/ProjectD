@@ -95,7 +95,7 @@ $(document).ready(function() {
 					<tr>
 						<th></th>
 						<td>
-							<a href="#" id="join">가입하기</a>
+							<input type="button" id="join" value="가입하기" class="bigbutton">
 						</td>
 					</tr>
 				</tbody>

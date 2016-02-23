@@ -1,5 +1,8 @@
 package kr.co.projecta.matching.popup;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class Popuper {
 	String name;
 	int height;
@@ -58,5 +61,10 @@ public class Popuper {
 	}
 	public void setFoot(String foot) {
 		this.foot = foot;
+	}
+	
+	public String toString() {
+		return ToStringBuilder.reflectionToString(
+				this, ToStringStyle.NO_CLASS_NAME_STYLE);
 	}
 }

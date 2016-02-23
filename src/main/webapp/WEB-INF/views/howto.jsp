@@ -8,7 +8,16 @@
 
 <div id="site-wrapper">
 	<%@ include file="menu.jspf" %>
-	<h2>How To????</h2>
+
+	<div class="main" id="main-two-columns">	
+		<div class="left" id="main-content">
+			이용방법
+		</div>	
+		<div class="right sidebar" id="sidebar">
+			어떻게??
+		</div>	
+		<div class="clearer">&nbsp;</div>
+	</div>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>
 </body>

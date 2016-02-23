@@ -25,7 +25,6 @@ import kr.co.projecta.matching.match.MatchResult.RankResultComparable;
 import kr.co.projecta.matching.user.Matcher;
 import kr.co.projecta.matching.user.Requirement;
 import kr.co.projecta.matching.user.Seeker;
-import kr.co.projecta.matching.util.Parameters;
 import kr.co.projecta.matching.util.Times;
 
 public class MatchService2 {
@@ -46,6 +45,12 @@ public class MatchService2 {
 	
 	String resultExportPath;
 	
+	// 최종 매칭된 배정요청 수
+	long matchedRequirementCount;
+	// 최종 매칭된 구직자 수
+	long matchedSeekerCount;
+	
+
 	public MatchService2(
 			SeekerDAO seekerDAO, 
 			RequirementDAO requirementDAO,
@@ -66,8 +71,13 @@ public class MatchService2 {
 		this.assignmentCandidateDAO = assignmentCandidateDAO;
 		this.topLimit = topLimit;
 		this.matcherPriority = matcherPriority;
+	}	
+	public long getMatchedRequirementCount() {
+		return matchedRequirementCount;
 	}
-	
+	public long getMatchedSeekerCount() {
+		return matchedSeekerCount;
+	}	
 	public String getResultExportPath() {
 		return resultExportPath;
 	}
@@ -159,7 +169,6 @@ public class MatchService2 {
 			// 배정요청에 부족한 인원 만큼 선출한다.
 			int needN = person - assignedSeekerCount;
 			
-			System.out.println("person: "+needN);
 			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> bestRank = 
 					new ArrayList<>();
 			while (!rank.isEmpty() && (needN-- > 0)) {
@@ -215,6 +224,10 @@ public class MatchService2 {
 			Matcher requirement,
 			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> recommandSeeker) 
 	{
+		this.matchedRequirementCount++;
+		this.matchedSeekerCount += recommandSeeker.size();
+		
+		
 		log.i("<<< ["+requirement+"] recommand seekers >>>");
 		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
 			MatchResultComparable<Matcher> match = rank.getData();

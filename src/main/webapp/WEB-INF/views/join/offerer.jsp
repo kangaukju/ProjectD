@@ -81,9 +81,19 @@ $(document).ready(function() {
 		v.add($("#mypassword1"), "비밀번호를 꼭 입력하세요.");
 		v.add($("#offererNumber"), "사업자번호를 꼭 입력하세요.");
 		v.add($("#phone"), "전화번호를 꼭 입력하세요.");
-		v.add($("#cellPhone"), "휴대폰번호를 꼭 입력하세요.");
-		
+		v.add($("#cellPhone"), "휴대폰번호를 꼭 입력하세요.");		
 		if (!v.isValid()) return;
+		
+		if (!isPhoneNumber($("#phone").val())) {
+			alert("전화번호 형식이 올바르지 않습니다.");
+			$("#phone").focus();
+			return;
+		}
+		if (!isPhoneNumber($("#cellPhone").val())) {
+			alert("전화번호 형식이 올바르지 않습니다.");
+			$("#cellPhone").focus();
+			return;
+		}
 		
 		if ($("#mypassword").val() != $("#mypassword1").val()) {
 			alert("동일한 비밀번호를 입력하세요.");
@@ -235,7 +245,7 @@ $(document).ready(function() {
 					<tr>
 						<th></th>
 						<td>
-							<a href="#" id="join">가입하기</a>
+							<input type="button" id="join" value="로그인" class="bigbutton">
 						</td>
 					</tr>
 				</tbody>

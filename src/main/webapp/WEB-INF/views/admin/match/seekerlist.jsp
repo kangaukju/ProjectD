@@ -9,7 +9,7 @@
 $(document).ready(function() {
 	
 	// 임시배정 -> 배정확정하기
-	$(".candidate .confirm .button").on("click", function() {
+	$(".candidate .confirm .smallbutton").on("click", function() {
 		var seekerId = $(".candidate .confirm .seekerId").val();
 		var seekerName = $(".candidate .confirm .seekerName").val();
 		$("#seekerId").val(seekerId);
@@ -39,7 +39,7 @@ $(document).ready(function() {
 	});
 	
 	// 임시배정 -> 배정취소하기
-	$(".candidate .cancel .button").on("click", function() {
+	$(".candidate .cancel .smallbutton").on("click", function() {
 		var seekerId = $(".candidate .cancel .seekerId").val();
 		var seekerName = $(".candidate .cancel .seekerName").val();
 		$("#seekerId").val(seekerId);
@@ -69,7 +69,7 @@ $(document).ready(function() {
 	});
 	
 	// 배정확정 -> 배정취소하기
-	$(".confirm .cancel .button").on("click", function() {
+	$(".confirm .cancel .smallbutton").on("click", function() {
 		var seekerId = $(".confirm .cancel .seekerId").val();
 		var seekerName = $(".confirm .cancel .seekerName").val();
 		$("#seekerId").val(seekerId);
@@ -151,12 +151,12 @@ $(document).ready(function() {
 				<td>${fn:replace(s.workMday, '\"', '')}</td>						
 				<td>${fn:replace(s.workQtime, '\"', '')}</td>
 				<td class="confirm">
-					<input type="button" class="button" value="확정">
+					<input type="button" class="smallbutton" value="확정">
 					<input class="seekerId" type="hidden" value="${s.id}">
 					<input class="seekerName" type="hidden" value="${s.name}">
 				</td>
 				<td class="cancel">
-					<input type="button" class="button" value="취소">
+					<input type="button" class="smallbutton" value="취소">
 					<input class="seekerId" type="hidden" value="${s.id}">
 					<input class="seekerName" type="hidden" value="${s.name}">
 				</td>
@@ -180,12 +180,8 @@ $(document).ready(function() {
 			<th>근무지역3</th>
 			<th>근무요일</th>
 			<th>근무시간</th>
-			<th>배정취소</th>
 			<th></th>
-			<!-- 
-			<th>결제날짜</th>
-			<th>만료날짜</th>
-			-->
+			<th>배정취소</th>
 			<c:forEach items="${confirmSeekerList}" var="s">
 			<tr class="confirm">
 				<td><c:out value="${s.id}"/></td>
@@ -199,12 +195,12 @@ $(document).ready(function() {
 				<td><c:out value="${s.region3.sigunguName}" /></td>						
 				<td>${fn:replace(s.workMday, '\"', '')}</td>						
 				<td>${fn:replace(s.workQtime, '\"', '')}</td>
+				<td></td>
 				<td class="cancel">
-					<input type="button" class="button" value="취소">
+					<input type="button" class="smallbutton" value="취소">
 					<input class="seekerId" type="hidden" value="${s.id}">
 					<input class="seekerName" type="hidden" value="${s.name}">
-				</td>
-				<td></td>
+				</td>				
 			</tr>
 			</c:forEach>
 		</c:if>

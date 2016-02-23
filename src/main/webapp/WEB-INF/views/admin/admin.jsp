@@ -11,17 +11,17 @@
 <div id="site-wrapper">
 	<%@ include file="../menu.jspf" %>
 	
-	<div id="splash">
+	<div class="main">
 		<div class="col3 left">
 			<table>
 				<tr>
 					<td>
-						<h2 class="label label-green"><a href="/admin/select/seekerlist.do">구직자조회</a></h2>
+						<h2 class="label label-green"><a href="/admin/select/seekerlist.do">일찾는사람 조회</a></h2>
 					</td>
 				</tr>
 				<tr>
 					<td>
-						<h2 class="label label-green"><a href="/offerer/offererlist.do">업체조회</a></h2>
+						<h2 class="label label-green"><a href="/offerer/offererlist.do">사장님 조회</a></h2>
 					</td>
 				</tr>
 				<tr>
@@ -35,7 +35,7 @@
 			<table>
 				<tr>
 					<td>
-						<h2 class="label label-orange"><a href="/admin/match/auto.do">자동배정</a></h2>
+						<h2 class="label label-orange"><a href="/admin/match/auto.do">자동배정 수행</a></h2>
 					</td>
 				</tr>
 				<tr>
@@ -64,6 +64,7 @@
 				</tr>
 			</table>
 		</div>
+		<div class="clearer">&nbsp;</div>
 	</div>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>
