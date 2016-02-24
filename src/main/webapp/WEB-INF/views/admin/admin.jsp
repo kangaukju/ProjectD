@@ -26,7 +26,7 @@
 				</tr>
 				<tr>
 					<td>
-						<h2 class="label label-green"><a href="/offerer/requirement.do">관리자 배정요청(x)</a></h2>
+						<h2 class="label label-green"><a href="/admin/match/offererlist.do">관리자 수동 배정</a></h2>
 					</td>
 				</tr>
 			</table>

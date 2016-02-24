@@ -71,6 +71,7 @@ $(document).ready(function() {
 				</td>
 			</tr>
 		</table>
+		<%@ include file="/WEB-INF/views/include/popup_close.jspf" %>
 	</form>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>

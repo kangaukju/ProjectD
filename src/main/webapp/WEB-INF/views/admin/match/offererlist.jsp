@@ -7,7 +7,7 @@
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
 $(document).ready(function() {	
-	var myUrl = "/admin/match/matchresult.do";
+	var myUrl = "/admin/match/offererlist.do";
 	
 	setValueDefault($("#line"), '${line}', 10);
 	setValue($("#id"), '${id}');
@@ -36,14 +36,14 @@ $(document).ready(function() {
 		$("#search").trigger('click');
 	});
 	
-	var popupUrl = "/admin/match/matchresult_offerer.do";
+	var popupUrl = "/admin/requirement.do";
 	$(".data-table a").on("click", function() {
 		var width = 500;
-		var height = 600;		
+		var height = 500;		
 		var x = (screen.availWidth - width) / 2;
 		var y = (screen.availHeight - height) / 2;
-		var id = $(this).text();
-		window.open(popupUrl+"?id="+id, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
+		var offererId = $(this).text();
+		window.open(popupUrl+"?offererId="+offererId, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
 	});
 });
 </script>
@@ -53,7 +53,7 @@ $(document).ready(function() {
 	<%@ include file="../../menu.jspf" %>
 	
 	<div id="splash">
-		<h3>업체별 배정결과</h3>
+		<h3>업체목록</h3>
 		<form method="post" action="#" id="form">
 			<table class="data-table">
 				<tr>
@@ -75,10 +75,6 @@ $(document).ready(function() {
 				<th>사업자번호</th>
 				<th>전화번호</th>
 				<th>휴대폰</th>
-				<!-- 
-				<th>결제날짜</th>
-				<th>만료날짜</th>
-				-->
 				<c:forEach items="${list}" var="o">
 				<tr>
 					<td><a href="#"><c:out value="${o.id}" /></a></td>
@@ -88,10 +84,6 @@ $(document).ready(function() {
 					<td><c:out value="${o.offererNumber}" /></td>
 					<td><c:out value="${o.phone}" /></td>
 					<td><c:out value="${o.cellPhone}" /></td>
-					<!-- 
-					<td><c:out value="${o.payDate}"></c:out></td>
-					<td><c:out value="${o.eosDate}"></c:out></td>
-					-->
 				</tr>
 				</c:forEach>
 			</table>

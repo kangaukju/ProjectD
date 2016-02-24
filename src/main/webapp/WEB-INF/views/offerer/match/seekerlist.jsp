@@ -24,7 +24,6 @@ $(document).ready(function() {
 	<input type="hidden" id="requirementId" name="requirementId" value="${param.id}">
 	<input type="hidden" id="seekerId" name="seekerId">
 	<table class="data-table">
-		<tbody>
 		<c:if test="${fn:length(candidateSeekerList) == 0 && fn:length(confirmSeekerList) == 0}">
 			<tr>
 				<th>배정된 인원이 없습니다. 배정인원이 지정되면 SMS문자로 통보됩니다.</th>
@@ -106,8 +105,8 @@ $(document).ready(function() {
 			</tr>
 			</c:forEach>
 		</c:if>
-		</tbody>
 	</table>
+	<%@ include file="/WEB-INF/views/include/popup_close.jspf" %>
 </form>
 </body>
 </html>

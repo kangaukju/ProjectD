@@ -29,6 +29,9 @@ public class OffererDAO extends LoggingDao implements DAO<Offerer> {
 	}
 
 	// 업주 단일 조회
+	public Offerer selectOne(String offererId) {
+		return this.selectOne("id", offererId);
+	}
 	public Offerer selectOne(String key, String value) {
 		Map<String, Object> params = new HashMap<>();
 		params.put(key, value);

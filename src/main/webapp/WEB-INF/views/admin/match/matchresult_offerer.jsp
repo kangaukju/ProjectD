@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
@@ -35,13 +34,6 @@ $(document).ready(function() {
 		form.submit();
 	});
 	
-	$('#line').change(function(){
-		$("#page").val(1);
-		//$('#line option:selected').val()
-		form.action = myUrl;
-		form.submit();
-    });
-	
 	$('#paging').paging({
 		current : '${page}',
 		max : '${navCount}',
@@ -51,6 +43,10 @@ $(document).ready(function() {
 			form.action = myUrl;
 			form.submit();
 		}
+	});
+	
+	$("#line").change(function(){
+		$("#search").trigger('click');
 	});
 	
 	$(".data-table a").on("click", function() {
@@ -159,16 +155,11 @@ $(document).ready(function() {
 				</c:forEach>
 			</tbody>
 		</table>
-		<input type="hidden" name="page" id="page">
-		<div id="paging"></div>
-		<select id="line" name="line">
-			<option value="1">1</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="5">5</option>
-			<option value="10">10</option>
-		</select>
+
+		<%@ include file="/WEB-INF/views/include/pagenumber.jspf" %>
+		
 	</form>
+	<%@ include file="/WEB-INF/views/include/popup_close.jspf" %>
 </div>
 <div id="splash" style="width:10px; float: left;">
 </div>

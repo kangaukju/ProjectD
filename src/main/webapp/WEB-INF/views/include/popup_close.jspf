@@ -1,0 +1,4 @@
+<%@ page pageEncoding="utf-8"%>
+<div align="right">
+	<input type="button" class="smallbutton" value="닫기" onclick="self.close();">
+</div>

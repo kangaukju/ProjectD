@@ -21,13 +21,6 @@ $(document).ready(function() {
 		form.submit();
 	});
 	
-	$('#line').change(function(){
-		$("#page").val(1);
-		//$('#line option:selected').val()
-		form.action = myUrl;
-		form.submit();
-    });
-	
 	$('#paging').paging({
 		current : '${page}',
 		max : '${navCount}',
@@ -37,6 +30,10 @@ $(document).ready(function() {
 			form.action = myUrl;
 			form.submit();
 		}
+	});
+	
+	$("#line").change(function(){
+		$("#search").trigger('click');
 	});
 	
 	var popupUrl = "/offerer/detail.do";
@@ -81,10 +78,6 @@ $(document).ready(function() {
 					<th>사업자번호</th>
 					<th>전화번호</th>
 					<th>휴대폰</th>
-					<!-- 
-					<th>결제날짜</th>
-					<th>만료날짜</th>
-					-->
 					<c:forEach items="${list}" var="o">
 					<tr>
 						<td><a href="#"><c:out value="${o.id}" /></a></td>
@@ -94,23 +87,13 @@ $(document).ready(function() {
 						<td><c:out value="${o.offererNumber}" /></td>
 						<td><c:out value="${o.phone}" /></td>
 						<td><c:out value="${o.cellPhone}" /></td>
-						<!-- 
-						<td><c:out value="${o.payDate}"></c:out></td>
-						<td><c:out value="${o.eosDate}"></c:out></td>
-						-->
 					</tr>
 					</c:forEach>
 				</tbody>
 			</table>
-			<input type="hidden" name="page" id="page">
-			<div id="paging"></div>
-			<select id="line" name="line">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="5">5</option>
-				<option value="10">10</option>
-			</select>
+
+			<%@ include file="/WEB-INF/views/include/pagenumber.jspf" %>
+
 		</form>
 	</div>
 </div>

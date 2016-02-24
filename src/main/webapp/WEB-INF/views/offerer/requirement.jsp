@@ -185,7 +185,7 @@ $(document).ready(function() {
 					<tr>
 						<th></th>
 						<td>
-							<a href="#" id="join">배정요청</a>
+							<input type="button" id="join" class="smallbutton" value="배정요청">
 						</td>
 					</tr>
 				</tbody>

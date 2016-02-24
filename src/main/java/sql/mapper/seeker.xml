@@ -121,7 +121,7 @@
 				<if test="workQtime != null">
 					AND workQtime = #{workQtime}
 				</if>
-				<if test="workAbility != null">
+				<if test="workAbility != null and workAbility != ''">
 					AND workAbility = #{workAbility}
 				</if>
 				<if test="start != null and end != null">
@@ -131,30 +131,92 @@
 			JOIN seeker a ON a.id = b.id
 	</select>
 	
+	<select id="selectNotAssignSeekerCount" resultType="long">
+			SELECT count(*) FROM seeker
+			WHERE
+				id NOT IN (SELECT seekerId FROM assignment)
+			<if test="id != null">
+				AND id = #{id}
+			</if>
+			<if test="name != null">
+				AND name = #{name}
+			</if>
+			<if test="gender != null">
+				AND gender = #{gender}
+			</if>
+			<if test="nation != null">
+				AND nation = #{nation}
+			</if>
+			<if test="region != null">
+				AND (region1 = #{region} OR region2 = #{region} OR region3 = #{region})
+			</if>
+			<if test="workMday != null">
+				AND workMday = #{workMday}
+			</if>
+			<if test="workQtime != null">
+				AND workQtime = #{workQtime}
+			</if>
+			<if test="workAbility != null and workAbility != ''">
+				AND workAbility = #{workAbility}
+			</if>
+	</select>
+	
 	<select id="selectNotAssignSeeker" 
 			parameterType="hashmap"
 			resultType="kr.co.projecta.matching.user.Seeker">
 			SELECT 
-				id, 
-				name, 
-				password,
-				birth, 
-				registerDate, 
-				gender, 
-				nation, 
-				region1, 
-				region2, 
-				region3, 
-				workMday, 
-				workQtime, 
-				licenseFile, 
-				workAbility, 
-				payDate, 
-				eosDate
-			FROM 
-				seeker
-			WHERE
-				id NOT IN (SELECT seekerId FROM assignment)
+				a.id id, 
+				a.name name,
+				a.password password,
+				a.birth birth, 
+				a.gender gender,
+				a.registerDate registerDate,
+				a.nation nation, 
+				a.region1 region1, 
+				a.region2 region2, 
+				a.region3 region3, 
+				a.workMday workMday, 
+				a.workQtime workQtime, 
+				a.licenseFile licenseFile, 
+				a.workAbility workAbility, 
+				a.payDate payDate, 
+				a.eosDate eosDate
+			FROM (
+				SELECT 
+					id 
+				FROM 
+					seeker
+				WHERE
+					id NOT IN (SELECT seekerId FROM assignment)
+				<if test="id != null">
+					AND id = #{id}
+				</if>
+				<if test="name != null">
+					AND name like CONCAT('%', #{name}, '%')
+				</if>
+				<if test="gender != null">
+					AND gender = #{gender}
+				</if>
+				<if test="nation != null">
+					AND nation = #{nation}
+				</if>
+				<if test="region != null">
+					AND (region1 = #{region} OR region2 = #{region} OR region3 = #{region})
+				</if>
+				<if test="workMday != null">
+					AND workMday = #{workMday}
+				</if>
+				<if test="workQtime != null">
+					AND workQtime = #{workQtime}
+				</if>
+				<if test="workAbility != null and workAbility != ''">
+					AND workAbility = #{workAbility}
+				</if>
+				<if test="start != null and end != null">
+					LIMIT ${start}, ${end}
+				</if>
+			) b
+			JOIN seeker a ON a.id = b.id
 	</select>
 	
 	<select id="selectOne"

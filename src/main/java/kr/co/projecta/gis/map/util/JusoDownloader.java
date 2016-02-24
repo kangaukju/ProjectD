@@ -32,8 +32,8 @@ public class JusoDownloader {
 			System.exit(1);
 		}
 		
-		log.i("download path: "+downloadpath);
-		log.i("script path: "+scriptpath);
+		System.out.println("download path: "+downloadpath);
+		System.out.println("script path: "+scriptpath);
 		
 		JusoDB jusoDB = new JusoDB(downloadpath, scriptpath);
 		try {

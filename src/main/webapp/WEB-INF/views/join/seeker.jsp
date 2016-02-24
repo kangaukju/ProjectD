@@ -174,7 +174,7 @@ $(document).ready(function() {
 					<th>업무지역</th>
 					<td>
 						<select name="region1" id="region1">
-							<option value=''>선택안함</option>								
+							<option value=''>선택안함</option>
 							<c:forEach items="${jusoSeoulList}" var="row">
 								<option value='<c:out value="${row.id}"/>'><c:out value="${row.sigunguName}"/></option>
 							</c:forEach>

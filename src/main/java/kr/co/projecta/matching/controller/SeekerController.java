@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.projecta.matching.controller.BaseController.Callback;
 import kr.co.projecta.matching.exception.NotAccessableException;
 import kr.co.projecta.matching.user.Assignment;
 import kr.co.projecta.matching.user.Identity;

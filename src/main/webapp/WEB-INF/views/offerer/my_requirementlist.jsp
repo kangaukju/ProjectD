@@ -8,7 +8,7 @@
 <script language="JavaScript">
 $(document).ready(function() {
 	
-	$(".data-table .offerer a").on("click", function() {
+	$(".offerer a").on("click", function() {
 /*
 		var popupUrl = "/offerer/detail.do";
 		var width = 700;
@@ -20,13 +20,13 @@ $(document).ready(function() {
 */
 	});
 	
-	$(".data-table .person a").on("click", function() {
+	$(".person .smallbutton").on("click", function() {
 		var popupUrl = "/offerer/match/seekerlist.do";
 		var width = 850;
 		var height = 300;		
 		var x = (screen.availWidth - width) / 2;
 		var y = (screen.availHeight - height) / 2;
-		var requirementId = $(this).children(':input').val();
+		var requirementId = $(this).attr("id");
 		window.open(popupUrl+"?requirementId="+requirementId, "", "width="+width+", height="+height+", toolbar=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, left="+x+", top="+y);
 	});
 });
@@ -51,7 +51,7 @@ $(document).ready(function() {
 					<th>연령</th>
 					<th>성별</th>
 					<th>국적</th>
-					<th>근무인원</th>
+					<th>인원</th>
 					<th>배정내역</th>
 					<c:forEach items="${list}" var="r">
 					<tr>
@@ -70,11 +70,9 @@ $(document).ready(function() {
 						<td><c:out value="${r.ageRange}"></c:out></td>
 						<td>${r.gender}</td>
 						<td>${r.nation}</td>
-						<td><c:out value="${r.person}" /></td>
+						<td><c:out value="${assignedMap[r.id]}/${r.person}" /></td>
 						<td class="person">
-							<a href="#">
-								자세히<input type="hidden" value="${r.id}" />
-							</a>
+							<input type="button" class="smallbutton" value="보기" id="${r.id}">
 						</td>
 					</tr>
 					</c:forEach>

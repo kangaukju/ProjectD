@@ -15,10 +15,10 @@ public class RequirementDAO extends LoggingDao implements DAO<Requirement> {
 	Plogger log = Plogger.getLogger(this.getClass());
 
 	// 매칭 상태를 갱신한다
-	public boolean updateMatchStatus(String id, int matchStatus) {
+	public boolean updateMatchStatus(String requirementId, int matchStatus) {
 		return (int)super.update("requirement.updateMatchStatus", 
 				Parameters.makeMap(
-						"id", id,
+						"id", requirementId,
 						"matchStatus",matchStatus)) == 1;
 	}
 	
@@ -42,6 +42,11 @@ public class RequirementDAO extends LoggingDao implements DAO<Requirement> {
 		return super.selectCount("requirement.selectCount", params);
 	}
 
+	// 배정요청 단일 조회
+	public Requirement selectOne(String requirementId) {
+		return this.selectOne("id", requirementId);
+	}
+	
 	// 배정요청 단일 조회
 	public Requirement selectOne(String key, String value) {
 		Map<String, Object> params = new HashMap<>();

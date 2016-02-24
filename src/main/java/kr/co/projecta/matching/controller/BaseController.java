@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.security.PrivateKey;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -40,6 +41,7 @@ import kr.co.projecta.matching.dao.CommonDAO;
 import kr.co.projecta.matching.dao.DAO;
 import kr.co.projecta.matching.dao.MatchResultDAO;
 import kr.co.projecta.matching.dao.OffererDAO;
+import kr.co.projecta.matching.dao.PageDAO;
 import kr.co.projecta.matching.dao.RequirementDAO;
 import kr.co.projecta.matching.dao.SeekerDAO;
 import kr.co.projecta.matching.exception.InvalidPhoneNumberException;
@@ -238,6 +240,42 @@ abstract public class BaseController {
 	}
 	
 	/**
+	 * 페이징 처리
+	 * @param mv
+	 * @param params
+	 * @param request
+	 * @param dao page처리 만을 위한 DAO인터페이스
+	 * @return
+	 */
+	protected ModelAndView pagingData(
+			ModelAndView mv, 
+			RequestMap params,
+			HttpServletRequest request,
+			PageDAO<?> dao) 
+	{
+		debugParameters(request);
+		
+		long page = Long.valueOf(parameter(request, "page", 1));
+		long line = Long.valueOf(parameter(request, "line", DEFAULT_LINE));
+		long navCount = 0;
+		long count = 0;
+		
+		params.put("start", (page-1) * line);
+		params.put("end", line);
+		
+		count = dao.getCount(params.getMap());
+		navCount = (count % line == 0) ? count/line : count/line+1;
+		mv.addObject("navCount", navCount);
+		mv.addObject("count", count);
+		mv.addObject("list", dao.getList(params.getMap()));
+		mv.addObject("line", line);
+		mv.addObject("page", page);
+		mv.addAllObjects(params.getMap());
+		
+		return mv;
+	}
+	
+	/**
 	 * HTTP 서블릿의 요청 파라메터 디버그
 	 * @param request
 	 */
@@ -259,8 +297,46 @@ abstract public class BaseController {
 			sb.append(": ");
 			
 			for (String val : values) {
-				sb.append(val);
-				sb.append(" ");
+				sb.append("'"+val+"'");
+				sb.append(",");
+			}
+			log.d(sb.toString());
+			elementCount++;
+		}
+		if (elementCount == 0) {
+			log.d("HTTP request is empty");
+		}
+		
+		log.d("==============================");
+	}
+	
+	protected void debugRequestMap(RequestMap request) {
+		Map<String, Object> map = request.getMap();
+		Iterator<String> it = map.keySet().iterator();
+		String key;
+		Object value;	
+		StringBuffer sb;
+		long elementCount = 0;
+		
+		log.d("[debugRequestMap]==========");
+		
+		while (it.hasNext()) {
+			key = it.next();
+			value = (Object) map.get(key);
+			
+			sb = new StringBuffer(key);
+			sb.append(": ");
+			
+			if (value instanceof List) {
+				List<String> list = (List<String>) value;
+				for (String val : list) {
+					sb.append("'"+val+"'");
+					sb.append(",");	
+				}
+			}
+			else if (value instanceof String) {
+				sb.append("'"+value+"'");
+				sb.append(",");
 			}
 			log.d(sb.toString());
 			elementCount++;
@@ -400,6 +476,7 @@ abstract public class BaseController {
 		public void tryCatchRun() throws Exception;
 	}
 	
+	public static final String NOHUP = "nohup";
 	/**
 	 * 처리 페이지
 	 * @param callback

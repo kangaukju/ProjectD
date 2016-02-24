@@ -6,10 +6,12 @@
 	<!-- datasource -->
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-		<property name="url" value="jdbc:mysql://localhost/projecta"/>
+		<property name="url" value="jdbc:mysql://localhost/projecta?autoReconnect=true"/>
 		<property name="username" value="projecta"/>
 		<property name="password" value="adminme"/>
 		<property name="connectionProperties" value="useUnicode=yes;characterEncoding=utf8;"/>
+		<property name="validationQuery" value="SELECT 1"/>
+		<property name="testOnBorrow" value="true"/>
 	</bean>
 	
 	<!-- datasource logging -->

@@ -25,6 +25,7 @@ import kr.co.projecta.matching.match.MatchResult.RankResultComparable;
 import kr.co.projecta.matching.user.Matcher;
 import kr.co.projecta.matching.user.Requirement;
 import kr.co.projecta.matching.user.Seeker;
+import kr.co.projecta.matching.user.types.MatchStatus;
 import kr.co.projecta.matching.util.Times;
 
 public class MatchService2 {
@@ -227,6 +228,7 @@ public class MatchService2 {
 		this.matchedRequirementCount++;
 		this.matchedSeekerCount += recommandSeeker.size();
 		
+		String requirementId = requirement.getId();
 		
 		log.i("<<< ["+requirement+"] recommand seekers >>>");
 		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
@@ -245,10 +247,23 @@ public class MatchService2 {
 		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
 			MatchResultComparable<Matcher> match = rank.getData();
 			Seeker seeker = (Seeker) match.getData();
-			
-			String requirementId = requirement.getId();
 			String seekerId = seeker.getId();
 			assignmentCandidateDAO.insert(requirementId, seekerId);
+		}
+		
+		// 매칭 상태를 업데이트한다
+		Requirement r = (Requirement)requirement;
+		long person = r.getPerson();
+		long assignedCount = assignmentCandidateDAO.selectCount(requirementId);
+		System.out.println("person:"+person+", assignedCount:"+assignedCount);
+		if (person == assignedCount) {
+			if (r.getMatchStatus().getMatchStatus() != MatchStatus.COMPLETION) {
+				requirementDAO.updateMatchStatus(requirementId, MatchStatus.COMPLETION);
+			}
+		} else {
+			if (r.getMatchStatus().getMatchStatus() != MatchStatus.INCOMPLETION) {
+				requirementDAO.updateMatchStatus(requirementId, MatchStatus.INCOMPLETION);
+			}			
 		}
 		
 	}

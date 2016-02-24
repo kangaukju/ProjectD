@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -84,7 +83,7 @@ public class JusoDB {
 			throws Exception 
 	{
 		String jusoZipFile = downloadpath+"/"+JUSO_ZIP_FILENAME;
-		log.i("juso zip file: "+jusoZipFile);
+		System.out.println("juso zip file: "+jusoZipFile);
 		
 		if (!mkdir(downloadpath)) {
 			throw new IOException(
@@ -92,12 +91,12 @@ public class JusoDB {
 		}
 				
 		// download juso.zip
-		log.i("run: "+String.format(
+		System.out.println("run: "+String.format(
 				"%s/%s %s",
 				scriptpath,
 				DOWNLOAD_SHELLSCRIPT,
 				downloadpath));
-		log.i("Start download");
+		System.out.println("Start download");
 		UnixCommand.executeWithPrint(String.format(
 				"%s/%s %s",
 				scriptpath,
@@ -162,11 +161,11 @@ public class JusoDB {
 			if (jusolist != null) {
 				for (Juso juso : jusolist) {
 					total++;
-					log.i(juso);
+					System.out.println(juso);
 				}
 			}
 		}
-		log.i("show juso: total juso is " + total);
+		System.out.println("show juso: total juso is " + total);
 	}
 	
 	public void extract() throws Exception {
@@ -182,7 +181,7 @@ public class JusoDB {
 		File outputDir = new File(outputdir);
 		if (outputDir.isDirectory()) {
 			rm(outputDir.getAbsolutePath());
-			log.i("Delete old output directory - "+outputDir.getAbsolutePath());
+			System.out.println("Delete old output directory - "+outputDir.getAbsolutePath());
 		}
 		mkdir(outputDir.getAbsolutePath());
 	
@@ -233,7 +232,7 @@ public class JusoDB {
 				
 					write(outputdir+"/"+sidoName+".txt", jusoList);
 				
-					log.i("extract: "+sidoName+", count: "+jusoList.size());
+					System.out.println("extract: "+sidoName+", count: "+jusoList.size());
 				}
 			} catch (IOException e) {
 				throw e;
@@ -243,7 +242,7 @@ public class JusoDB {
 					try { br.close(); } catch (IOException e) { };
 			}
 		}
-		log.i("extract all, count: "+total);
+		System.out.println("extract all, count: "+total);
 	}
 	
 	private Connection getConnection(
@@ -277,7 +276,7 @@ public class JusoDB {
 					"DROP TABLE IF EXISTS " + table);
 			ps.executeUpdate();
 			ps.close();
-			log.i("drop table "+table);
+			System.out.println("drop table "+table);
 			
 			// create new table
 			ps = connection.prepareStatement(
@@ -286,8 +285,8 @@ public class JusoDB {
 							JusoTown.createTableSQL(table));
 			ps.executeUpdate();
 			ps.close();
-			log.i("create table "+table);
-			log.i(ignoreCity ?
+			System.out.println("create table "+table);
+			System.out.println(ignoreCity ?
 					JusoBase.createTableSQL(table) :
 					JusoTown.createTableSQL(table));
 			
@@ -301,7 +300,7 @@ public class JusoDB {
 						ps.executeUpdate();
 					}
 				}
-				log.i("import DB: insert "+key+", count: "+jusoList.size());
+				System.out.println("import DB: insert "+key+", count: "+jusoList.size());
 			}
 			
 		} catch (Exception e) {

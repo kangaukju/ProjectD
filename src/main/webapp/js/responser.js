@@ -16,7 +16,7 @@ function responserAction() {
 function responserAction(json) {
 	var type = responserValue(json.type);
 	var code = responserValue(json.code);
-	var success = responserValueDef(json.success, '/home.do');
+	var success = responserValueDef(json.success, '/');
 	var failure = responserValueDef(json.failure, '/error.do');
 	var error = responserValue(json.error);
 	var data = responserValue(json.data);
@@ -31,6 +31,9 @@ function responserAction(json) {
 		return;
 	}
 	if (type == 'SUCCESS') {
+		if (success == "nohup") {
+			return;
+		}
 		if (popup) {
 			window.open(success, "", "width="+width+",height="+height+",directories=0,titlebar=0,toolbar=no,menubar=no,scrollbars=no,resizable=no,copyhistory=no,left="+x+",top="+y);
 		} else {

@@ -1,7 +1,9 @@
 package kr.co.projecta.matching.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +49,17 @@ public class OffererController extends BaseController {
 			return mv;
 		}
 		params.put("offererId", identity.getId());
-		return pagingData(mv, params, request, requirementDAO);
+		mv = pagingData(mv, params, request, requirementDAO);
+		
+		Map<String, Long> assignedMap = new HashMap<>();
+		List<Requirement> requirements = (List<Requirement>) mv.getModel().get("list");
+		for (Requirement r : requirements) {
+			long assignedCount = assignmentDAO.selectCount(r.getId());
+			assignedMap.put(r.getId(), assignedCount);
+		}
+		mv.addObject("assignedMap", assignedMap);
+		
+		return mv;
 	}
 	
 	/**
@@ -86,9 +98,7 @@ public class OffererController extends BaseController {
 	@RequestMapping(value="/offerer/requirement.do")
 	public ModelAndView joinRequirement(
 			ModelAndView mv, 
-			HttpServletRequest request,
-			HttpSession session,
-			HttpServletResponse response) 
+			HttpServletRequest request) 
 	{
 		generateRSAKeyPair(mv, request.getSession());
 		return mv;
