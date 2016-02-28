@@ -4,26 +4,62 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
-import java.util.HashMap;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.mozilla.universalchardet.UniversalDetector;
 
-import kr.co.projecta.matching.user.types.Gender;
-import kr.co.projecta.matching.user.types.MatchStatus;
-import kr.co.projecta.matching.user.types.MdayBit;
-import kr.co.projecta.matching.user.types.Nation;
-import kr.co.projecta.matching.user.types.QtimeBit;
-import kr.co.projecta.matching.user.types.Region;
-import kr.co.projecta.matching.user.types.WorkAbility;
-import kr.co.projecta.matching.user.types.WorkMday;
-import kr.co.projecta.matching.user.types.WorkQtime;
-
 public class Strings {
 
+	public static int digitStringCompare(String s1, String s2) {
+		return digitCompare(digitBinary(s1), digitBinary(s2));
+	}
+	
+	public static int digitCompare(byte[] b1, byte[] b2) {
+		byte[] shortByte = (b1.length > b2.length) ? b2 : b1;
+		
+		for (int i=0; i<shortByte.length; i++) {
+			int compare = (int)b1[i] - (int)b2[i];
+			if (compare != 0) {
+				if (b1.length > b2.length) {
+					return 1;
+				} else if (b2.length > b1.length) {
+					return -1;
+				} else {
+					return (compare > 0) ? 1 : -1;
+				}
+			}
+		}
+		if (b1.length == b2.length) {
+			return 0;
+		}
+		return (shortByte == b1) ? -1 : 1;
+	}
+	
+	public static byte[] digitBinary(String s) {
+		if ("".equals(s)) {
+			return null;
+		}
+		
+		byte [] sb = new byte[s.length()];
+		for (int i=0; i<sb.length; i++) {
+			sb[i] = 0;
+		}
+		for (int i=s.length()-1, k=s.length()-1; i>=0; i--) {
+			if (Character.isDigit(s.charAt(i))) {
+				sb[k--] = (byte) Character.digit(s.charAt(i), 16);
+			}else if (Character.isAlphabetic(s.charAt(i))) {
+				sb[k--] = (byte) s.charAt(i);
+			}
+		}
+		/*
+		for (byte b : sb) {
+			System.out.print(b);
+		}
+		System.out.println();
+		*/
+		return sb;
+	}
+	
 	/*
 	public static void setJSON(JSONObject json, String key, Object value) {		
 		if (value == null) {
@@ -100,8 +136,9 @@ public class Strings {
 	 */
 	public static String toHexString(byte[] bytes) {
 	    StringBuilder sb = new StringBuilder();
-	    for(byte b: bytes)
+	    for(byte b: bytes) {
 	        sb.append(String.format("%02x", b & 0xff));
+	    }
 	    return sb.toString();
 	}
 	
@@ -186,9 +223,9 @@ public class Strings {
 		return bitVal;
 	}
 	
-	public static void main(String [] ars) throws JsonGenerationException, JsonMappingException, IOException {
+	public static void main(String [] ars) throws Exception {
+		/*
 		JSONObject j = new JSONObject();
-		
 		Gender gender = new Gender(Gender.MALE);
 		MatchStatus matchStatus = new MatchStatus(MatchStatus.COMPLETION);
 		MdayBit mdayBit = new MdayBit(MdayBit.MON);
@@ -212,5 +249,13 @@ public class Strings {
 		map.put("gender", gender.toString());
 		
 		System.out.println(mapper.writeValueAsString(map));
+		*/
+		String s1 = "2016-02-27-23.bin.10";
+		String s2 = "2016-02-27-23.bin.8";
+		String s3 = "2016-02-27-23.bin.3";
+		
+		System.out.println(digitStringCompare(s1, s2));
+		System.out.println(digitStringCompare(s1, s1));
+		System.out.println(digitStringCompare(s3, s2));
 	}
 }

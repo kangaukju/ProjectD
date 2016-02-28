@@ -1,10 +1,15 @@
 package kr.co.projecta.matching.user.types;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
-public class Region {
+public class Region 
+	implements Serializable
+{
+	private static final long serialVersionUID = 2131826259603189167L;
+
 	private int id;
 	
 	private int sidoId; // 시/도 번호

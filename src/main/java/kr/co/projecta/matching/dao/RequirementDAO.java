@@ -1,18 +1,24 @@
 package kr.co.projecta.matching.dao;
 
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
 import kr.co.projecta.matching.log.Plogger;
+import kr.co.projecta.matching.user.Offerer;
 import kr.co.projecta.matching.user.Requirement;
 import kr.co.projecta.matching.util.Parameters;
 
 @Component("RequirementDAO")
-public class RequirementDAO extends LoggingDao implements DAO<Requirement> {
-	Plogger log = Plogger.getLogger(this.getClass());
+public class RequirementDAO 
+	extends LoggingDao 
+	implements DAO<Requirement>, Serializable
+{
+	private static final long serialVersionUID = 2930895453767351336L;
+	
+	transient Plogger log = Plogger.getLogger(this.getClass());
 
 	// 매칭 상태를 갱신한다
 	public boolean updateMatchStatus(String requirementId, int matchStatus) {
@@ -47,12 +53,17 @@ public class RequirementDAO extends LoggingDao implements DAO<Requirement> {
 		return this.selectOne("id", requirementId);
 	}
 	
+	//배정번호로 고용주 정보 조회
+	public Offerer selectOfferer(String requirementId) {
+		return (Offerer) super.selectOne("requirement.selectOfferer",
+				Parameters.makeMap("id", requirementId));
+	}
+	
 	// 배정요청 단일 조회
 	public Requirement selectOne(String key, String value) {
-		Map<String, Object> params = new HashMap<>();
-		params.put(key, value);
-
-		Requirement requirement = (Requirement) super.selectOne("requirement.selectOne", params);
+		Requirement requirement = 
+				(Requirement) super.selectOne("requirement.selectOne", 
+						Parameters.makeMap(key, value));
 		return requirement;
 	}
 

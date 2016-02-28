@@ -19,6 +19,40 @@ public class MenuInterceptor
 		return true;
 	}
 
+	private void appendAttribute(
+			HttpServletRequest request,
+			ModelAndView modelAndView,
+			String [] attributes)
+	{ 
+		HttpSession session = request.getSession(true);
+		
+		for (String attr : attributes) {
+			
+			String attrValue = request.getParameter(attr);
+			if (attrValue != null) {
+				if (modelAndView != null) {
+					modelAndView.addObject(attr, attrValue);
+				}
+				if (session != null) {
+					// request parameter로 안들어오는 경우에는 세션에 저장
+					session.setAttribute(attr, attrValue);
+				}
+				return;
+			}
+			
+			if (session != null) {
+				attrValue = (String) session.getAttribute(attr);
+				if (attrValue != null) {
+					// 세션에 존재하는 경우 view로 전달한다.
+					if (modelAndView != null) {
+						modelAndView.addObject(attr, attrValue);
+					}
+					return;
+				}
+			}	
+		}
+	}
+	
 	public void postHandle(
 			HttpServletRequest request, 
 			HttpServletResponse response, 
@@ -30,30 +64,8 @@ public class MenuInterceptor
 			if (request == null) {
 				return;
 			}
-			
-			HttpSession session = request.getSession(true);
-			String menu = request.getParameter("m");
-			if (menu != null) {
-				if (modelAndView != null) {
-					modelAndView.addObject("m", menu);
-				}
-				if (session != null) {
-					// 메뉴 번호가 request parameter로 안들어오는 경우에는 세션에 저장
-					session.setAttribute("m", menu);
-				}
-				return;
-			}
-			
-			if (session != null) {
-				menu = (String) session.getAttribute("m");
-				if (menu != null) {
-					// 세션에 메뉴 번호가 존재하는 경우 view로 전달한다.
-					if (modelAndView != null) {
-						modelAndView.addObject("m", menu);
-					}
-					return;
-				}
-			}
+			appendAttribute(request, modelAndView, 
+					new String[] {"m", "s"});
 		}
 		catch (IllegalStateException e) {
 //			e.printStackTrace();

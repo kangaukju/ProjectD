@@ -13,10 +13,10 @@ function responserValueDef(data, defValue) {
 function responserAction() {
 	responserAction(this.json);
 }
-function responserAction(json) {
+function responserActionAfter(json, after) {
 	var type = responserValue(json.type);
 	var code = responserValue(json.code);
-	var success = responserValueDef(json.success, '/');
+	var success = responserValueDef(json.success, '/home.do');
 	var failure = responserValueDef(json.failure, '/error.do');
 	var error = responserValue(json.error);
 	var data = responserValue(json.data);
@@ -31,6 +31,10 @@ function responserAction(json) {
 		return;
 	}
 	if (type == 'SUCCESS') {
+		if (after != null && after != '' && after != 'undefined') {
+			after();
+			return;
+		}
 		if (success == "nohup") {
 			return;
 		}
@@ -53,12 +57,25 @@ function responserAction(json) {
 		}
 	}
 }
-
+function responserAction(json) {
+	responserActionAfter(json, null);
+}
 function Responser() { }
 
 function Responser(json) {
+	this.ok = false;
+	
+	if (json == null || json == '' || json == 'undefined') {
+		return;
+	}
+	
 	this.json = json;
+		
+	if (this.json.type == 'SUCCESS') {
+		this.ok = true;
+	}
 }
 
 Responser.prototype.action = responserAction;
+Responser.prototype.actionAfter = responserActionAfter;
 var Responser = new Responser();

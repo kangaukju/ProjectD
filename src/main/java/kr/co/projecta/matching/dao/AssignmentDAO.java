@@ -1,5 +1,6 @@
 package kr.co.projecta.matching.dao;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,9 @@ import kr.co.projecta.matching.util.Parameters;
 @Component("AssignmentDAO")
 public class AssignmentDAO 
 	extends LoggingDao 
-	implements DAO<Assignment> 
-{
-	Plogger log = Plogger.getLogger(this.getClass());
+	implements DAO<Assignment>, Serializable 
+{	
+	transient Plogger log = Plogger.getLogger(this.getClass());
 	
 	// 배정가능목록 조회
 	public List<Assignment> selectList(String requirementId) {

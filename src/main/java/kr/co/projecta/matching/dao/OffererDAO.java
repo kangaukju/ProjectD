@@ -11,7 +11,7 @@ import kr.co.projecta.matching.user.Offerer;
 
 @Component("OffererDAO")
 public class OffererDAO extends LoggingDao implements DAO<Offerer> {
-	Plogger log = Plogger.getLogger(this.getClass());
+	transient Plogger log = Plogger.getLogger(this.getClass());
 
 	// 업주 조회
 	public Map selectMap(Map<String, Object> params) {

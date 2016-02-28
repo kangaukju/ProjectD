@@ -1,6 +1,7 @@
 package kr.co.projecta.matching.user;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +15,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import kr.co.projecta.gis.map.SimilarityTable;
 import kr.co.projecta.matching.context.ContextDatabase;
 import kr.co.projecta.matching.exception.NeedNotMatchException;
-import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.match.MatchResult;
 import kr.co.projecta.matching.match.MatchResultScore;
 import kr.co.projecta.matching.user.types.Gender;
@@ -27,8 +27,10 @@ import kr.co.projecta.matching.user.types.WorkMday;
 import kr.co.projecta.matching.user.types.WorkQtime;
 import kr.co.projecta.matching.util.Times;
 
-public abstract class Matcher {
-	Plogger log = Plogger.getLogger(this.getClass());
+public abstract class Matcher 
+	implements Serializable
+{
+	private static final long serialVersionUID = -6908347089818430126L;
 	
 	// Matching Factors
 	MatchStatus matchStatus;

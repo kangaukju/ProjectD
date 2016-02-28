@@ -1,11 +1,16 @@
 package kr.co.projecta.matching.user.types;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import kr.co.projecta.matching.util.Times;
 
-public class WorkQtime extends BitMatch {
-	
+public class WorkQtime 
+	extends BitMatch
+	implements Serializable
+{
+	private static final long serialVersionUID = 4799916769930767954L;
+
 	public WorkQtime() {
 		
 	}
@@ -48,6 +53,9 @@ public class WorkQtime extends BitMatch {
 				}
 				sb.append(QtimeBit.valueOf(b));
 			}
+		}
+		if (sb == null) {
+			return "";
 		}
 		return sb.toString();
 	}

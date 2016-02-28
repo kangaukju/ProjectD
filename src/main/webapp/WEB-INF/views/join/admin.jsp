@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
@@ -57,10 +56,12 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>관리자 회원가입</h3>
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="loginme">관리자 추가</div>
+		</div>
 		
-		<form method="post" action="#" id="form">
+		<form method="post" id="form">
 			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
 			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
 			<table class="data-table">
@@ -95,7 +96,7 @@ $(document).ready(function() {
 					<tr>
 						<th></th>
 						<td>
-							<input type="button" id="join" value="가입하기" class="bigbutton">
+							<input type="button" id="join" value="관리자 등록" class="bigbutton">
 						</td>
 					</tr>
 				</tbody>

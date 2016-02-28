@@ -1,11 +1,16 @@
 package kr.co.projecta.matching.user.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.projecta.matching.context.ContextSchemable;
 
-public class WorkAbility implements ContextSchemable {
+public class WorkAbility 
+	implements ContextSchemable, Serializable 
+{
+	private static final long serialVersionUID = 3318446726217851160L;
+	
 	public static final int ASSIST = 2;
 	public static final int KITCHEN = 1;
 	public static final int SERVING = 0;

@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import kr.co.projecta.matching.user.Seeker;
-
 public class Plogger {
 	Logger log;
 	Map<String, Method> methodCache = new HashMap<String, Method>();
@@ -135,31 +133,5 @@ public class Plogger {
 			}
 		}
 		throw new RuntimeException("Could not find Log4j method - "+name);
-	}
-	
-	
-	
-	
-	public static void main(String [] args) {
-		Plogger log = Plogger.getLogger(Plogger.class);
-		
-		log.i("11111"+"22222222"+3);
-		log.e("11111"+"22222222"+3);
-		log.t("11111"+"22222222"+3);
-		log.d("11111"+"22222222"+3);
-		log.w("11111"+"22222222"+3);
-		log.f("11111"+"22222222"+3);
-		
-		
-		Seeker s1 = new Seeker(); s1.setName("kaka");
-		Seeker s2 = new Seeker(); s2.setName("kinow");
-		Seeker s3 = new Seeker(); s3.setName("mama");
-		Seeker s4 = new Seeker(); s4.setName("kaka");
-		
-		log.d(Seeker.class, s1, s4, "find: "+s4);
-		log.d(Seeker.class, s1, s4, "find: "+s4);
-		log.d(Seeker.class, s1, s4, "find: "+s4);
-		
-		System.out.println("end");
 	}
 }

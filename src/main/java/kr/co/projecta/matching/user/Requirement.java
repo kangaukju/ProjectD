@@ -1,5 +1,6 @@
 package kr.co.projecta.matching.user;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +8,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Requirement extends Matcher {
+public class Requirement 
+	extends Matcher
+	implements Serializable
+{
+	private static final long serialVersionUID = 5549761580009237777L;
 	
 	String id;
 	String offererId;

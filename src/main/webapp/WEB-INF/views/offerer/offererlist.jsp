@@ -2,44 +2,19 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
-$(document).ready(function() {	
-	var myUrl = "/offerer/offererlist.do";
-	
-	setValueDefault($("#line"), '${line}', 10);
+var myUrl = "/offerer/offererlist.do";
+$(document).ready(function() {
 	setValue($("#id"), '${id}');
 	setValue($("#name"), '${name}');
-	setValue($("#offererName"), '${offererName}');	
+	setValue($("#offererName"), '${offererName}');
 	
-	$("#search").click(function() {
-		var form = $("#form");
-		$("#page").val(1);
-		form.action = myUrl;
-		form.submit();
-	});
-	
-	$('#paging').paging({
-		current : '${page}',
-		max : '${navCount}',
-		onclick : function(e, page) {
-			var form = $("#form");
-			$("#page").val(page);
-			form.action = myUrl;
-			form.submit();
-		}
-	});
-	
-	$("#line").change(function(){
-		$("#search").trigger('click');
-	});
-	
-	var popupUrl = "/offerer/detail.do";
 	$(".data-table a").on("click", function() {
-		var width = 600;
-		var height = 300;		
+		var popupUrl = "/offerer/detail.do";
+		var width = 650;
+		var height = 500;		
 		var x = (screen.availWidth - width) / 2;
 		var y = (screen.availHeight - height) / 2;
 		var id = $(this).text();
@@ -52,15 +27,17 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>구직자 조회</h3>
-		<form method="post" action="#" id="form">
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="people4">고용주조회</div>
+		</div>
+		<form method="post" id="form">
 			<table class="data-table">
 				<tbody>
 					<tr>
-						<th>아이디</th>
+						<th>고용주 ID</th>
 						<td><input type="text" id="id" name="id" class="text" ></td>
-						<th>이름</th>
+						<th>고용주 이름</th>
 						<td><input type="text" id="name" name="name" class="text" ></td>
 						<th>상호</th>
 						<td><input type="text" id="offererName" name="offererName" class="text" ></td>
@@ -71,8 +48,8 @@ $(document).ready(function() {
 			</table>
 			<table class="data-table">
 				<tbody>
-					<th>아이디</th>
-					<th>이름</th>
+					<th>고용주 ID</th>
+					<th>고용주 이름</th>
 					<th>상호</th>
 					<th>가입날짜</th>
 					<th>사업자번호</th>

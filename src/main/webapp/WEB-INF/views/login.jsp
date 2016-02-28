@@ -74,81 +74,34 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="menu.jspf" %>
 	
-	<div class="main">
-		<div class="left" id="main-content">
-			<div class="loing_box">
-				<h2 class="label label-green">구직자 로그인</h2>
-				<form method="post" id="seekerForm">
-					<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
-					<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
-					<input type="hidden" name="seekerId" id="seekerId">
-					<input type="hidden" name="seekerPassword" id="seekerPassword">
-					<table>
-						<tr>
-							<th>아이디</th>
-							<td><input type="text" id="myseekerId" class="text w150"></td>
-							<td rowspan="2">
-								<input type="button" id="seekerLogin" value="로그인" class="bigbutton">
-							</td>
-						</tr>
-						<tr>
-							<th>비밀번호</th>
-							<td><input type="password" id="myseekerPassword" class="text w150"></td>
-						</tr>
-					</table>
-				</form>
-			</div>
-			
-			<div class="loing_box">
-				<h2 class="label label-orange">업체 로그인</h2>
-				<form method="post" id="offererForm">
-					<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
-					<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
-					<input type="hidden" name="offererId" id="offererId">
-					<input type="hidden" name="offererPassword" id="offererPassword">
-					<table>
-						<tr>
-							<th>아이디</th>
-							<td><input type="text" id="myoffererId" class="text w150"></td>
-							<td rowspan="2">
-								<input type="button" id="offererLogin" value="로그인" class="bigbutton">
-							</td>
-						</tr>
-						<tr>
-							<th>비밀번호</th>
-							<td><input type="password" id="myoffererPassword" class="text w150"></td>
-						</tr>
-					</table>
-				</form>
-			</div>
-			
-			<div class="loing_box">			
-				<h2 class="label label-blue">관리자 로그인</h2>
-				<form method="post" id="adminForm">
-					<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
-					<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
-					<input type="hidden" name="adminId" id="adminId">
-					<input type="hidden" name="adminPassword" id="adminPassword">
-					<table>
-						<tr>
-							<th>아이디</th>
-							<td><input type="text" id="myadminId" class="text w150" value="projecta"></td>
-							<td rowspan="2">
-								<input type="button" id="adminLogin" value="로그인" class="bigbutton">
-							</td>
-						</tr>
-						<tr>
-							<th>비밀번호</th>
-							<td><input type="password" id="myadminPassword" class="text w150" value="qwe123"></td>
-						</tr>
-					</table>
-				</form>
-			</div>
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="people5">로그인</div>
 		</div>
-		<!-- 
-		<div class="right sidebar" id="sidebar"></div>		
-		 -->
-		 <div class="clearer">&nbsp;</div>
+		<table>
+			<tr>
+				<td style="text-align: center; padding-left: 150px;">
+					<a href="/login/seeker.do" style="text-decoration: none;">
+						<img class="login" src="/img/seeker.png"><br>
+						<span style="font: bold 2.5em sans-serif;">일반회원</span>
+					</a>
+				</td>
+				<td></td>
+				<td style="text-align: center; padding-right: 150px;">
+					<a href="/login/offerer.do" style="text-decoration: none;">
+						<img  class="login" src="/img/offerer.png"><br>
+						<span style="font: bold 2.5em sans-serif;">고용주</span>
+					</a>
+				</td>
+				<td></td>
+				<td style="text-align: center; padding-right: 150px;">
+					<a href="/login/admin.do" style="text-decoration: none;">
+						<img  class="login" src="/img/offerer.png"><br>
+						<span style="font: bold 2.5em sans-serif;">관리자</span>
+					</a>
+				</td>
+			</tr>
+		</table>
 	</div>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>

@@ -1,5 +1,6 @@
 package kr.co.projecta.matching.user;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +13,10 @@ import kr.co.projecta.matching.util.Times;
 
 public class Seeker  
 	extends Matcher 
-	implements Identity
-{	
+	implements Identity, Serializable
+{
+	private static final long serialVersionUID = -6474783132746651083L;
+	
 	String id;
 	String name;
 	String password;

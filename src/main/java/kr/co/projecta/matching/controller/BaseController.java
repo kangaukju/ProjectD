@@ -219,10 +219,24 @@ abstract public class BaseController {
 			HttpServletRequest request,
 			DAO<?> dao) 
 	{
+		return this.pagingData(mv, params, request, dao, "list");
+	}
+	
+	protected ModelAndView pagingData(
+			ModelAndView mv, 
+			RequestMap params,
+			HttpServletRequest request,
+			DAO<?> dao,
+			String listname) 
+	{
 		long page = Long.valueOf(parameter(request, "page", 1));
 		long line = Long.valueOf(parameter(request, "line", DEFAULT_LINE));
 		long navCount = 0;
 		long count = 0;
+		
+		if (listname == null) {
+			listname = "list";
+		}
 		
 		params.put("start", (page-1) * line);
 		params.put("end", line);
@@ -231,7 +245,7 @@ abstract public class BaseController {
 		navCount = (count % line == 0) ? count/line : count/line+1;
 		mv.addObject("navCount", navCount);
 		mv.addObject("count", count);
-		mv.addObject("list", dao.selectList(params.getMap()));
+		mv.addObject(listname, dao.selectList(params.getMap()));
 		mv.addObject("line", line);
 		mv.addObject("page", page);
 		mv.addAllObjects(params.getMap());
@@ -252,9 +266,7 @@ abstract public class BaseController {
 			RequestMap params,
 			HttpServletRequest request,
 			PageDAO<?> dao) 
-	{
-		debugParameters(request);
-		
+	{	
 		long page = Long.valueOf(parameter(request, "page", 1));
 		long line = Long.valueOf(parameter(request, "line", DEFAULT_LINE));
 		long navCount = 0;

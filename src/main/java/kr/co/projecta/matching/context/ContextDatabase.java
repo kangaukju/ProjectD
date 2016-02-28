@@ -22,7 +22,7 @@ import kr.co.projecta.matching.user.types.Region;
 
 @Component("ContextDatabase")
 public class ContextDatabase {
-	static Plogger log = Plogger.getLogger(ContextDatabase.class);
+	transient static Plogger log = Plogger.getLogger(ContextDatabase.class);
 	
 	public static final String pakagename = "kr.co.projecta";
 	

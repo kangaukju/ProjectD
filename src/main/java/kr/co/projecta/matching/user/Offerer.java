@@ -1,5 +1,6 @@
 package kr.co.projecta.matching.user;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -7,8 +8,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Offerer 
-	implements Identity
+	implements Identity, Serializable
 {
+	private static final long serialVersionUID = 2818711517954696363L;
+	
 	String id;
 	String name;
 	String password;

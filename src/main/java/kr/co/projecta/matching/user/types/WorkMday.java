@@ -1,6 +1,12 @@
 package kr.co.projecta.matching.user.types;
 
-public class WorkMday extends BitMatch {
+import java.io.Serializable;
+
+public class WorkMday 
+	extends BitMatch
+	implements Serializable
+{
+	private static final long serialVersionUID = -6334234527738582927L;
 
 	public WorkMday() {
 	}
@@ -51,6 +57,9 @@ public class WorkMday extends BitMatch {
 				}
 				sb.append(MdayBit.valueOf(b));
 			}
+		}
+		if (sb == null) {
+			return "";
 		}
 		return sb.toString();
 	}

@@ -14,13 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.projecta.matching.controller.BaseController.Callback;
 import kr.co.projecta.matching.log.Plogger;
-import kr.co.projecta.matching.popup.Popuper;
 import kr.co.projecta.matching.security.RSA;
 import kr.co.projecta.matching.user.Identity;
+import kr.co.projecta.matching.user.Offerer;
 import kr.co.projecta.matching.user.Seeker;
-import kr.co.projecta.matching.util.Numbers;
 
 @Controller
 public class CommonController extends BaseController {
@@ -104,6 +102,31 @@ public class CommonController extends BaseController {
 		return mv;
 	}
 	
+	@RequestMapping(value="/login/seeker.do")
+	public ModelAndView loginSeeker(
+			ModelAndView mv, 
+			HttpServletRequest request,
+			HttpSession session) 
+	{
+		return login(mv, request, session);
+	}
+	@RequestMapping(value="/login/offerer.do")
+	public ModelAndView loginOfferer(
+			ModelAndView mv, 
+			HttpServletRequest request,
+			HttpSession session) 
+	{
+		return login(mv, request, session);
+	}
+	@RequestMapping(value="/login/admin.do")
+	public ModelAndView loginAdmin(
+			ModelAndView mv, 
+			HttpServletRequest request,
+			HttpSession session) 
+	{
+		return login(mv, request, session);
+	}
+	
 	/**
 	 * 로그아웃
 	 * @param request
@@ -144,16 +167,41 @@ public class CommonController extends BaseController {
 	@RequestMapping(value="/check_dup_seeker.do")
 	@ResponseBody
 	public Responser seekerCheckDupSeeker(
-			@RequestParam(value="id") String id,
+			@RequestParam(value="id") String seekerId,
 			ModelAndView mv, 
 			HttpServletRequest request)
 	{
 		return proxy(new Callback() {
 			public void tryCatchRun() throws Exception {
-				Seeker seeker = seekerDAO.selectOne("id", id);
+				Seeker seeker = seekerDAO.selectOne(seekerId);
 				if (seeker != null && 
-					seeker.getId().equals(id)) {
-					throw new DuplicateKeyException("seeker ["+id+"]id duplicated");
+					seeker.getId().equals(seekerId)) {
+					throw new DuplicateKeyException("seeker ["+seekerId+"]id duplicated");
+				}
+			}
+		});
+	}
+	
+	/**
+	 * 고용주 아이디 중복 검사
+	 * @param id
+	 * @param mv
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/check_dup_offerer.do")
+	@ResponseBody
+	public Responser seekerCheckDupOfferer(
+			@RequestParam(value="id") String offererId,
+			ModelAndView mv, 
+			HttpServletRequest request)
+	{
+		return proxy(new Callback() {
+			public void tryCatchRun() throws Exception {
+				Offerer offerer = offererDAO.selectOne(offererId);
+				if (offerer != null && 
+					offerer.getId().equals(offererId)) {
+					throw new DuplicateKeyException("offerer ["+offererId+"]id duplicated");
 				}
 			}
 		});

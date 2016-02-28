@@ -1,10 +1,16 @@
 package kr.co.projecta.matching.user;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class Assignment {
+public class Assignment 
+	implements Serializable
+{
+	private static final long serialVersionUID = 7329525393587583621L;
+	
 	public static final int CANDIDATE = 0;
 	public static final int CONFIRM = 1;
 	

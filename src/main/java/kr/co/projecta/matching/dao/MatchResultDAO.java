@@ -5,7 +5,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -13,17 +12,26 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 import kr.co.projecta.matching.log.Plogger;
+import kr.co.projecta.matching.util.Strings;
 
 @Component("MatchResultDAO")
 public class MatchResultDAO implements DAO<File> {
-	Plogger log = Plogger.getLogger(this.getClass());
+	transient Plogger log = Plogger.getLogger(this.getClass());
 	
 	@Deprecated
 	public Map selectMap(Map<String, Object> params) {
 		return null;
 	}
 
+	public long selectCount(Map<String, Object> params) {
+		return this.select(params, true).size();
+	}
+	
 	public List<File> selectList(Map<String, Object> params) {
+		return this.select(params, false);
+	}
+
+	private List<File> select(Map<String, Object> params, boolean onlyCount) {
 		String database = (String) params.get("database");
 		String filter = (String) params.get("filter");
 		Long lstart = (Long) params.get("start");		
@@ -61,48 +69,47 @@ public class MatchResultDAO implements DAO<File> {
 			return new ArrayList<File>();
 		}
 		
+		// 파일 갯수
+		if (onlyCount) {
+			return new ArrayList<File>(Arrays.asList(resultFiles));
+		}
+		
 		Arrays.sort(resultFiles, new Comparator<File>() {
 			public int compare(File f1, File f2) {
-				return f2.compareTo(f1);
+				return Strings.digitStringCompare(f2.getName(), f1.getName());
 			}
 		});		
 		pages = resultFiles;
-/*		
-		System.out.println(start+" ~ "+end);
+		
+		/*
 		for (File f : pages) {
-			System.out.println("--> "+f.getName());
+			System.out.println("["+f.getName()+"]");
 		}
-*/		
+		*/
+		
 		// paging 처리
-		int size = end - start + 1;
-		if (pages.length < size) {
-			size = pages.length;
+		int end2 = start + end;
+		if (pages.length < end2) {
+			end2 = pages.length;
 		}
-//			System.out.println("size: "+size);
+		int size = end2 - start;
+		/*
+		System.out.println(String.format(
+				"start:%d ~ end:%d, size:%d, pages:%d", 
+				start, end2, size, pages.length));
+		*/
 		pages = new File[size];
 		System.arraycopy(resultFiles, start, pages, 0, size);
-		
-		List<File> result = new ArrayList<File>(Arrays.asList(pages));
-		List<File> kornameResult = new ArrayList<File>();
-		for (File file : result) {
-			String filename = file.getName();
-			
-		}
-		
-		return result;
+		return new ArrayList<File>(Arrays.asList(pages));
 	}
 	
 	@Deprecated
 	public File selectOne(String key, String value) {
 		return null;
 	}
-
-	public long selectCount(Map<String, Object> params) {
-		return this.selectList(params).size();
-	}
 	
+	/*
 	public static void main(String [] args) {
-		/*
 		MatchResultDAO dao = new MatchResultDAO();
 		String dir = "/media/kinow/1TB_D/workspace/pa/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/pa/matching/kinow/";
 		Map<String, Object> params = new HashMap<>();
@@ -117,9 +124,8 @@ public class MatchResultDAO implements DAO<File> {
 		for (File f : files) {
 			System.out.println(f.getName());
 		}
-		*/
 		
 		String file = "2016_02_19_16_40_31.json";
 	}
-	
+	*/
 }

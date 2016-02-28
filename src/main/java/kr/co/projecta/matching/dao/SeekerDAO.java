@@ -10,8 +10,11 @@ import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.user.Seeker;
 
 @Component("SeekerDAO")
-public class SeekerDAO extends LoggingDao implements DAO<Seeker> {
-	Plogger log = Plogger.getLogger(this.getClass());
+public class SeekerDAO 
+	extends LoggingDao 
+	implements DAO<Seeker> 
+{	
+	transient Plogger log = Plogger.getLogger(this.getClass());
 
 	// 구직자 조회
 	public Map selectMap(Map<String, Object> params) {
@@ -48,6 +51,10 @@ public class SeekerDAO extends LoggingDao implements DAO<Seeker> {
 		
 		Seeker seeker = (Seeker) super.selectOne("seeker.selectOne", params);
 		return seeker;
+	}
+	
+	public Seeker selectOne(String seekerId) {
+		return this.selectOne("id", seekerId);
 	}
 	
 	// 구직자 회원가입

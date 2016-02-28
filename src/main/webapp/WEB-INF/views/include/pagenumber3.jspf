@@ -1,0 +1,61 @@
+<%@ page pageEncoding="utf-8"%>
+<input type="hidden" name="page" id="page">
+</div>
+<c:if test="${navCount > 0}" >
+<table>
+	<tr>
+		<td>
+			<div id="paging" style="margin: auto; border: 3px solid #73AD21;">
+			</div>
+		</td>
+		<td>
+			<select id="line" name="line">
+				<option value="1">1</option>
+				<option value="5">5</option>
+				<option value="10">10</option>
+				<option value="30">30</option>
+				<option value="50">50</option>
+				<option value="100">100</option>
+			</select>
+		</td>
+	</tr>
+</table>
+</c:if>
+<script type="text/javascript" src="/js/jquery.paginate.js"></script>
+<link rel="stylesheet" type="text/css" href="/css/style.css" media="screen"/>
+<script type="text/javascript">
+$(function() {
+	setValueDefault($("#line"), '${line}', 10);
+	$("#search").click(function() {
+		var form = $("#form");
+		$("#page").val(1);
+		form.action = myUrl;
+		form.submit();
+	});
+	$("#line").change(function(){
+		$("#search").trigger('click');
+	});
+	if ('${navCount}' > 0) {
+		$("#paging").paginate({
+			count: '${navCount}',
+			start: '${page}',
+			display: 12,
+			border					: false,
+			text_color  			: '#000000',
+			background_color    	: 'none',	
+			text_hover_color  		: '#2573AF',
+			background_hover_color	: 'none', 
+			rotate: false,
+			images: true,
+			mouse: 'press',
+			onChange: function(page){
+				var form = $("#form");
+				$("#page").val(page);
+				form.action = myUrl;
+				form.submit();
+				return true;
+			}
+		});
+	}
+});
+</script>

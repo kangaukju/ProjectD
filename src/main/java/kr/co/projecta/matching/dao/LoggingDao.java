@@ -10,7 +10,7 @@ import kr.co.projecta.matching.log.Plogger;
 
 public class LoggingDao {
 	
-	Plogger log = Plogger.getLogger(this.getClass());
+	transient Plogger log = Plogger.getLogger(this.getClass());
 	
 	@Autowired
 	SqlSessionTemplate sqlSession;

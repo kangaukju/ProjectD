@@ -1,11 +1,16 @@
 package kr.co.projecta.matching.user.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.projecta.matching.context.ContextSchemable;
 
-public class Nation implements ContextSchemable {
+public class Nation 
+	implements ContextSchemable, Serializable
+{
+	private static final long serialVersionUID = -8412074443345824754L;
+	
 	public static final int ETC = 2;
 	public static final int CHA = 1;
 	public static final int KOR = 0;

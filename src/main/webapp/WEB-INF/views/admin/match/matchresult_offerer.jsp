@@ -20,34 +20,10 @@ function makeTR() {
     }
 	return html+"</tr>";
 }
+var myUrl = "/admin/match/matchresult_offerer.do";
 $(document).ready(function() {
-	var myUrl = "/admin/match/matchresult_offerer.do";
-	
-	setValueDefault($("#line"), '${line}', 10);
 	setValue($("#id"), '${id}');
 	setValue($("#name"), '${name}');
-	
-	$("#search").click(function() {
-		var form = $("#form");
-		$("#page").val(1);
-		form.action = myUrl;
-		form.submit();
-	});
-	
-	$('#paging').paging({
-		current : '${page}',
-		max : '${navCount}',
-		onclick : function(e, page) {
-			var form = $("#form");
-			$("#page").val(page);
-			form.action = myUrl;
-			form.submit();
-		}
-	});
-	
-	$("#line").change(function(){
-		$("#search").trigger('click');
-	});
 	
 	$(".data-table a").on("click", function() {
 		var id = $("#id").val();
@@ -141,7 +117,7 @@ $(document).ready(function() {
 <body>
 <div id="splash" style="float: left;">
 	<h3>구직자 조회</h3>
-	<form method="post" action="#" id="form">
+	<form method="post" id="form">
 		<input type="hidden" id="id" value="${param.id}">
 		<table class="data-table">
 			<tbody>

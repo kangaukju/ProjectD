@@ -11,6 +11,18 @@ $(document).ready(function() {
 		}
 	}
 	$('#'+m).addClass("current-tab");
+	
+	// check sub menu parameter
+	if (m == 'm8') {
+		var s = getParameter("s");
+		if (s == undefined) {
+			s = "${s}";
+			if (s == "") {
+				s = "s1";
+			}
+		}
+		$('#'+s).addClass("current-tab");
+	}	
 });
 </script>
 
@@ -67,7 +79,7 @@ $(document).ready(function() {
 				</c:choose>
 				<c:choose>
 					<c:when test="${sessionScope.admin != null}">
-						<li id="m8"><a href="/admin/admin.do?m=m8">관리</a></li>
+						<li id="m8"><a href="/admin/select/seekerlist.do?m=m8&s=s1">관리</a></li>
 					</c:when>
 				</c:choose>
 			</ul>
@@ -75,19 +87,20 @@ $(document).ready(function() {
 		</div>
 		<div class="clearer">&nbsp;</div>
 	</div>
-<!-- 
-	<div class="navigation" id="sub-nav">
-		<ul class="tabbed">
-			<li class="current-tab"><a href="index.html">Template Info</a></li>
-			<li><a href="style-demo.html">Style Demo</a></li>
-			<li><a href="comments.html">Comments</a></li>
-			<li><a href="archives.html">Archives</a></li>
-			<li><a href="no-subnavigation.html">No Subnavigation</a></li>
-			<li><a href="left-sidebar.html">Left Sidebar</a></li>
-			<li><a href="single-column.html">Single Column</a></li>
-			<li><a href="empty-page.html">Empty Page</a></li>
-		</ul>
-		<div class="clearer">&nbsp;</div>
-	</div>
- -->
+
+	<c:if test="${sessionScope.admin != null && m == 'm8'}">
+		<div class="navigation" id="sub-nav">
+			<ul class="tabbed">
+				<li id="s1"><a href="/admin/select/seekerlist.do?m=m8&s=s1">회원조회</a></li>
+				<li id="s2"><a href="/offerer/offererlist.do?m=m8&s=s2">고용주조회</a></li>
+				<li id="s3"><a href="/admin/match/offererlist.do?m=m8&s=s3">수동배정</a></li>
+				<li id="s4"><a href="/admin/match/automatch.do?m=m8&s=s4">자동배정</a></li>
+				<li id="s5"><a href="/admin/select/requirementlist.do?m=m8&s=s5">배정현황</a></li>
+				<!--<li id="s6"><a href="/admin/match/matchresult.do?m=m8&s=s6">업체별 배정이력</a></li>-->
+				<li id="s7"><a href="/admin/match/autoMatchresult.do?m=m8&s=s7">자동배정이력</a></li>
+				<!--<li id="s8"><a href="/admin/match/matchHistory.do?m=m8&s=s8">배정로그</a></li> -->
+			</ul>
+			<div class="clearer">&nbsp;</div>
+		</div>
+	</c:if>
 </div>

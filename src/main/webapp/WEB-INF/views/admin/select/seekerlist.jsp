@@ -2,40 +2,14 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
+var myUrl = "/admin/select/seekerlist.do";
 $(document).ready(function() {
-	
-	var myUrl = "/admin/select/seekerlist.do";
-	
-	setValue($("#line"), '${line}');
 	setValue($("#workAbility"), '${workAbility}');
 	setValue($("#id"), '${id}');
 	setValue($("#name"), '${name}');
-	
-	$("#search").click(function() {
-		var form = $("#form");
-		$("#page").val(1);
-		form.action = myUrl;
-		form.submit();
-	});
-		
-	$('#paging').paging({
-		current : '${page}',
-		max : '${navCount}',
-		onclick : function(e, page) {
-			var form = $("#form");
-			$("#page").val(page);
-			form.action = myUrl;
-			form.submit();
-		}
-	});
-	
-	$("#line").change(function(){
-		$("#search").trigger('click');
-	});
 });
 </script>
 </head>
@@ -43,14 +17,16 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="../../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>구직자 조회</h3>
-		<form method="post" action="#" id="form">
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="people2">회원조회</div>
+		</div>
+		<form method="post" id="form">
 			<table class="data-table">
 				<tr>
 					<th>전화번호</th>
 					<td><input type="text" id="id" name="id" class="text" ></td>
-					<th>이름</th>
+					<th>회원이름</th>
 					<td><input type="text" id="name" name="name" class="text" ></td>
 					<th>가능업무</th>
 					<td>
@@ -61,13 +37,15 @@ $(document).ready(function() {
 						</c:forEach>
 						</select>
 					<td>
+					<th>지역</th>
+					<td></td>
 					<th></th>
 					<td><input type="button" id="search" value="검색" class="smallbutton"></td>
 				</tr>
 			</table>
 			<table class="data-table">
 				<th>전화번호</th>
-				<th>이름</th>
+				<th>회원이름</th>
 				<th>생년월일</th>
 				<th>성별</th>
 				<th>국가</th>
@@ -78,10 +56,6 @@ $(document).ready(function() {
 				<th>근무요일</th>
 				<th>근무시간</th>
 				<th>본인인증</th>
-				<!-- 
-				<th>결제날짜</th>
-				<th>만료날짜</th>
-				-->
 				<c:forEach items="${list}" var="s">
 				<tr>
 					<td><c:out value="${s.id}"/></td>
@@ -96,10 +70,6 @@ $(document).ready(function() {
 					<td>${fn:replace(s.workMday, '\"', '')}</td>						
 					<td>${fn:replace(s.workQtime, '\"', '')}</td>
 					<td><c:out value="${s.licenseFile}"/></td>
-					<!-- 
-					<td><c:out value="${s.payDate}"></c:out></td>
-					<td><c:out value="${s.eosDate}"></c:out></td>
-					-->
 				</tr>
 				</c:forEach>
 			</table>

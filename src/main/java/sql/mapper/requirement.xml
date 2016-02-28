@@ -105,6 +105,32 @@
 			ORDER BY workDate ASC
 	</select>
 	
+	<select id="selectOfferer" 
+			parameterType="hashmap"
+			resultType="kr.co.projecta.matching.user.Offerer">
+			SELECT 
+				o.id id,
+				o.name name,
+				password,
+				offererName,
+				o.registerDate registerDate,
+				offererNumber,
+				offererBrief,
+				phone,
+				cellPhone,
+				sidoId,
+				sigunguId,
+				postcode,
+				address1,
+				address2,
+				mapFilename
+			FROM
+				offerer o, requirement r
+			WHERE 
+				o.id = r.offererId AND
+				r.id = #{id}
+	</select>
+	
 	<select id="select" 
 			parameterType="hashmap"
 			resultType="kr.co.projecta.matching.user.Requirement">

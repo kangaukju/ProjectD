@@ -1,12 +1,17 @@
 package kr.co.projecta.matching.user.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.projecta.matching.context.ContextSchemable;
 
 
-public class Gender implements ContextSchemable {
+public class Gender 
+	implements ContextSchemable, Serializable 
+{
+	private static final long serialVersionUID = -7108734017581481233L;
+	
 	public static final int FEMALE = 0;
 	public static final int MALE = 1;
 	

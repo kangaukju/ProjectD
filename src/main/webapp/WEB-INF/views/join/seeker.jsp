@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
@@ -31,13 +30,17 @@ $(document).ready(function() {
 	
 	$("#join").click(function() {
 		var v = new Validator();
-		v.add($("#myid"), "전화번호를 꼭 입력하세요.");
+		v.add($("#myid1"), "전화번호를 꼭 입력하세요.");
+		v.add($("#myid2"), "전화번호를 꼭 입력하세요.");
+		v.add($("#myid3"), "전화번호를 꼭 입력하세요.");
 		v.add($("#myname"), "이름을 꼭 입력하세요.");
 		v.add($("#years"), "태어난 해를 꼭 입력하세요.");
 		v.add($("#region1"), "업무지역1을 꼭 입력하세요.");
 		v.add($("#region2"), "업무지역2을 꼭 입력하세요.");
 		v.add($("#region3"), "업무지역3을 꼭 입력하세요.");		
 		if (!v.isValid()) return;
+		
+		$("#myid").val($("#myid1").val()+"-"+$("#myid2").val()+"-"+$("#myid3").val());
 		
 		if (!isPhoneNumber($("#myid").val())) {
 			alert("전화번호 형식이 올바르지 않습니다.");
@@ -108,18 +111,32 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>개인 회원가입</h3>
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="loginme">일반회원 가입</div>
+		</div>
 		
-		<form method="post" action="#" id="form">
+		<form method="post" id="form">
 			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
 			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
+			<input type="hidden" id="id" name="id" />
+			<input type="hidden" id="myid" name="myid" />
 			<table class="data-table">
 				<tr>
 					<th>전화번호</th>
 					<td>
-						<input type="hidden" id="id" name="id" /> 
-						<input type="text" id="myid" class="text" placeholder="010-1234-5678" />
+						<select id="myid1" class="w60">
+							<option value="010">010</option>
+							<option value="011">011</option>
+							<option value="016">016</option>
+							<option value="017">017</option>
+							<option value="018">018</option>
+							<option value="019">019</option>
+						</select>
+						-
+						<input type="text" id="myid2" class="text w40"/>
+						-
+						<input type="text" id="myid3" class="text w40"/>												
 					</td>
 				</tr>
 				<tr>
@@ -264,7 +281,7 @@ $(document).ready(function() {
 				<tr>
 					<th></th>
 					<td>
-						<input type="button" id="join" value="가입하기" class="bigbutton">
+						<input type="button" id="join" value="회원가입" class="bigbutton">
 					</td>
 				</tr>
 			</table>

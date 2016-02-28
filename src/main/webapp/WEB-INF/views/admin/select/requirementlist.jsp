@@ -2,45 +2,20 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
+var myUrl = "/admin/select/requirementlist.do"
 $(document).ready(function() {
-	
-	var myUrl = "/admin/select/requirementlist.do"
-	setValue($("#line"), '${line}');
 	setValue($("#workAbility"), '${workAbility}');
 	setValue($("#offererName"), '${offererName}');
 	setValue($("#startTime"), '${startTime}');
 	setValue($("#endTime"), '${endTime}');
 	
-	$("#search").click(function() {
-		var form = $("#form");
-		$("#page").val(1);
-		form.action = myUrl;
-		form.submit();
-	});
-	
-	$('#paging').paging({
-		current : '${page}',
-		max : '${navCount}',
-		onclick : function(e, page) {
-			var form = $("#form");
-			$("#page").val(page);
-			form.action = myUrl;
-			form.submit();
-		}
-	});
-	
-	$("#line").change(function(){
-		$("#search").trigger('click');
-	});
-	
 	$(".offerer a").on("click", function() {
 		var popupUrl = "/offerer/detail.do";
-		var width = 700;
-		var height = 300;		
+		var width = 650;
+		var height = 500;
 		var x = (screen.availWidth - width) / 2;
 		var y = (screen.availHeight - height) / 2;
 		var offererId = $(this).children(':input').val();
@@ -49,8 +24,8 @@ $(document).ready(function() {
 	
 	$(".person .smallbutton").on("click", function() {
 		var popupUrl = "/admin/match/seekerlist.do";
-		var width = 850;
-		var height = 300;		
+		var width = 950;
+		var height = 500;		
 		var x = (screen.availWidth - width) / 2;
 		var y = (screen.availHeight - height) / 2;
 		var requirementId = $(this).attr("id")
@@ -95,9 +70,11 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="../../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>배정목록</h3>
-		<form method="post" action="#" id="form">
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="chart3">배정현황</div>
+		</div>
+		<form method="post" id="form">
 			<table class="data-table">
 				<tr>
 					<th>상호</th>
@@ -147,6 +124,11 @@ $(document).ready(function() {
 				<th>배정내역</th>
 				<th>수동배정</th>
 				
+				<c:if test="${fn:length(list) == 0 }">
+				<tr>
+					<td colspan="14" style="text-align: center;">배정된 결과가 없습니다.</td>
+				</tr>
+				</c:if>
 				<c:forEach items="${list}" var="r">
 				<tr>
 					<td><c:out value="${r.id}"/></td>						

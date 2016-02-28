@@ -1,11 +1,16 @@
 package kr.co.projecta.matching.user.types;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import kr.co.projecta.matching.context.ContextSchemable;
 
-public class MatchStatus implements ContextSchemable {
+public class MatchStatus 
+	implements ContextSchemable, Serializable 
+{
+	private static final long serialVersionUID = 7173989424214014325L;
+	
 	public static final int INCOMPLETION = 0;	
 	public static final int COMPLETION = 1;
 	

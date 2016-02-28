@@ -12,7 +12,7 @@ import kr.co.projecta.matching.log.Plogger;
 
 public class Times {
 	
-	static Plogger log = Plogger.getLogger(Times.class);
+	transient static Plogger log = Plogger.getLogger(Times.class);
 	
 	static SimpleDateFormat yyyy_format = new SimpleDateFormat("yyyy");
 	static SimpleDateFormat yyyy_mm_format = new SimpleDateFormat("yyyy-MM");

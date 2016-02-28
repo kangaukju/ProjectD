@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <script language="JavaScript">
 $(document).ready(function() {
@@ -10,8 +9,12 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-<div>
-	<form method="post" action="#" id="form">
+<div id="splash" class="subline" style="padding-top: 0px; margin-top: 0xp;">
+	<div class="sub-nav-img">
+		<div class="people5">${offerer.offererName} (${offerer.name})</div>
+	</div>
+	
+	<form method="post" id="form">
 		<table class="data-table">
 			<tr>
 				<td>
@@ -71,9 +74,7 @@ $(document).ready(function() {
 				</td>
 			</tr>
 		</table>
-		<%@ include file="/WEB-INF/views/include/popup_close.jspf" %>
 	</form>
 </div>
-<%@ include file="/WEB-INF/views/include/footer.jspf" %>
 </body>
 </html>

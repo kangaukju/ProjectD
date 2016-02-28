@@ -7,41 +7,34 @@
 <body>
 <div id="site-wrapper">
 	<%@ include file="menu.jspf" %>
-	<div>
-		<div class="col3 left">
-			<table>
-				<tr>
-					<td>
-						<h2 class="label label-green"><a href="/join/seeker.do">구직자 가입</a></h2>
-					</td>
-				</tr>
-			</table>	
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="chart3">화면가입</div>
 		</div>
-		
-		<div class="col3-mid left">
-			<table>				
-				<tr>
-					<td>
-						<h2 class="label label-green"><a href="/join/offerer.do">업체 가입</a></h2>
-					</td>
-				</tr>
-			</table>	
-		</div>
-		
-		<div class="col3-mid left">
-			<table>
-				<tr>
-					<td>
-						<h2 class="label label-blue"><a href="/join/admin.do">관리자 신청</a></h2>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<h2 class="label label-blue"><a href="#"></a></h2>
-					</td>
-				</tr>
-			</table>
-		</div>
+		<table>
+			<tr>
+				<td style="text-align: center; padding-left: 150px;">
+					<a href="/join/seeker.do" style="text-decoration: none;">
+						<img class="login" src="/img/seeker.png"><br>
+						<span style="font: bold 2.5em sans-serif;">일반회원</span>
+					</a>
+				</td>
+				<td></td>
+				<td style="text-align: center; padding-right: 150px;">
+					<a href="/join/offerer.do" style="text-decoration: none;">
+						<img  class="login" src="/img/offerer.png"><br>
+						<span style="font: bold 2.5em sans-serif;">고용주</span>
+					</a>
+				</td>
+				<td></td>
+				<td style="text-align: center; padding-right: 150px;">
+					<a href="/join/admin.do" style="text-decoration: none;">
+						<img  class="login" src="/img/offerer.png"><br>
+						<span style="font: bold 2.5em sans-serif;">관리자</span>
+					</a>
+				</td>
+			</tr>
+		</table>
 	</div>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>

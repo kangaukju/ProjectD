@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 </head>
 <body>
@@ -10,14 +9,19 @@
 <div id="site-wrapper">
 	<%@ include file="menu.jspf" %>
 	
-	<div class="main" id="main-two-columns">	
-		<div class="left" id="main-content">
-			요금안내
-		</div>	
-		<div class="right sidebar" id="sidebar">
-			얼마??
-		</div>	
-		<div class="clearer">&nbsp;</div>	
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="money">요금안내</div>
+		</div>
+		<div class="main" id="main-two-columns">	
+			<div class="left" id="main-content">
+				요금안내
+			</div>	
+			<div class="right sidebar" id="sidebar">
+				얼마??
+			</div>	
+			<div class="clearer">&nbsp;</div>	
+		</div>
 	</div>
 </div>
 <%@ include file="/WEB-INF/views/include/footer.jspf" %>

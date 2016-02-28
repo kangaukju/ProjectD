@@ -2,14 +2,11 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
+var myUrl = "/admin/select/juso.do";
 $(document).ready(function() {
-	
-	var myUrl = "/admin/select/juso.do";
-	
 	setValue($("#sidoName"), '${sidoName}');
 	setValue($("#sigunguName"), '${sigunguName}');
 	
@@ -27,7 +24,7 @@ $(document).ready(function() {
 	
 	<div id="splash">
 		<h3>주소 조회</h3>
-		<form method="post" action="#" id="form">
+		<form method="post" id="form">
 			<table class="data-table">
 				<tbody>
 					<tr>

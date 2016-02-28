@@ -1,11 +1,15 @@
 package kr.co.projecta.matching.user;
 
+import java.io.Serializable;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class Admin 
-	implements Identity 
+	implements Identity, Serializable 
 {
+	private static final long serialVersionUID = 7369278996015677890L;
+	
 	String id; // 관리자 아이디
 	String name; // 관리자 이름
 	String password; // 관리자 비밀번호

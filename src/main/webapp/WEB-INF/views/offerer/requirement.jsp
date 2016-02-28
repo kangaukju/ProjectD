@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script language="JavaScript">
@@ -10,21 +9,13 @@
 $(document).ready(function() {
 	
 	$("#join").click(function() {
-		if (!checkvalue($("#workDate1").val())) {
-			alert("근무일자를 꼭 입력하세요.");
-			$("#workDate1").focus();
-			return;
-		} else
-		if (!checkvalue($("#workDate2").val())) {
-			alert("출근시간을 꼭 입력하세요.");
-			$("#workDate2").focus();
-			return;
-		} else
-		if (!checkvalue($("#workTime").val())) {
-			alert("근무시간을 꼭 입력하세요.");
-			$("#workTime").focus();
-			return;
-		} else
+		var v = new Validator();
+		v.add($("#workDate1"), "근무일자를 꼭 입력하세요.");
+		v.add($("#workDate2"), "근무일자를 꼭 입력하세요.");
+		v.add($("#workTime"), "근무시간을 꼭 입력하세요.");
+		v.add($("#ageRange"), "연령을 꼭 입력하세요.");
+		if (!v.isValid()) return;
+		
 		if (!checkvalue($('input:radio[name="workAbility"]:checked').val())) {
 			alert("업무를 꼭 입력하세요.");
 			$("#workAbility").focus();
@@ -33,11 +24,6 @@ $(document).ready(function() {
 		if (!checkvalue($('input:radio[name="gender"]:checked').val())) {
 			alert("성별을 꼭 입력하세요.");
 			$("#gender").focus();
-			return;
-		} else
-		if (!checkvalue($("#ageRange").val())) {
-			alert("연령을 꼭 입력하세요.");
-			$("#ageRange").focus();
 			return;
 		} else
 		if (!checkvalue($('input:radio[name="nation"]:checked').val())) {
@@ -58,7 +44,8 @@ $(document).ready(function() {
 			cache : false,
 			data : formData,
 			success : function(data) {
-				Responser.action(data);
+				Responser.actionAfter(data, requestOK);
+				document.getElementById("form").reset();
 			},
 			complete : function(data) {
 				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
@@ -78,18 +65,47 @@ $(document).ready(function() {
 		minDate: "+1",
 		maxDate: "+100",
 	});
+	
+	function requestOK() {
+		$( "#dialog" ).dialog({
+			show: {
+				effect: "blind",
+				duration: 100
+			},
+			hide: {
+				effect: "explode",
+				duration: 100
+			},
+			closeOnEscape: false,
+			open: function(event, ui) {
+				$(".ui-dialog-titlebar-close", $(this).parent()).hide();
+			},
+		    dialogClass: "no-close",
+		    buttons: [{
+		        text: "OK",
+		        click: function() {
+		            $(this).dialog("close");
+		        }
+		    }]
+		});
+	}
 });	
-
 </script>
 </head>
 <body>
+<div id="dialog" title="배정신청완료">
+	배정신청을 완료하였습니다. 배정정보는 SMS를 통해 전달됩니다.<br>
+	[배정내역]을 통해 배정정보를 자세히 보실 수 있습니다.
+</div>
 <div id="site-wrapper">
 	<%@ include file="../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>배정요청</h3>
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="people2">배정요청</div>
+		</div>
 		
-		<form method="post" action="#" id="form">
+		<form method="post" id="form">
 			<input type="hidden" id="offererId" name="offererId" />
 			<input type="hidden" id="myoffererId" value='<c:out value="${offerer.id}" />' />
 			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />

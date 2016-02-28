@@ -2,7 +2,6 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
 <%@ include file="/WEB-INF/views/include/header.jspf" %>
 <%@ include file="/WEB-INF/views/include/rsa.jspf" %>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
@@ -65,7 +64,7 @@ $(document).ready(function() {
         	left: (window.screen.width / 2) - (width / 2),
             top: 0
         });
-	});
+	});	
 	
 	$("#join").click(function() {
 		var v = new Validator();
@@ -79,10 +78,20 @@ $(document).ready(function() {
 		v.add($("#address1"), "주소를 꼭 입력하세요.");
 		v.add($("#mypassword"), "비밀번호를 꼭 입력하세요.");
 		v.add($("#mypassword1"), "비밀번호를 꼭 입력하세요.");
-		v.add($("#offererNumber"), "사업자번호를 꼭 입력하세요.");
-		v.add($("#phone"), "전화번호를 꼭 입력하세요.");
-		v.add($("#cellPhone"), "휴대폰번호를 꼭 입력하세요.");		
+		v.add($("#offererNumber1"), "사업자번호를 꼭 입력하세요.");
+		v.add($("#offererNumber2"), "사업자번호를 꼭 입력하세요.");
+		v.add($("#offererNumber3"), "사업자번호를 꼭 입력하세요.");
+		v.add($("#phone1"), "전화번호를 꼭 입력하세요.");
+		v.add($("#phone2"), "전화번호를 꼭 입력하세요.");
+		v.add($("#phone3"), "전화번호를 꼭 입력하세요.");
+		v.add($("#cellPhone1"), "휴대폰번호를 꼭 입력하세요.");
+		v.add($("#cellPhone2"), "휴대폰번호를 꼭 입력하세요.");
+		v.add($("#cellPhone3"), "휴대폰번호를 꼭 입력하세요.");
 		if (!v.isValid()) return;
+		
+		$("#offererNumber").val($("#offererNumber1").val()+"-"+$("#offererNumber2").val()+"-"+$("#offererNumber3").val());
+		$("#cellPhone").val($("#cellPhone1").val()+"-"+$("#cellPhone2").val()+"-"+$("#cellPhone3").val());
+		$("#phone").val($("#phone1").val()+"-"+$("#phone2").val()+"-"+$("#phone3").val());
 		
 		if (!isPhoneNumber($("#phone").val())) {
 			alert("전화번호 형식이 올바르지 않습니다.");
@@ -90,7 +99,7 @@ $(document).ready(function() {
 			return;
 		}
 		if (!isPhoneNumber($("#cellPhone").val())) {
-			alert("전화번호 형식이 올바르지 않습니다.");
+			alert("휴대폰번호 형식이 올바르지 않습니다.");
 			$("#cellPhone").focus();
 			return;
 		}
@@ -125,6 +134,30 @@ $(document).ready(function() {
 			}
 		});
 	});
+	
+	$("#dup_check").click(function() {
+		var myid = $("#myid").val();
+		if (myid == "") {
+			return;
+		}
+		var params = "id="+myid;
+		$.ajax({
+			type : "POST",
+			url : '/check_dup_offerer.do?'+params,
+			dataType : 'JSON',
+			cache : false,
+			success : function(data) {
+				var responser = new Responser(data);
+				alert(responser.ok)
+			},
+			complete : function(data) {
+				// 통신이 실패했어도 완료가 되었을 때 이 함수를 타게 된다.
+			},
+			error : function(xhr, status, error) {
+				alert("xhr="+xhr+"\nstatus="+status+"\nerror="+error);
+			}
+		});
+	});
 });
 
 </script>
@@ -133,10 +166,12 @@ $(document).ready(function() {
 <div id="site-wrapper">
 	<%@ include file="../menu.jspf" %>
 	
-	<div id="splash">
-		<h3>업주 회원가입</h3>
+	<div id="splash" class="subline">
+		<div class="sub-nav-img">
+			<div class="loginme">고용주 회원가입</div>
+		</div>
 		
-		<form method="post" action="#" id="form">
+		<form method="post" id="form">
 			<input type="hidden" id="publicKeyModulus"  value='<c:out value="${publicKeyModulus}" />' />
 			<input type="hidden" id="publicKeyExponent" value='<c:out value="${publicKeyExponent}" />' />
 			<table class="data-table">
@@ -146,10 +181,11 @@ $(document).ready(function() {
 						<td>
 							<input type="hidden" id="id" name="id" /> 
 							<input type="text" id="myid" class="text" placeholder="아이디" />
+							<a id="dup_check" href="#" style="text-decoration: none;"><img src="/img/dup.png">중복검사</a>
 						</td>
 					</tr>
 					<tr>
-						<th>이름</th>
+						<th>대표자명</th>
 						<td>
 							<input type="hidden" id="name" name="name" /> 
 							<input type="text" id="myname" class="text" placeholder="이름" />
@@ -188,19 +224,49 @@ $(document).ready(function() {
 					<tr>
 						<th>사업자등록번호</th>
 						<td>
-							<input type="text" name="offererNumber" id="offererNumber" class="text" placeholder="00-000-0000"/>
+							<input type="hidden" name="offererNumber" id="offererNumber" />
+							<input type="text" name="offererNumber1" id="offererNumber1" class="text w40"/>
+							-
+							<input type="text" name="offererNumber2" id="offererNumber2" class="text w40"/>
+							-
+							<input type="text" name="offererNumber3" id="offererNumber3" class="text w40"/>
 						</td>
 					</tr>
 					<tr>
 						<th>전화번호</th>
 						<td>
-							<input type="tel" name="phone" id="phone" class="text" placeholder="02-000-0000"/>
+							<input type="hidden" name="phone" id="phone" />
+							<input type="text" name="phone1" id="phone1" class="text w40"/>
+							-
+							<input type="text" name="phone2" id="phone2" class="text w40"/>
+							-
+							<input type="text" name="phone3" id="phone3" class="text w40"/>
+							(형식: 000-00-00000)
+						</td>
+					</tr>
+					<tr>
+						<th>업종</th>
+						<td>
+							<select name="typeOfbusiness" id="typeOfbusiness">
+							</select>
 						</td>
 					</tr>
 					<tr>
 						<th>휴대폰</th>
 						<td>
-							<input type="tel" name="cellPhone" id="cellPhone" class="text" placeholder="010-000-0000"/>
+							<input type="hidden" name="cellPhone" id="cellPhone" />
+							<select name="cellPhone1" id="cellPhone1" class="w60">
+								<option value="010">010</option>
+								<option value="011">011</option>
+								<option value="016">016</option>
+								<option value="017">017</option>
+								<option value="018">018</option>
+								<option value="019">019</option>
+							</select>
+							-
+							<input type="text" name="cellPhone2" id="cellPhone2" class="text w40"/>
+							-
+							<input type="text" name="cellPhone3" id="cellPhone3" class="text w40"/>
 						</td>
 					</tr>
 					<tr>
@@ -245,7 +311,7 @@ $(document).ready(function() {
 					<tr>
 						<th></th>
 						<td>
-							<input type="button" id="join" value="로그인" class="bigbutton">
+							<input type="button" id="join" value="회원가입" class="bigbutton">
 						</td>
 					</tr>
 				</tbody>

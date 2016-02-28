@@ -2,28 +2,21 @@
 <%@ include file="/WEB-INF/views/include/dtd.jspf" %>
 <html>
 <head>
-<title>Insert title here</title>
-<%@ include file="/WEB-INF/views/include/header.jspf" %>
-<%@ include file="/WEB-INF/views/include/rsa.jspf" %>
+<%@ include file="/WEB-INF/views/include/popup_header.jspf" %>
 <script language="JavaScript">
 $(document).ready(function() {
-	
-	$(".candidate a").on("click", function() {
-		
-	});
-	
-	$(".confirm a").on("click", function() {
-		
-	});
 });
 </script>
 </head>
 <body>
-<h3>배정된 구직자</h3>
-<form method="post" action="#" id="form">
-	<input type="hidden" id="requirementId" name="requirementId" value="${param.id}">
-	<input type="hidden" id="seekerId" name="seekerId">
-	<table class="data-table">
+<div id="splash" class="subline" style="padding-top: 0px; margin-top: 0px;">
+	<div class="sub-nav-img">
+		<div class="people5">배정정보</div>
+	</div>
+	<form method="post" id="form">
+		<input type="hidden" id="requirementId" name="requirementId" value="${param.id}">
+		<input type="hidden" id="seekerId" name="seekerId">
+		<table class="data-table">
 		<c:if test="${fn:length(candidateSeekerList) == 0 && fn:length(confirmSeekerList) == 0}">
 			<tr>
 				<th>배정된 인원이 없습니다. 배정인원이 지정되면 SMS문자로 통보됩니다.</th>
@@ -36,10 +29,12 @@ $(document).ready(function() {
 			</tr>
 			<tr style="height: 10px;"></tr>
 		</c:if>
-		
-		<c:if test="${fn:length(candidateSeekerList) > 0}">
 			<tr>
-				<th colspan="13">[임시배정 구직자 목록]</th>
+				<th colspan="13">
+					<div class="sub-nav-img">
+						<div class="people5">임시배정 구직자 목록</div>
+					</div>
+				</th>
 			</tr>
 			<th>전화번호</th>
 			<th>이름</th>
@@ -52,7 +47,12 @@ $(document).ready(function() {
 			<th>근무지역3</th>
 			<th>근무요일</th>
 			<th>근무시간</th>
-			<c:forEach items="${candidateSeekerList}" var="s">
+		<c:if test="${fn:length(candidateSeekerList) == 0}">
+			<tr>
+				<td colspan="13" style="text-align: center;">임시배정된 구직자가 없습니다.</td>
+			</tr>
+		</c:if>
+		<c:forEach items="${candidateSeekerList}" var="s">
 			<tr class="candidate">
 				<td>
 					<a href="#"><c:out value="${s.id}"/></a>
@@ -68,13 +68,16 @@ $(document).ready(function() {
 				<td>${fn:replace(s.workMday, '\"', '')}</td>						
 				<td>${fn:replace(s.workQtime, '\"', '')}</td>
 			</tr>
-			</c:forEach>			
+		</c:forEach>
+			
 			<tr style="height: 10px;"></tr>
-		</c:if>
-		
-		<c:if test="${fn:length(confirmSeekerList) > 0}">
+			
 			<tr>
-				<th colspan="13">[배정확정 구직자 목록]</th>
+				<th colspan="13">
+					<div class="sub-nav-img">
+						<div class="people5">배정확정 구직자 목록</div>
+					</div>
+				</th>
 			</tr>
 			<th>전화번호</th>
 			<th>이름</th>
@@ -87,7 +90,12 @@ $(document).ready(function() {
 			<th>근무지역3</th>
 			<th>근무요일</th>
 			<th>근무시간</th>
-			<c:forEach items="${confirmSeekerList}" var="s">
+		<c:if test="${fn:length(confirmSeekerList) == 0}">
+			<tr>
+				<td colspan="13" style="text-align: center;">배정확정된 구직자가 없습니다.</td>
+			</tr>
+		</c:if>
+		<c:forEach items="${confirmSeekerList}" var="s">
 			<tr class="confirm">
 				<td>
 					<a href="#"><c:out value="${s.id}"/></a>
@@ -103,10 +111,9 @@ $(document).ready(function() {
 				<td>${fn:replace(s.workMday, '\"', '')}</td>						
 				<td>${fn:replace(s.workQtime, '\"', '')}</td>
 			</tr>
-			</c:forEach>
-		</c:if>
-	</table>
-	<%@ include file="/WEB-INF/views/include/popup_close.jspf" %>
-</form>
+		</c:forEach>
+		</table>
+	</form>
+</div>
 </body>
 </html>

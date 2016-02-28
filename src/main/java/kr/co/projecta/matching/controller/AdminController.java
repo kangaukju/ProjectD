@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.co.projecta.matching.controller.BaseController.Callback;
 import kr.co.projecta.matching.dao.PageDAO;
 import kr.co.projecta.matching.user.Assignment;
 import kr.co.projecta.matching.user.Offerer;
@@ -213,6 +211,14 @@ public class AdminController extends BaseController {
 		});
 		mv.addObject("requirement", requirement);
 		mv.addObject("assignedCount", assignedCount);
+		return mv;
+	}
+	
+	@RequestMapping(value="/admin/match/automatch.do")
+	public ModelAndView adminMatchAutoMatch(
+			ModelAndView mv,
+			HttpServletRequest request)
+	{
 		return mv;
 	}
 	

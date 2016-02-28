@@ -9,7 +9,7 @@ import kr.co.projecta.algorithm.Dijkstra;
 import kr.co.projecta.matching.log.Plogger;
 
 abstract public class SimilarityTable {
-	static Plogger log = Plogger.getLogger(SimilarityTable.class);
+	transient static Plogger log = Plogger.getLogger(SimilarityTable.class);
 	public static int NA = Dijkstra.MAX;
 	
 	// 지역

@@ -1,13 +1,138 @@
 <%@ page pageEncoding="utf-8"%>
-<input type="hidden" name="page" id="page">
-<div align="right">
-	<select id="line" name="line">
-		<option value="1">1</option>
-		<option value="5">5</option>
-		<option value="10">10</option>
-		<option value="30">30</option>
-		<option value="50">50</option>
-		<option value="100">100</option>
-	</select>
-</div>
-<div id="paging"></div>
+<!--<link id="ui-theme" rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/pepper-grinder/jquery-ui.css"/>-->
+<link rel="stylesheet" type="text/css" href="/css/jquery.jui_pagination.css"/>
+<!--<script type="text/javascript" src="/js/jquery.ui.touch-punch.min.js"></script>-->
+<script type="text/javascript" src="/js/jquery.jui_pagination.min.js"></script>
+<script type="text/javascript" src="/localization/en.js"></script>
+
+<style type="text/css">
+.containerNav {
+	width: 700px;
+	padding: 10px;
+	line-height: 1;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.sliderNav {
+	width: 400px;
+	margin: 10px auto;
+}
+
+.rows-per-page {
+	display: inline-block !important;
+	background: url("images/page.png") no-repeat left center !important;
+	padding: 0px 0px 0px 20px !important;
+	margin: 3px 10px 3px 10px !important;
+	width: 30px;
+	vertical-align: middle;
+	height: 18px !important;
+}
+
+.goto-page {
+	display: inline-block !important;
+	background: url("images/bullet_go.png") no-repeat left center !important;
+	padding: 0px 0px 0px 20px !important;
+	margin: 3px 10px 3px 10px !important;
+	width: 30px;
+	vertical-align: middle;
+	height: 18px !important;
+}
+</style>
+
+<c:if test="${navCount > 0}" >
+	<input type="hidden" name="page" id="page">
+	<table>
+		<tr>
+			<td>
+				<div id="paging"></div>
+			</td>
+			<td width="50px;">
+				<select id="line" name="line">
+					<option value="1">1</option>
+					<option value="5">5</option>
+					<option value="10">10</option>
+					<option value="30">30</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select>
+			</td>
+		</tr>
+	</table>
+</c:if>
+<script type="text/javascript">
+$(function() {
+	setValueDefault($("#line"), '${line}', 10);
+	$("#search").click(function() {
+		var form = $("#form");
+		$("#page").val(1);
+		form.action = myUrl;
+		form.submit();
+	});
+	
+	$("#line").change(function() {
+		$("#search").trigger('click');
+	});
+
+	$("#paging").jui_pagination({
+		currentPage : '${page}',
+		visiblePageLinks : 12,
+		totalPages : '${navCount}',
+		containerClass : 'containerNav',
+		rowsPerPage: '${line}',
+
+		useSlider : true,
+		sliderInsidePane : true,
+		sliderClass : 'sliderNav',
+
+		disableSelectionNavPane : true,
+
+		navRowsPerPageClass : 'rows-per-page  ui-state-default ui-corner-all',
+		navGoToPageClass : 'goto-page ui-state-default ui-corner-all',
+		navPaneClass: '',
+
+		showPreferences: false,
+//		sliderAnimation: 'slow',
+//		showTotalPages: true,
+//		showLabelTotalPages: true,
+//		showGoToPage: true,
+//		showNavButtons: true,
+//		showLabelCurrentPage: true,
+		
+		onChangePage : function(event, page_num) {
+			if (isNaN(page_num) || page_num <= 0) {
+				alert('Invalid page' + ' (' + page_num
+						+ ')');
+			} else {
+				var form = $("#form");
+				$("#page").val(page_num);
+				form.action = myUrl;
+				form.submit();
+			}
+		},
+		onSetRowsPerPage : function(event, rpp) {
+			if (isNaN(rpp) || rpp <= 0) {
+				alert('Invalid rows per page' + ' (' + rpp
+						+ ')');
+			} else {
+				alert('rows per page successfully changed'
+						+ ' (' + rpp + ')');
+				$(this).jui_pagination({
+					rowsPerPage : rpp
+				})
+			}
+		},
+		onDisplay : function() {
+			var showRowsInfo = $(this).jui_pagination(
+					'getOption', 'showRowsInfo');
+			if (showRowsInfo) {
+				var prefix = $(this).jui_pagination(
+						'getOption',
+						'nav_rows_info_id_prefix');
+				$("#" + prefix + $(this).attr("id")).text(
+						'Total rows: XXX');
+			}
+		}
+	});
+});
+</script>

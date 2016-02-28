@@ -2,8 +2,12 @@ package kr.co.projecta.matching.match;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,9 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.regex.Pattern;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import kr.co.projecta.matching.dao.AssignmentDAO;
@@ -29,7 +32,7 @@ import kr.co.projecta.matching.user.types.MatchStatus;
 import kr.co.projecta.matching.util.Times;
 
 public class MatchService2 {
-	Plogger log = Plogger.getLogger(this.getClass());
+	transient Plogger log = Plogger.getLogger(this.getClass());
 	
 	SeekerDAO seekerDAO;
 	RequirementDAO requirementDAO;
@@ -51,6 +54,9 @@ public class MatchService2 {
 	// 최종 매칭된 구직자 수
 	long matchedSeekerCount;
 	
+	public static final String assignResultListPath = "assign";
+	public static final String assignResultOffererPath = "offerer";
+	List<AssignResult> assignResultList = new ArrayList<>();
 
 	public MatchService2(
 			SeekerDAO seekerDAO, 
@@ -102,6 +108,9 @@ public class MatchService2 {
 	}
 	public void setRequirementDAO(RequirementDAO requirementDAO) {
 		this.requirementDAO = requirementDAO;
+	}
+	public List<AssignResult> getAssignResultList() {
+		return this.assignResultList;
 	}
 	
 	// 자동 매칭 서비스
@@ -170,6 +179,8 @@ public class MatchService2 {
 			// 배정요청에 부족한 인원 만큼 선출한다.
 			int needN = person - assignedSeekerCount;
 			
+			List<String> seekers = new ArrayList<>();
+			
 			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> bestRank = 
 					new ArrayList<>();
 			while (!rank.isEmpty() && (needN-- > 0)) {
@@ -178,14 +189,43 @@ public class MatchService2 {
 				
 				seekerAll.remove(r.getData().getData());
 				bestRank.add(r);
+				// 구직자 ID 리스트에 추가
+				seekers.add(r.getData().getData().getId());
 			}
  
-			recommandAction(requirement, bestRank);
-			
-			if (resultExportPath != null) {
-				Requirement require = (Requirement) requirement;
-				Map<String, Object> resultMap = recommandResultMap(require, bestRank);
-				exportJSON(resultMap, require.getOffererId(), resultExportPath);
+			if (bestRank.size() > 0) {
+				
+				recommandAction(requirement, bestRank);
+				
+				// XXX: 배정이력 저장 방식-2
+				// 배정결과를 JSON 파일로 기록한다.
+				/*
+				if (resultExportPath != null) {
+					Requirement require = (Requirement) requirement;
+					Map<String, Object> resultMap = recommandResultMap(require, bestRank);
+					exportJSON(resultMap, require.getOffererId(), resultExportPath);
+				}
+				*/
+				
+				// XXX: 배정이력 저장 방식-1
+				// 배정된 결과 저장
+				String requirementId = ((Requirement)requirement).getId();
+				AssignResult assignResult = newAssignResult(requirementId, seekers);
+				this.assignResultList.add(assignResult);
+				
+
+				// XXX: 배정이력 저장 방식-3
+				
+			}
+		}
+		// XXX: 배정이력 저장 방식-1
+		// 배정결과가 존재하는 경우에만 파일로 직렬화하여 저장한다.
+		if (this.resultExportPath != null) {
+			if (this.assignResultList.size() > 0) {
+				String saveAssignResultFilename = saveAssignResult(
+						this.resultExportPath, this.assignResultList);
+//				System.out.println("saveAssignResultFilename: "+saveAssignResultFilename);
+//				debugAssignResult(this.assignResultList);
 			}
 		}
 	}
@@ -263,9 +303,162 @@ public class MatchService2 {
 		} else {
 			if (r.getMatchStatus().getMatchStatus() != MatchStatus.INCOMPLETION) {
 				requirementDAO.updateMatchStatus(requirementId, MatchStatus.INCOMPLETION);
-			}			
+			}
+		}
+	}
+	
+	/**
+	 * 배정정보와 배정의 구직자정보를 리스트에 저장한다. 
+	 * @param requirement
+	 * @param seekers
+	 */
+	private AssignResult newAssignResult(String requirementId, List<String> seekers) {
+		if (seekers.size() == 0) {
+			return null;
+		}		
+		// 배정받은 구직자 정보
+		List<Seeker> seekerList = new ArrayList<>();
+		for (String seeker : seekers) {
+			seekerList.add(seekerDAO.selectOne(seeker));
+		}
+		Requirement requirement = requirementDAO.selectOne(requirementId);
+		
+		return new AssignResult(requirement, seekerList);
+	}
+	
+	/**
+	 * 파일 중복을 검사하고 중복된 파일이 존재하면 파일명 뒤에 ".n" 형식으로 증가하는 파일명을 반환한다.
+	 * @param filename
+	 * @return
+	 */
+	private static String checkDuplicateFilename(String filename) {
+		File file = new File(filename);
+		if (!file.exists()) {
+			return filename;
+		}
+		String pattern = String.format("%s.*", filename);
+		File [] dir = file.getParentFile().listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return Pattern.matches(pattern, dir.getAbsolutePath()+"/"+name);
+			}
+		});
+		return String.format("%s.%d", filename, dir.length);
+	}
+	
+	/**
+	 * 배정결과를 파일로 직렬화하여 배정이력으로 관리한다.
+	 * @return
+	 */
+	public static String saveAssignResult(
+			String resource,
+			List<AssignResult> list)
+	{
+		// 배정내역 리스트 디렉토리 존재여부 검사
+		File file = new File(String.format(
+				"%s/%s",
+				resource,
+				MatchService2.assignResultListPath));
+		if (!file.exists()) {
+			file.mkdirs();
 		}
 		
+		String filename = String.format(
+				"%s/%s/%s-%d.bin",
+				resource,
+				MatchService2.assignResultListPath,
+				Times.formatYYYYMMDD(Times.now()),
+				Times.getHour(Times.now()));
+		// 중복파일 검사
+		filename = checkDuplicateFilename(filename);
+		
+		// 모든 배정내역을 기록한다.
+		ObjectOutputStream out = null;
+		try {
+			out = new ObjectOutputStream(
+					new FileOutputStream(filename));
+			out.writeObject(list);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (out != null) try {out.close();} catch (IOException e) { }
+		}
+		
+		// 고용주의 배정내역 디렉토리 존재여부 검사
+		file = new File(String.format(
+				"%s/%s",
+				resource,
+				MatchService2.assignResultOffererPath));
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+		// 고용주 개별적으로 배정내역을 기록한다.
+		out = null;
+		for (AssignResult as : list) {
+//			System.out.println("save result: "+as.getRequirement().getOffererName()+", seekers:"+as.getSeekers());
+			File offererFile = new File(String.format(
+					"%s/%s/%s",
+					resource,
+					MatchService2.assignResultOffererPath,
+					as.getRequirement().getOffererId()));
+			if (!offererFile.exists()) {
+				offererFile.mkdirs();
+			}
+			
+			filename = String.format(
+					"%s/%s/%s/%s-%d.bin",
+					resource,
+					MatchService2.assignResultOffererPath,
+					as.getRequirement().getOffererId(),
+					Times.formatYYYYMMDD(Times.now()),
+					Times.getHour(Times.now()));
+			// 중복파일 검사
+			filename = checkDuplicateFilename(filename);
+			try {
+				out = new ObjectOutputStream(
+						new FileOutputStream(filename));
+				out.writeObject(list);
+				out.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				if (out != null) try {out.close();} catch (IOException e) { }
+			}
+		}
+		return filename;
+	}
+	
+	/**
+	 * 파일로 저장된 배정이력을 역직렬화하여 오브젝트로 생성한다.
+	 * @param filename
+	 * @return
+	 */
+	public static List<AssignResult> loadAssignResult(String filename) {
+		ObjectInputStream in = null;
+		List<AssignResult> list = null;
+		try {
+			in = new ObjectInputStream(
+					new FileInputStream(filename));
+			list = (List<AssignResult>) in.readObject();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null) try {in.close();} catch (IOException e) { }
+		}
+		return list;
+	}
+	
+	private void debugAssignResult(List<AssignResult> assignResultList) {
+		for (AssignResult assignment : assignResultList) {
+			Requirement requirement = assignment.getRequirement();
+			System.out.println(requirement);
+			
+			for (Seeker seeker : assignment.getSeekers()) {
+				System.out.println("\t"+seeker);
+			}
+		}
 	}
 	
 	private Map<String, Object> recommandResultMap(
@@ -372,6 +565,7 @@ public class MatchService2 {
 		return matchers;
 	}
 	
+	/*
 	public static void main(String [] args) throws JsonGenerationException, JsonMappingException, IOException {
 		Map<String, Object> m1 = new HashMap<>();
 		Map<String, Object> m2 = new HashMap<>();
@@ -388,4 +582,5 @@ public class MatchService2 {
 		String out = m.writeValueAsString(m3);
 		System.out.println(out);
 	}
+	*/
 }

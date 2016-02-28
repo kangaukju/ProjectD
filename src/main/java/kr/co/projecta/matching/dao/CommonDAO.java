@@ -11,7 +11,7 @@ import kr.co.projecta.matching.user.types.Region;
 
 @Component("CommonDAO")
 public class CommonDAO extends LoggingDao implements DAO<Region> {
-	Plogger log = Plogger.getLogger(this.getClass());
+	transient Plogger log = Plogger.getLogger(this.getClass());
 	
 	// 주소 조회
 	public Map selectMap(Map<String, Object> params) {
