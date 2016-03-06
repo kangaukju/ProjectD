@@ -13,7 +13,7 @@ import kr.co.projecta.matching.util.Parameters;
 
 @Component("RequirementDAO")
 public class RequirementDAO 
-	extends LoggingDao 
+	extends LoggingDAO 
 	implements DAO<Requirement>, Serializable
 {
 	private static final long serialVersionUID = 2930895453767351336L;

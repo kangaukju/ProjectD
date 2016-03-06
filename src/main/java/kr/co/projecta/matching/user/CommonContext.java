@@ -11,9 +11,7 @@ import kr.co.projecta.matching.util.Times;
 /**
  * web jstl에서 숫자, 문자, 집합 범위 데이터를 사용하기 위한 저장 디비로 사용
  */
-public class CommonContext 
-	implements ContextSchemable
-{
+public class CommonContext implements ContextSchemable {
 
 	Map<String, Object> utilMap = new HashMap<>();
 	// 1월 ~ 12월

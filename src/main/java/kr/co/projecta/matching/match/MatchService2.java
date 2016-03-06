@@ -2,16 +2,12 @@ package kr.co.projecta.matching.match;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -20,12 +16,13 @@ import java.util.regex.Pattern;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import kr.co.projecta.matching.dao.AssignmentDAO;
+import kr.co.projecta.matching.dao.HistoryDAO;
 import kr.co.projecta.matching.dao.RequirementDAO;
 import kr.co.projecta.matching.dao.SeekerDAO;
+import kr.co.projecta.matching.history.SeekerNoticeHistory;
 import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.match.MatchResult.MatchResultComparable;
 import kr.co.projecta.matching.match.MatchResult.RankResultComparable;
-import kr.co.projecta.matching.user.Matcher;
 import kr.co.projecta.matching.user.Requirement;
 import kr.co.projecta.matching.user.Seeker;
 import kr.co.projecta.matching.user.types.MatchStatus;
@@ -37,6 +34,7 @@ public class MatchService2 {
 	SeekerDAO seekerDAO;
 	RequirementDAO requirementDAO;
 	AssignmentDAO assignmentCandidateDAO;
+	HistoryDAO historyDAO;
 	int topLimit = 5;
 	
 	// 양방향 매칭 시 가중치를 부여할 매칭타켓
@@ -47,35 +45,35 @@ public class MatchService2 {
 	};
 	MATCHER_PRIORITY matcherPriority = MATCHER_PRIORITY.NONE;
 	
-	String resultExportPath;
-	
+	// 매칭결과 저장 경로
+	String resultExportPath;	
 	// 최종 매칭된 배정요청 수
 	long matchedRequirementCount;
 	// 최종 매칭된 구직자 수
 	long matchedSeekerCount;
-	
-	public static final String assignResultListPath = "assign";
-	public static final String assignResultOffererPath = "offerer";
-	List<AssignResult> assignResultList = new ArrayList<>();
 
 	public MatchService2(
 			SeekerDAO seekerDAO, 
 			RequirementDAO requirementDAO,
 			AssignmentDAO assignmentCandidateDAO,
+			HistoryDAO historyDAO,
 			int topLimit) {
-		this(seekerDAO, requirementDAO, assignmentCandidateDAO, topLimit, MATCHER_PRIORITY.NONE);
+		this(seekerDAO, requirementDAO, assignmentCandidateDAO, historyDAO,
+				topLimit, MATCHER_PRIORITY.NONE);
 	}
 	
 	public MatchService2(
 			SeekerDAO seekerDAO, 
 			RequirementDAO requirementDAO,
 			AssignmentDAO assignmentCandidateDAO,
+			HistoryDAO historyDAO,
 			int topLimit,
 			MATCHER_PRIORITY matcherPriority) 
 	{
 		this.seekerDAO = seekerDAO;
 		this.requirementDAO = requirementDAO;
 		this.assignmentCandidateDAO = assignmentCandidateDAO;
+		this.historyDAO = historyDAO;
 		this.topLimit = topLimit;
 		this.matcherPriority = matcherPriority;
 	}	
@@ -109,16 +107,13 @@ public class MatchService2 {
 	public void setRequirementDAO(RequirementDAO requirementDAO) {
 		this.requirementDAO = requirementDAO;
 	}
-	public List<AssignResult> getAssignResultList() {
-		return this.assignResultList;
-	}
 	
 	// 자동 매칭 서비스
 	synchronized public void autoMatchService() {
 		log.i("Start autoMatchService");
 		// TODO: DAO의 모든 데이터를 불러온다. 많은 리소스가 요구됨.
-		List<? extends Matcher> seekerAll = seekerDAO.selectNotAssignSeeker();
-		List<? extends Matcher> requirementAll = requirementDAO.selectNotAssignComplete();
+		List<Seeker> seekerAll = seekerDAO.selectNotAssignSeeker();
+		List<Requirement> requirementAll = requirementDAO.selectNotAssignComplete();
 		
 		// 양방향 매칭
 		twoWayMatching(seekerAll, requirementAll);
@@ -130,29 +125,30 @@ public class MatchService2 {
 	 * @param requirementAll
 	 */
 	private void twoWayMatching(
-			List<? extends Matcher> seekerAll, 
-			List<? extends Matcher> requirementAll)
+			List<Seeker> seekerAll, 
+			List<Requirement> requirementAll)
 	{
 		long requirementRank;
-		List<MatchResultComparable<Matcher>> recommandSeekers;
+		List<MatchResultComparable<Seeker>> topMatchedSeekerList;
 		
 		// 모든 채용정보 검색
-		for (Matcher requirement : requirementAll) {
+		for (Requirement requirement : requirementAll) {
 			// 채용정보와 매칭률이 높은 구직자 N명 선출
 			// 1. topN
-			recommandSeekers = topMatch(requirement, seekerAll, topLimit);
+			topMatchedSeekerList = topMatchSeekerList(requirement, seekerAll, topLimit);
 			
-			PriorityQueue<RankResultComparable<Long, MatchResultComparable<Matcher>>> rank
+			PriorityQueue<RankResultComparable<MatchResultComparable<Seeker>>> rankMatchedSeekerQueue
 				= new PriorityQueue<>(requirementAll.size());
 			
 			long seekerRank = 0;
-			long matcherScore;
+			long matcherScore;			
 			
 			// 선출된 구직자 입장에서
-			for (MatchResultComparable<Matcher> matchResult : recommandSeekers) {
+			for (MatchResultComparable<Seeker> topMatchedSeeker : topMatchedSeekerList) {
 				// 구직자 입장에서 해당 채용정보의 매칭순위
 				// 2. rank
-				requirementRank = rankMatch(matchResult.getData(), requirementAll, requirement);
+				Seeker seeker = topMatchedSeeker.getData();
+				requirementRank = rankMatchRequirement(seeker, requirementAll, requirement);
 				
 				switch (matcherPriority) {
 				case SEEKER:
@@ -165,12 +161,13 @@ public class MatchService2 {
 					matcherScore = requirementRank + seekerRank;
 				}
 				
-				rank.add(new RankResultComparable<Long, MatchResultComparable<Matcher>>(matcherScore, matchResult));
+				rankMatchedSeekerQueue.add(new RankResultComparable<MatchResultComparable<Seeker>>(matcherScore, topMatchedSeeker));
 				
 				seekerRank++;
 			}
 			
 			// 배정요청에 현재 배정된 구직자 수
+			// TODO: DAO 호출로 검색 부하 예상
 			int assignedSeekerCount = (int)assignmentCandidateDAO.selectCount(requirement.getId());
 			
 			// 해당 채용정보에 가장 (양방향)매칭률이 좋은 구직자 N명 선출
@@ -179,53 +176,19 @@ public class MatchService2 {
 			// 배정요청에 부족한 인원 만큼 선출한다.
 			int needN = person - assignedSeekerCount;
 			
-			List<String> seekers = new ArrayList<>();
+			List<RankResultComparable<MatchResultComparable<Seeker>>> recommandSeekerList = new ArrayList<>();
 			
-			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> bestRank = 
-					new ArrayList<>();
-			while (!rank.isEmpty() && (needN-- > 0)) {
+			while (!rankMatchedSeekerQueue.isEmpty() && (needN-- > 0)) {				
+				RankResultComparable<MatchResultComparable<Seeker>> recommandSeeker = rankMatchedSeekerQueue.poll();
 				
-				RankResultComparable<Long, MatchResultComparable<Matcher>> r = rank.poll();
-				
-				seekerAll.remove(r.getData().getData());
-				bestRank.add(r);
-				// 구직자 ID 리스트에 추가
-				seekers.add(r.getData().getData().getId());
+				// 다음 매칭률 계산에서는 지금 선정된 구직자를 제외한다.
+				seekerAll.remove(recommandSeeker.getData().getData());
+				recommandSeekerList.add(recommandSeeker);
 			}
  
-			if (bestRank.size() > 0) {
+			if (recommandSeekerList.size() > 0) {				
+				recommandAction(requirement, recommandSeekerList);
 				
-				recommandAction(requirement, bestRank);
-				
-				// XXX: 배정이력 저장 방식-2
-				// 배정결과를 JSON 파일로 기록한다.
-				/*
-				if (resultExportPath != null) {
-					Requirement require = (Requirement) requirement;
-					Map<String, Object> resultMap = recommandResultMap(require, bestRank);
-					exportJSON(resultMap, require.getOffererId(), resultExportPath);
-				}
-				*/
-				
-				// XXX: 배정이력 저장 방식-1
-				// 배정된 결과 저장
-				String requirementId = ((Requirement)requirement).getId();
-				AssignResult assignResult = newAssignResult(requirementId, seekers);
-				this.assignResultList.add(assignResult);
-				
-
-				// XXX: 배정이력 저장 방식-3
-				
-			}
-		}
-		// XXX: 배정이력 저장 방식-1
-		// 배정결과가 존재하는 경우에만 파일로 직렬화하여 저장한다.
-		if (this.resultExportPath != null) {
-			if (this.assignResultList.size() > 0) {
-				String saveAssignResultFilename = saveAssignResult(
-						this.resultExportPath, this.assignResultList);
-//				System.out.println("saveAssignResultFilename: "+saveAssignResultFilename);
-//				debugAssignResult(this.assignResultList);
 			}
 		}
 	}
@@ -262,20 +225,21 @@ public class MatchService2 {
 	 * @param recommandSeeker: 추천된 구직자
 	 */
 	private void recommandAction(
-			Matcher requirement,
-			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> recommandSeeker) 
+			Requirement requirement,
+			List<RankResultComparable<MatchResultComparable<Seeker>>> recommandSeekerList) 
 	{
 		this.matchedRequirementCount++;
-		this.matchedSeekerCount += recommandSeeker.size();
+		this.matchedSeekerCount += recommandSeekerList.size();
 		
 		String requirementId = requirement.getId();
 		
+		// 디버깅
 		log.i("<<< ["+requirement+"] recommand seekers >>>");
-		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
-			MatchResultComparable<Matcher> match = rank.getData();
+		for (RankResultComparable<MatchResultComparable<Seeker>> rank : recommandSeekerList) {
+			MatchResultComparable<Seeker> match = rank.getData();
 			log.i("\t rank: "+rank.getRank());
 			MatchResult matchResult = match.getMatchResult();
-			Matcher matcher = match.getData();
+			Seeker matcher = match.getData();
 			Map<String, Double> matchScore = matchResult.getMatchScore();
 			log.i("\t\t ["+matcher+"]");
 			for (String key : matchScore.keySet()) {
@@ -284,8 +248,8 @@ public class MatchService2 {
 		}
 		
 		// 현재 배정 현황(assignment) 기록
-		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
-			MatchResultComparable<Matcher> match = rank.getData();
+		for (RankResultComparable<MatchResultComparable<Seeker>> rank : recommandSeekerList) {
+			MatchResultComparable<Seeker> match = rank.getData();
 			Seeker seeker = (Seeker) match.getData();
 			String seekerId = seeker.getId();
 			assignmentCandidateDAO.insert(requirementId, seekerId);
@@ -305,25 +269,31 @@ public class MatchService2 {
 				requirementDAO.updateMatchStatus(requirementId, MatchStatus.INCOMPLETION);
 			}
 		}
+		
+		// 
+		for (RankResultComparable<MatchResultComparable<Seeker>> rank : recommandSeekerList) {
+			MatchResultComparable<Seeker> match = rank.getData();
+			Seeker seeker = (Seeker) match.getData();
+			// 구직자에게 배정 알림 통보
+			if (noticeSeeker(seeker)) {
+				historyDAO.insertSeekerNoticeHistory(
+						new SeekerNoticeHistory(
+							requirement.getId(), 
+							requirement.getOffererId(), 
+							seeker.getId()));
+			}
+			///////////////////////////////////////////////
+			// 구직자에게 배정 알림 통보 실패 시
+			///////////////////////////////////////////////
+			else {
+				
+			}
+		}
 	}
 	
-	/**
-	 * 배정정보와 배정의 구직자정보를 리스트에 저장한다. 
-	 * @param requirement
-	 * @param seekers
-	 */
-	private AssignResult newAssignResult(String requirementId, List<String> seekers) {
-		if (seekers.size() == 0) {
-			return null;
-		}		
-		// 배정받은 구직자 정보
-		List<Seeker> seekerList = new ArrayList<>();
-		for (String seeker : seekers) {
-			seekerList.add(seekerDAO.selectOne(seeker));
-		}
-		Requirement requirement = requirementDAO.selectOne(requirementId);
+	private boolean noticeSeeker(Seeker seeker) {
 		
-		return new AssignResult(requirement, seekerList);
+		return true;
 	}
 	
 	/**
@@ -344,225 +314,85 @@ public class MatchService2 {
 		});
 		return String.format("%s.%d", filename, dir.length);
 	}
-	
+		
 	/**
-	 * 배정결과를 파일로 직렬화하여 배정이력으로 관리한다.
+	 * 구직자 입장에서 배정요청의 매칭률 순위를 구한다.
+	 * @param seeker
+	 * @param requirementAll
+	 * @param rankMatcher
 	 * @return
 	 */
-	public static String saveAssignResult(
-			String resource,
-			List<AssignResult> list)
-	{
-		// 배정내역 리스트 디렉토리 존재여부 검사
-		File file = new File(String.format(
-				"%s/%s",
-				resource,
-				MatchService2.assignResultListPath));
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-		
-		String filename = String.format(
-				"%s/%s/%s-%d.bin",
-				resource,
-				MatchService2.assignResultListPath,
-				Times.formatYYYYMMDD(Times.now()),
-				Times.getHour(Times.now()));
-		// 중복파일 검사
-		filename = checkDuplicateFilename(filename);
-		
-		// 모든 배정내역을 기록한다.
-		ObjectOutputStream out = null;
-		try {
-			out = new ObjectOutputStream(
-					new FileOutputStream(filename));
-			out.writeObject(list);
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (out != null) try {out.close();} catch (IOException e) { }
-		}
-		
-		// 고용주의 배정내역 디렉토리 존재여부 검사
-		file = new File(String.format(
-				"%s/%s",
-				resource,
-				MatchService2.assignResultOffererPath));
-		if (!file.exists()) {
-			file.mkdirs();
-		}
-		// 고용주 개별적으로 배정내역을 기록한다.
-		out = null;
-		for (AssignResult as : list) {
-//			System.out.println("save result: "+as.getRequirement().getOffererName()+", seekers:"+as.getSeekers());
-			File offererFile = new File(String.format(
-					"%s/%s/%s",
-					resource,
-					MatchService2.assignResultOffererPath,
-					as.getRequirement().getOffererId()));
-			if (!offererFile.exists()) {
-				offererFile.mkdirs();
-			}
-			
-			filename = String.format(
-					"%s/%s/%s/%s-%d.bin",
-					resource,
-					MatchService2.assignResultOffererPath,
-					as.getRequirement().getOffererId(),
-					Times.formatYYYYMMDD(Times.now()),
-					Times.getHour(Times.now()));
-			// 중복파일 검사
-			filename = checkDuplicateFilename(filename);
-			try {
-				out = new ObjectOutputStream(
-						new FileOutputStream(filename));
-				out.writeObject(list);
-				out.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
-				if (out != null) try {out.close();} catch (IOException e) { }
-			}
-		}
-		return filename;
-	}
-	
-	/**
-	 * 파일로 저장된 배정이력을 역직렬화하여 오브젝트로 생성한다.
-	 * @param filename
-	 * @return
-	 */
-	public static List<AssignResult> loadAssignResult(String filename) {
-		ObjectInputStream in = null;
-		List<AssignResult> list = null;
-		try {
-			in = new ObjectInputStream(
-					new FileInputStream(filename));
-			list = (List<AssignResult>) in.readObject();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} finally {
-			if (in != null) try {in.close();} catch (IOException e) { }
-		}
-		return list;
-	}
-	
-	private void debugAssignResult(List<AssignResult> assignResultList) {
-		for (AssignResult assignment : assignResultList) {
-			Requirement requirement = assignment.getRequirement();
-			System.out.println(requirement);
-			
-			for (Seeker seeker : assignment.getSeekers()) {
-				System.out.println("\t"+seeker);
-			}
-		}
-	}
-	
-	private Map<String, Object> recommandResultMap(
-			Requirement requirement, 
-			List<RankResultComparable<Long, MatchResultComparable<Matcher>>> recommandSeeker) 
-	{
-		Map<String, Object> requirementMap = new HashMap<String, Object>();
-		
-		List<Object> seekerListJSON = new ArrayList<Object>();
-		for (RankResultComparable<Long, MatchResultComparable<Matcher>> rank : recommandSeeker) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			
-			long rankN = rank.getRank();
-			MatchResultComparable<Matcher> match = rank.getData();
-			Matcher matcher = match.getData();
-			MatchResult matchResult = match.getMatchResult();
-			Map<String, Double> matchScore = matchResult.getMatchScore();
-			
-			map.put("score", matchScore);
-			map.put("matcher", matcher.getBuildJSON());
-			map.put("rank", rankN);
-			
-//			System.out.println(map);
-			seekerListJSON.add(map);
-		}
-		
-		requirementMap.put("seeker", seekerListJSON);
-		requirementMap.put("total", recommandSeeker.size());
-		requirementMap.put("requirement", requirement.getBuildJSON());
-		
-		return requirementMap;
-	}
-	
-	// @return rank 순위(0부터 시작)
-	private long rankMatch(
-			Matcher compareMatcher, 
-			List<? extends Matcher> matcherAll, 
-			Matcher rankMatcher)
+	private long rankMatchRequirement(
+			Seeker seeker, 
+			List<Requirement> requirementAll, 
+			Requirement rankMatcher)
 	{
 		long ranking = 0;
 		
-		if (matcherAll.isEmpty()) {
-			throw new IllegalArgumentException("matcher list is empty");
+		if (requirementAll.isEmpty()) {
+			throw new IllegalArgumentException("requirement list is empty");
 		}
 		
-		// MatchResult 정렬을 위한 우선순위 큐
-		PriorityQueue<MatchResultComparable<Matcher>> topQueue
-			= new PriorityQueue<>(matcherAll.size());
+		// 구직자와 배정요청 매칭률이 높은 우선순위 큐
+		PriorityQueue<MatchResultComparable<Requirement>> topRequirementQueue
+			= new PriorityQueue<>(requirementAll.size());
 		
-		// 모든 매 정보 검색
-		for (Matcher matcher : matcherAll) {
+		// 모든 배정요청 검색
+		for (Requirement requirement : requirementAll) {
 			// 매칭함수 결과	
-			MatchResult result = compareMatcher.matchResult(matcher);
+			MatchResult result = seeker.matchResult(requirement);
 			
-			topQueue.add(
-					new MatchResultComparable<Matcher>(result, matcher));			
+			topRequirementQueue.add(
+					new MatchResultComparable<Requirement>(result, requirement));			
 		}
-		while (!topQueue.isEmpty()) {
-			// FIXME: equals? or ==?
-			if (rankMatcher.equals(topQueue.poll().getData())) {
+		while (!topRequirementQueue.isEmpty()) {
+			// FIXME: equals? or == ?
+			if (rankMatcher.equals(topRequirementQueue.poll().getData())) {
 				return ranking;
 			}
 			ranking++;
 		}
+		// 해당 배정요청의 순위
 		return ranking;
 	}
 		
 	/**
 	 * 기준과 매칭률이 높은 매칭 N개 선출
-	 * @param compareMatcher 기준이 되는 매칭
-	 * @param matcherAll 기준과 비교할 매칭
+	 * @param requirement 기준이 되는 매칭
+	 * @param seekerAll 기준과 비교할 매칭
 	 * @param topN 선출 갯수
 	 * @return 기준과 매칭률이 높은 매칭 N개 리스트 
 	 */
-	private List<MatchResultComparable<Matcher>> topMatch(
-			Matcher compareMatcher, 
-			List<? extends Matcher> matcherAll,
+	private List<MatchResultComparable<Seeker>> topMatchSeekerList(
+			Requirement requirement,
+			List<Seeker> seekerAll,
 			int topN) {
 		
-		// 매칭 점수 우선순위 큐
-		PriorityQueue<MatchResultComparable<Matcher>> topQueue
+		// 구직자 매칭 점수 우선순위 큐
+		PriorityQueue<MatchResultComparable<Seeker>> topSeekerQueue
 			= new PriorityQueue<>(topN);
 		
 		// 비교할 매칭들
-		for (Matcher matcher : matcherAll) {
-			// 매칭함수 수행 결과로 매칭점수 획득
-			MatchResult result = compareMatcher.matchResult(matcher);
-			// 매칭점수가 높은 우선순위 큐
-			MatchResultComparable<Matcher> compare 
-				= new MatchResultComparable<Matcher>(result, matcher);
+		for (Seeker seeker : seekerAll) {
+			// 배정요청과 구직자와 매칭률을 계산
+			MatchResult result = requirement.matchResult(seeker);
+			// 매칭점수가 높은 구직자 비교 연산
+			MatchResultComparable<Seeker> seekerCompare 
+				= new MatchResultComparable<Seeker>(result, seeker);
 			
-			topQueue.add(compare);
+			topSeekerQueue.add(seekerCompare);
 		}
 		
-		List<MatchResultComparable<Matcher>> matchers = new ArrayList<>();
-		// 매칭률이 높은 매칭 N개 선출
-		while (!topQueue.isEmpty() && (topN-- > 0)) {
-			matchers.add(topQueue.poll());
+		List<MatchResultComparable<Seeker>> matchedSeekerList = new ArrayList<>();
+		// 매칭률이 높은 구직자 매칭 N개 선출
+		while (!topSeekerQueue.isEmpty() && (topN-- > 0)) {
+			matchedSeekerList.add(topSeekerQueue.poll());
 		}
 		// 우선순위 큐 메모리 정리
-		topQueue.clear();
-		topQueue = null;
+		topSeekerQueue.clear();
+		topSeekerQueue = null;
 		
-		return matchers;
+		return matchedSeekerList;
 	}
 	
 	/*

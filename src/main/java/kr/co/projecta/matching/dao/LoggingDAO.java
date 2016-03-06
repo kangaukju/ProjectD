@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kr.co.projecta.matching.log.Plogger;
 
-public class LoggingDao {
+public class LoggingDAO {
 	
 	transient Plogger log = Plogger.getLogger(this.getClass());
 	

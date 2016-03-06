@@ -37,8 +37,8 @@ public interface MatchResult {
 	 * @param <Long> rank 숫자
 	 * @param <T>
 	 */
-	static class RankResultComparable<Long, T>
-		implements Comparable<RankResultComparable<Long, T>>
+	static class RankResultComparable<T>
+		implements Comparable<RankResultComparable<T>>
 	{
 		long rank;
 		T data;
@@ -55,7 +55,7 @@ public interface MatchResult {
 			return rank;
 		}
 		
-		public int compareTo(RankResultComparable<Long, T> o) {
+		public int compareTo(RankResultComparable<T> o) {
 			return (rank >= o.rank) ? 1 : -1;
 		}
 	}

@@ -13,7 +13,7 @@ import kr.co.projecta.matching.util.Parameters;
 
 @Component("AssignmentDAO")
 public class AssignmentDAO 
-	extends LoggingDao 
+	extends LoggingDAO 
 	implements DAO<Assignment>, Serializable 
 {	
 	transient Plogger log = Plogger.getLogger(this.getClass());

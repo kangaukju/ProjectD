@@ -11,8 +11,10 @@ public class MatchStatus
 {
 	private static final long serialVersionUID = 7173989424214014325L;
 	
-	public static final int INCOMPLETION = 0;	
-	public static final int COMPLETION = 1;
+	public static final int INCOMPLETION = 0;	// 배정중
+	public static final int COMPLETION = 1; // 배정완료
+	
+	public static final int DETERMINE = 2; // 배정확정 (구직자 모두가 확정함)
 	
 	int matchStatus;
 	

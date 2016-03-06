@@ -25,8 +25,7 @@ public class MdayBit implements ContextSchemable {
 	
 	int mdayBit;
 
-	public MdayBit() {
-		
+	public MdayBit() {		
 	}
 	
 	public MdayBit(int mdayBit) {

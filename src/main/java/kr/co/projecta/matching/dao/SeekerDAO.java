@@ -11,7 +11,7 @@ import kr.co.projecta.matching.user.Seeker;
 
 @Component("SeekerDAO")
 public class SeekerDAO 
-	extends LoggingDao 
+	extends LoggingDAO 
 	implements DAO<Seeker> 
 {	
 	transient Plogger log = Plogger.getLogger(this.getClass());

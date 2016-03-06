@@ -10,7 +10,7 @@ import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.user.Offerer;
 
 @Component("OffererDAO")
-public class OffererDAO extends LoggingDao implements DAO<Offerer> {
+public class OffererDAO extends LoggingDAO implements DAO<Offerer> {
 	transient Plogger log = Plogger.getLogger(this.getClass());
 
 	// 업주 조회

@@ -10,7 +10,7 @@ import kr.co.projecta.matching.log.Plogger;
 import kr.co.projecta.matching.user.Admin;
 
 @Component("AdminDAO")
-public class AdminDAO extends LoggingDao implements DAO<Admin> {
+public class AdminDAO extends LoggingDAO implements DAO<Admin> {
 	Plogger log = Plogger.getLogger(this.getClass());
 	
 	// 관리자 목록 조회

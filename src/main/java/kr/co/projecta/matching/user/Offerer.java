@@ -1,38 +1,46 @@
 package kr.co.projecta.matching.user;
 
-import java.io.Serializable;
+import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.codehaus.jackson.map.ObjectMapper;
 
-public class Offerer 
-	implements Identity, Serializable
-{
-	private static final long serialVersionUID = 2818711517954696363L;
+import kr.co.projecta.matching.util.JSONUtils;
+
+public class Offerer implements Identity {
 	
-	String id;
-	String name;
-	String password;
-	String offererName;
-	String offererNumber;
-	String phone;
-	String cellPhone;
-	String businessType;
-	String offererBrief;
-	Date payDate;
-	Date eosDate;
-	Date registerDate;
-	int sidoId;
-	int sigunguId;
-	String postcode;
-	String address1;
-	String address2;
-	String mapFilename;
+	private String id;
+	private String name;
+	private String password;
+	private String offererName;
+	private String offererNumber;
+	private String phone;
+	private String cellPhone;
+	private String businessType;
+	private String offererBrief;
+	private Date payDate;
+	private Date eosDate;
+	private Date registerDate;
+	private int sidoId;
+	private int sigunguId;
+	private String postcode;
+	private String address1;
+	private String address2;
+	private String mapFilename;
+	private int kindOfBusiness;
+	private long cancelCount;
 
-	public Offerer() {
-		
+	public Offerer() {		
+	}
+	
+	public String toJSON() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = JSONUtils.getJSONMap(this.getClass(), this);
+		return mapper.writeValueAsString(map);
 	}
 	
 	public boolean equals(Object obj) {
@@ -158,5 +166,11 @@ public class Offerer
 	}
 	public void setMapFilename(String mapFilename) {
 		this.mapFilename = mapFilename;
+	}
+	public int getKindOfBusiness() {
+		return kindOfBusiness;
+	}
+	public void setKindOfBusiness(int kindOfBusiness) {
+		this.kindOfBusiness = kindOfBusiness;
 	}
 }

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="history">
+
+	<insert id="insertOffererCancelHistory" 
+			parameterType="kr.co.projecta.matching.history.OffererCancelHistory">
+			INSERT INTO offerer_cancel_history
+			(
+				requirementId,
+				offererId,
+				datetime
+			) VALUES (
+				#{requirementId},
+				#{offererId},
+				now()
+			)
+			
+	</insert>
+	
+	<select id="selectOffererCancelHistory" 
+			resultType="kr.co.projecta.matching.history.OffererCancelHistory">
+			SELECT 
+				requirementId, offererId, datetime
+			FROM offerer_cancel_history
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+			
+	</select>
+	
+		
+	<insert id="insertSeekerCancelHistory" 
+			parameterType="kr.co.projecta.matching.history.SeekerCancelHistory">
+			INSERT INTO seeker_cancel_history
+			(
+				requirementId,
+				offererId,
+				seekerId,
+				datetime
+			) VALUES (
+				#{requirementId},
+				#{offererId},
+				#{seekerId},
+				now()
+			)
+			
+	</insert>
+	
+	<select id="selectSeekerCancelHistory" 
+			resultType="kr.co.projecta.matching.history.SeekerCancelHistory">
+			SELECT 
+				requirementId, offererId, seekerId, datetime
+			FROM seeker_cancel_history
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+	</select>
+	
+	
+	<insert id="insertSeekerConfirmAfterCancelHistory" 
+			parameterType="kr.co.projecta.matching.history.SeekerConfirmAfterCancelHistory">
+			INSERT INTO seeker_confirm_after_cancel_history
+			(
+				requirementId,
+				offererId,
+				seekerId,
+				datetime
+			) VALUES (
+				#{requirementId},
+				#{offererId},
+				#{seekerId},
+				now()
+			)
+			
+	</insert>
+	
+	<select id="selectSeekerConfirmAfterCancelHistory" 
+			resultType="kr.co.projecta.matching.history.SeekerConfirmAfterCancelHistory">
+			SELECT 
+				requirementId, offererId, seekerId, datetime
+			FROM seeker_confirm_after_cancel_history
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+	</select>
+	
+	
+	<insert id="insertSeekerConfirmHistory" 
+			parameterType="kr.co.projecta.matching.history.SeekerConfirmHistory">
+			INSERT INTO seeker_confirm_history
+			(
+				requirementId,
+				offererId,
+				seekerId,
+				datetime
+			) VALUES (
+				#{requirementId},
+				#{offererId},
+				#{seekerId},
+				now()
+			)
+			
+	</insert>
+	
+	<select id="selectSeekerConfirmHistory" 
+			resultType="kr.co.projecta.matching.history.SeekerConfirmHistory">
+			SELECT 
+				requirementId, offererId, seekerId, datetime
+			FROM seeker_confirm_history
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+	</select>
+	
+	
+	<insert id="insertSeekerNoticeHistory" 
+			parameterType="kr.co.projecta.matching.history.SeekerNoticeHistory">
+			INSERT INTO seeker_notice_history
+			(
+				requirementId,
+				offererId,
+				seekerId,
+				datetime
+			) VALUES (
+				#{requirementId},
+				#{offererId},
+				#{seekerId},
+				now()
+			)
+			
+	</insert>
+	
+	<select id="selectSeekerNoticeHistory" 
+			resultType="kr.co.projecta.matching.history.SeekerNoticeHistory">
+			SELECT 
+				requirementId, offererId, seekerId, datetime
+			FROM seeker_notice_history
+			WHERE 1=1
+			<if test="requirementId != null">
+				AND requirementId = #{requirementId}
+			</if>
+			<if test="offererId != null">
+				AND offererId = #{offererId}
+			</if>
+			<if test="seekerId != null">
+				AND seekerId = #{seekerId}
+			</if>
+	</select>
+</mapper>

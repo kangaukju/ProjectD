@@ -185,30 +185,6 @@ $(document).ready(function() {
 						</td>
 					</tr>
 					<tr>
-						<th>대표자명</th>
-						<td>
-							<input type="hidden" id="name" name="name" /> 
-							<input type="text" id="myname" class="text" placeholder="이름" />
-						</td>
-					</tr>
-					<tr>
-						<th>상호</th>
-						<td>
-							<input type="text" id="offererName" name="offererName" class="text" placeholder="상호" />
-						</td>
-					</tr>
-					<tr>
-						<th>주소</th>
-						<td>
-							<input type="hidden" id="sidoId" name="sidoId">
-							<input type="hidden" id="sigunguId" name="sigunguId">
-							<input type="text" id="postcode" name="postcode" class="text" placeholder="우편번호">
-							<input type="button" id="execDaumPostcode" class="button" value="우편번호 찾기"><br>
-							<input type="text" id="address1" name="address1" class="text" style="width: 200px;" placeholder="주소">
-							<input type="text" id="address2" name="address2" class="text" style="width: 100px;" placeholder="상세주소">
-						</td>
-					</tr>
-					<tr>
 						<th>비밀번호</th>
 						<td>
 							<input type="hidden" id="password" name="password" />
@@ -222,6 +198,19 @@ $(document).ready(function() {
 						</td>
 					</tr>
 					<tr>
+						<th>대표자명</th>
+						<td>
+							<input type="hidden" id="name" name="name" /> 
+							<input type="text" id="myname" class="text" placeholder="이름" />
+						</td>
+					</tr>
+					<tr>
+						<th>상호명</th>
+						<td>
+							<input type="text" id="offererName" name="offererName" class="text" placeholder="상호" />
+						</td>
+					</tr>
+					<tr>
 						<th>사업자등록번호</th>
 						<td>
 							<input type="hidden" name="offererNumber" id="offererNumber" />
@@ -230,6 +219,17 @@ $(document).ready(function() {
 							<input type="text" name="offererNumber2" id="offererNumber2" class="text w40"/>
 							-
 							<input type="text" name="offererNumber3" id="offererNumber3" class="text w40"/>
+						</td>
+					</tr>
+					<tr>
+						<th>주소</th>
+						<td>
+							<input type="hidden" id="sidoId" name="sidoId">
+							<input type="hidden" id="sigunguId" name="sigunguId">
+							<input type="text" id="postcode" name="postcode" class="text" placeholder="우편번호">
+							<input type="button" id="execDaumPostcode" class="button" value="우편번호 찾기"><br>
+							<input type="text" id="address1" name="address1" class="text" style="width: 200px;" placeholder="주소">
+							<input type="text" id="address2" name="address2" class="text" style="width: 100px;" placeholder="상세주소">
 						</td>
 					</tr>
 					<tr>
@@ -247,8 +247,10 @@ $(document).ready(function() {
 					<tr>
 						<th>업종</th>
 						<td>
-							<select name="typeOfbusiness" id="typeOfbusiness">
-							</select>
+							<c:forEach items="${context.KindOfBusiness}" var="business">
+								<input type="radio" name="kindOfBusiness" value="${business}" >
+								<c:out value="${business}" />
+							</c:forEach>
 						</td>
 					</tr>
 					<tr>
@@ -268,14 +270,6 @@ $(document).ready(function() {
 							-
 							<input type="text" name="cellPhone3" id="cellPhone3" class="text w40"/>
 						</td>
-					</tr>
-					<tr>
-						<th>주소</th>
-						<td></td>
-					</tr>
-					<tr>
-						<th>결제</th>
-						<td></td>
 					</tr>
 					<tr>
 						<th>이용약관 동의</th>

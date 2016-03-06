@@ -1,16 +1,12 @@
 package kr.co.projecta.matching.user;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import kr.co.projecta.gis.map.SimilarityTable;
 import kr.co.projecta.matching.context.ContextDatabase;
@@ -25,26 +21,22 @@ import kr.co.projecta.matching.user.types.Region;
 import kr.co.projecta.matching.user.types.WorkAbility;
 import kr.co.projecta.matching.user.types.WorkMday;
 import kr.co.projecta.matching.user.types.WorkQtime;
-import kr.co.projecta.matching.util.Times;
 
-public abstract class Matcher 
-	implements Serializable
-{
-	private static final long serialVersionUID = -6908347089818430126L;
+public abstract class Matcher {
 	
-	// Matching Factors
-	MatchStatus matchStatus;
-	Gender gender; // 성별
-	WorkQtime workQtime; // 업무가능 시간
-	WorkMday workMday; // 업무가능 요일
-	Date workDate; // 업무날짜
-	Nation nation; // 국적
-	WorkAbility workAbility; // 가능업무
-	List<Region> regions = new ArrayList<Region>(3); // 업무가능 지역
-	Date birth; // 생년월일
-	int workTime; // 근무 시간
-	Date registerDate;
-	Region location; // 업주 주소
+	// 매칭조건
+	private MatchStatus matchStatus;
+	private Gender gender; // 성별
+	private WorkQtime workQtime; // 업무가능 시간
+	private WorkMday workMday; // 업무가능 요일
+	private Date workDate; // 업무날짜
+	private Nation nation; // 국적
+	private WorkAbility workAbility; // 가능업무
+	private List<Region> regions = new ArrayList<Region>(3); // 업무가능 지역
+	private Date birth; // 생년월일
+	private int workTime; // 근무 시간
+	private Date registerDate; // 가입 날짜
+	private Region location; // 업주 주소
 	
 	abstract public String getId();
 	
@@ -55,43 +47,7 @@ public abstract class Matcher
 	abstract public boolean equals(Object obj);
 	
 	// JSON 데이터를 만들수 있어야 한다.
-	abstract protected Map<String, Object> buildJSON();
-	
-	public Map<String, Object> getBuildJSON() {
-		Map<String, Object> map = buildJSON();
-		if (map == null) {
-			map = new HashMap<>();
-		}
-		if (matchStatus != null)
-			map.put("matchStatus", matchStatus.toString());
-		if (gender != null)
-			map.put("gender", gender.toString());
-		if (workQtime != null)
-			map.put("workQtime", workQtime.toString());
-		if (workMday != null)
-			map.put("workMday", workMday.toString());
-		if (workDate != null)
-			map.put("workDate", Times.formatYYYYMMDDHH(workDate));
-		if (nation != null)
-			map.put("nation", nation.toString());
-		if (workAbility != null)
-			map.put("workAbility", workAbility.toString());
-		if (regions != null)
-			map.put("regions", regions);
-		if (birth != null)
-			map.put("birth", Times.formatYYYY(birth));		
-		if (registerDate != null)
-			map.put("registerDate", Times.formatYYYYMMDDHHMMSS(registerDate));
-		if (location != null)
-			map.put("location", location);
-		map.put("workTime", workTime);
-		return map;
-	}
-	
-	public String toJSON() throws IOException {		
-		ObjectMapper mapper = new ObjectMapper();
-		return mapper.writeValueAsString(getBuildJSON());
-	}
+	abstract public String toJSON() throws IOException;
 	
 	public String toString() {
 		return ToStringBuilder.reflectionToString(

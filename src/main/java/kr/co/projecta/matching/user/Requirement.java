@@ -1,19 +1,16 @@
 package kr.co.projecta.matching.user;
 
-import java.io.Serializable;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.codehaus.jackson.map.ObjectMapper;
 
-public class Requirement 
-	extends Matcher
-	implements Serializable
-{
-	private static final long serialVersionUID = 5549761580009237777L;
-	
+import kr.co.projecta.matching.util.JSONUtils;
+
+public class Requirement extends Matcher {
 	String id;
 	String offererId;
 	String offererName;
@@ -21,7 +18,12 @@ public class Requirement
 	int person;
 	
 	public Requirement() {
-		
+	}
+	
+	public String toJSON() throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> map = JSONUtils.getJSONMap(this.getClass(), this);
+		return mapper.writeValueAsString(map);
 	}
 	
 	public boolean equals(Object obj) {
@@ -38,19 +40,6 @@ public class Requirement
 	public String toString() {
 		return ToStringBuilder.reflectionToString(
 				this, ToStringStyle.NO_CLASS_NAME_STYLE);
-	}
-	
-	public Map<String, Object> buildJSON() {
-		Map<String, Object> map = new HashMap<>();		
-		if (id != null)
-			map.put("id", id);
-		if (offererId != null)
-			map.put("offererId", offererId);
-		if (offererName != null)
-			map.put("offererName", offererName);
-		map.put("ageRange", ageRange);
-		map.put("person", person);
-		return map;
 	}
 	
 	public String getOffererName() {

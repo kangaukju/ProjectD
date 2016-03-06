@@ -39,6 +39,7 @@ import kr.co.projecta.matching.dao.AdminDAO;
 import kr.co.projecta.matching.dao.AssignmentDAO;
 import kr.co.projecta.matching.dao.CommonDAO;
 import kr.co.projecta.matching.dao.DAO;
+import kr.co.projecta.matching.dao.HistoryDAO;
 import kr.co.projecta.matching.dao.MatchResultDAO;
 import kr.co.projecta.matching.dao.OffererDAO;
 import kr.co.projecta.matching.dao.PageDAO;
@@ -92,7 +93,11 @@ abstract public class BaseController {
 	
 	// 배정 DAO
 	@Resource(name="AssignmentDAO")
-	AssignmentDAO assignmentDAO;	
+	AssignmentDAO assignmentDAO;
+	
+	// 로그내역 DAO
+	@Resource(name="HistoryDAO")
+	HistoryDAO historyDAO;
 	
 	public static final int DEFAULT_LINE = 10;
 	
